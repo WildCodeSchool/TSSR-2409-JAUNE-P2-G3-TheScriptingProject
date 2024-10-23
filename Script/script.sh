@@ -30,6 +30,62 @@ function menu() {
 
 ##### fonction pour créer un compte --> ajout_utilisateur()
 
+#!/bin/bash
+
+# Fonction pour vérifier si un utilisateur existe déjà
+
+function ajout_utilisateur {
+    # Demander le nom d'utilisateur
+    read -p "Quel est le nom d'utilisateur ? " nom_utilisateur
+
+    # Vérifier si l'utilisateur existe déjà
+    if grep "$nom_utilisateur:" /etc/passwd > /dev/null
+    then
+        echo "Utilisateur $nom_utilisateur existe déjà."
+        exit 1
+    fi
+
+    # Demander la confirmation de la création du compte
+    read -p "Confirmation de la création du compte [o/n] : " confirmation
+
+    if [ "$confirmation" == "o" ]
+    then
+    sudo useradd "$nom_utilisateur"
+    
+    else
+        echo "Création de compte annulée."
+        exit 1
+    fi
+
+    # Vérifier si l'utilisateur a été créé correctement
+
+    if grep "$nom_utilisateur:" /etc/passwd > /dev/null
+    then
+            echo "Utilisateur $nom_utilisateur a été créé."
+        else
+            echo "Utilisateur $nom_utilisateur n'a pas créé."
+            exit 1
+        fi
+
+    # Demander si l'utilisateur doit être associé à un groupe existant
+    read -p "Associer l'utilisateur à un groupe déjà existant [o/n] ? " associer_groupe
+        if [ "$associer_groupe" == "o" ]
+        then
+        read -p "Entrez le nom du groupe : " nom_groupe
+
+        # Vérifier si le groupe existe avant d'ajouter l'utilisateur
+        if grep "$nom_groupe:" /etc/group > /dev/null
+        then
+        sudo usermod -aG "$nom_groupe" "$nom_utilisateur"
+        echo "Utilisateur $nom_utilisateur ajouté au groupe $nom_groupe."
+        else
+            echo "Le groupe $nom_groupe n'existe pas."
+        fi
+    fi  
+}
+#la fonction pour créer l'utilisateur
+ajout_utilisateur
+
 ##### fonction pour changer de mdp --> change_mdp()
 
 ##### fonction pour supprimer un compte --> supp_utilisateur()
