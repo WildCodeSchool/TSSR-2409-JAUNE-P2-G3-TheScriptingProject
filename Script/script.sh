@@ -1,3 +1,4 @@
+#!/bin/bash
 ############################################
 ####### Script - Gestion à distance ########
 ######## Groupe 3 - Projet 2 - 2024 ########
@@ -8,15 +9,24 @@
 ##### fonction pour gérer le log -> ajout_log()
 #Prend en argument un texte et l'ajoute avec date/user/... dans le bon fichier
 
-##### fonction pour gérer le menu -> menu()
-msg="Ecrivez votre choix 0"
-afficher "Que voulez vous faire ? "
-afficher " 0 : Retour"
-Pour i allant de 1 à $#
-    afficher " i : $i "
-    msg=$msg+"/$i"
-Fin du Pour
-afficher "$msg"
+##### fonction pour gérer l'affichage du menu
+# Les choix correspondent aux arguments donnés.
+##### fonction pour gérer l'affichage d'un menu
+# Les arguments sont les différents choix.
+function menu() {
+    clear
+    message="Entrez votre choix : 0"
+    echo "Que voulez vous faire ? "
+    echo " 0 : Retour"
+    i=1
+    for arg in "$@"
+    do  
+        echo " $i : $arg "
+        message+="/$i"
+        i=$(($i+1))
+        done
+    echo $message
+]
 
 ##### fonction pour créer un compte --> ajout_utilisateur()
 
