@@ -226,9 +226,11 @@ do
        			0) echo "Fin du script"
 			exit 0;; # sortie du script
 			
-			1) action_utilisateur;;
+			1) action_utilisateur
+			exit 0;;
 			
-			2) action_ordinateur;;
+			2) action_ordinateur
+			exit 0;;
 			
 			*) echo "Erreur de saisie, veuillez recommencer"
 			sleep 1
@@ -241,11 +243,14 @@ do
             		O) echo "Fin du script"
     			exit 0;; # sortie du script
     		
-            		1) info_utilisateur;;
+            		1) info_utilisateur
+            		exit 0;;
 
-            		2) info_ordinateur;;
+            		2) info_ordinateur
+            		exit 0;;
 
-            		3) info_script;;
+            		3) info_script
+            		exit 0;;
 
             		*) echo "Erreur de saisie, veuillez recommencer"
             		sleep 1
