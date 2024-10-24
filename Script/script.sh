@@ -28,12 +28,7 @@ function menu() {
 }
 
 ##### fonction pour créer un compte --> ajout_utilisateur()
-
-#!/bin/bash
-
-# Fonction pour vérifier si un utilisateur existe déjà
-
-function ajout_utilisateur {
+function ajout_utilisateur() {
     # Demander le nom d'utilisateur
     read -p "Quel est le nom d'utilisateur ? " nom_utilisateur
 
@@ -82,8 +77,6 @@ function ajout_utilisateur {
         fi
     fi  
 }
-#la fonction pour créer l'utilisateur
-ajout_utilisateur
 
 ##### fonction pour changer de mdp --> change_mdp()
 
