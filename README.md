@@ -152,3 +152,16 @@ Actions sur les utilisateurs :**
 - Version de l'OS
 - etc.
 
+
+## Rôles et missions par sprint
+
+Pour le sprint 1 : 
+
+| Équipe     | Rôle   | Missions                                                                                          |
+| ---------- | ------ | ------------------------------------------------------------------------------------------------- |
+| Lamine     |   SM   | Configuration et mise en réseau des VM Debian 12 et Ubuntu 24.04 LTS                              |
+| Sam        | Membre | Création de la fonction addUser en Bash                                                           |
+| Charlène   | Membre | Création de l'architecture du menu en Bash                                                        |
+| Arnauld    |   PO   | Configuration et mise en réseau des VM Windows Serveur 2022 et Windows 10, préparation du Trello  |
+
+
