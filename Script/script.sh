@@ -6,8 +6,22 @@
 
 #### fonction pour se connecter à distance ??? SSH ???
 
-##### fonction pour gérer le log -> ajout_log()
-#Prend en argument un texte et l'ajoute avec date/user/... dans le bon fichier
+##### fonction pour gérer le log du script
+# Prend en argument un texte et l'ajoute avec date/user/... dans le bon fichier
+function addLog() {
+    path=/var/log #chemin vers le dossier du fichier
+
+    # vérifie que le fichier existe et l'initialise si ce n'est pas le cas
+    if ! [ -e $path/log_evt.log ]
+    then
+        touch $path/log_evt.log
+        echo "# Journal des activités de script.sh" > $path/log_evt.log
+    fi
+
+    # ajoute l'entrée sous le format YYYYMMDD-HHMMSS-Utilisateur-Événement
+    echo "$(date +"%Y%m%d - %H%M%S") - $SUDO_USER - $1" >> $path/log_evt.log     
+    #remplacer SUDO_USER par whoami si pas besoin de lancer le script en sudo 
+}
 
 ##### fonction pour gérer l'affichage d'un menu
 # Les arguments sont les différents choix.
@@ -27,7 +41,7 @@ function menu() {
     echo $message
 }
 
-##### fonction pour créer un compte --> ajout_utilisateur()
+##### fonction pour créer un compte utilisateur local
 function ajout_utilisateur() {
     # Demander le nom d'utilisateur
     read -p "Quel est le nom d'utilisateur ? " nom_utilisateur
@@ -116,6 +130,7 @@ function action_utilisateur() {
 	case $rep_action_utilisateur in 
 
     		0) echo "Fin du script"
+      		addLog "*********EndScript*********"
     		exit 0;; # sortie du script
 
     		1) echo ajout_utilisateur;; # fonction pour créer un compte
@@ -142,6 +157,7 @@ function action_ordinateur() {
 	read rep_action_ordinateur
 	case $rep_action_ordinateur in 
 		0) echo "Fin du script"
+  		addLog "*********EndScript*********"
     		exit 0;; # sortie du script
 		
 		1) echo arret;; # fonction pour arrêter un PC
@@ -179,13 +195,6 @@ function action_ordinateur() {
 	esac
 }
 
-#### fonction pour gérer les informations sur les utilisateurs --> info_utilisateur()
-
-#### fonction pour gérer les informations sur les ordinateurs clients --> info_ordinateur()
-
-#### fonction pour gérer les informations sur le script --> info_script()
-
-
 ####################################################################################################################################
 
 # fonction qui gère les informations sur l'utilisateur --> info_utilisateur()
@@ -194,6 +203,7 @@ function info_utilisateur() {
 	read rep_info_utilisateur
 	case $rep_info_utilisateur in 
 		0) echo "Fin du script"
+  		addLog "*********EndScript*********"
     		exit 0;; # sortie du script
     		
 		1) echo date_co;; # fonction pour extraire la date de dernière connexion d’un utilisateur
@@ -224,6 +234,7 @@ function info_ordinateur() {
 	case $rep_info_ordinateur in 
 		
 		0) echo "Fin du script"
+  		addLog "*********EndScript*********"
     		exit 0;; # sortie du script
     		
 		1) echo version_os;; # fonction pour avoir la version de l'OS
@@ -261,6 +272,7 @@ function info_script() {
 	read rep_info_script
 	case $rep_info_script in 
 		0) echo "Fin du script"
+  		addLog "*********EndScript*********"
     		exit 0;; # sortie du script
     		
 		1) echo recherche_utilisateur;; # fonction pour rechercher des événements dans le fichier log_evt.log pour un utilisateur
@@ -277,7 +289,7 @@ function info_script() {
 ####################################################################################################################################
 #### Début du Script principal
 echo "Début du script - Gestion à distance"
-#ajout_log "Lancement du script"
+addLog "********StartScript********"
 menu "Effectuer une action" "Récupérer une information"
 read rep_principale
  
@@ -285,13 +297,14 @@ read rep_principale
 while true;
 do
 	case $rep_principale in
-		0) #ajout_log "Arrêt du script"
+		0) addLog "*********EndScript*********"
 		exit 0 ;;   #fin du script
 		
 		1) menu "Une action concernant un utilisateur" "Une action concernant un ordinateur client"
 		read rep_action
        		case $rep_action in
        			0) echo "Fin du script"
+	  		addLog "*********EndScript*********"
 			exit 0;; # sortie du script
 			
 			1) action_utilisateur
@@ -309,6 +322,7 @@ do
        		read rep_info
        		case $rep_info in 
             		O) echo "Fin du script"
+	      		addLog "*********EndScript*********"
     			exit 0;; # sortie du script
     		
             		1) info_utilisateur
