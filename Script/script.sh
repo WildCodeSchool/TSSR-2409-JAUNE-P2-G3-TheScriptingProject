@@ -89,6 +89,23 @@ function ajout_groupe() {
 }
 
 ##### fonction pour sortir un utilisateur d'un groupe --> sortie_groupe()
+function sortie_groupe() {
+
+    read -p "Entrez le nom de l'utilisateur : " nom_utilisateur
+    read -p "Faire sortir l'utilisateur d'un groupe déjà existant [o/n] ? " sortie_groupe
+    if [ "$sortie_groupe" == "o" ]
+    then
+        read -p "Entrez le nom du groupe : " nom_groupe
+	
+        if grep "$nom_groupe:" /etc/group > /dev/null
+        then
+            sudo gpasswd -d "$nom_utilisateur" "$nom_groupe"
+            echo "Utilisateur $nom_utilisateur a été sorti du groupe $nom_groupe."
+        else
+            echo "Le groupe $nom_groupe n'existe pas."
+        fi
+    fi  
+}
 
 ############################################################################################################################
 
