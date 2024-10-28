@@ -60,8 +60,18 @@ function ajout_utilisateur() {
             echo "Utilisateur $nom_utilisateur n'a pas créé."
             exit 1
         fi
+}
 
-    # Demander si l'utilisateur doit être associé à un groupe existant
+##### fonction pour changer de mdp --> change_mdp()
+
+##### fonction pour supprimer un compte --> supp_utilisateur()
+
+##### fonction pour désactiver un compte --> desact_utilisateur()
+
+##### fonction pour ajouter un utilisateur à un groupe --> ajout_groupe()
+# Demander si l'utilisateur doit être associé à un groupe existant
+function ajout_groupe() {
+    read -p "Entrez le nom de l'utilisateur : " nom_utilisateur
     read -p "Associer l'utilisateur à un groupe déjà existant [o/n] ? " associer_groupe
         if [ "$associer_groupe" == "o" ]
         then
@@ -77,14 +87,6 @@ function ajout_utilisateur() {
         fi
     fi  
 }
-
-##### fonction pour changer de mdp --> change_mdp()
-
-##### fonction pour supprimer un compte --> supp_utilisateur()
-
-##### fonction pour désactiver un compte --> desact_utilisateur()
-
-##### fonction pour ajouter un utilisateur à un groupe --> ajout_groupe()
 
 ##### fonction pour sortir un utilisateur d'un groupe --> sortie_groupe()
 
