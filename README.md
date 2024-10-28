@@ -152,6 +152,166 @@ Actions sur les utilisateurs :**
 - Version de l'OS
 - etc.
 
+### Enregistrement des informations
+
+#### Format des infos
+
+Les informations recueilli sur la cible (utilisateur ou ordinateur) sont enregistrées dans un fichier **info_<Cible>_<Date>.txt**
+
+Avec:
+Cible : Nom d’utilisateur ou de l’ordinateur cible
+Date : Date du recueil des informations au format **yyyymmdd**
+
+Ce fichier est dans le dossier **Documents** du dossier personnel de l’utilisateur exécutant le script ou sur le bureau (au choix du groupe).
+
+### Journalisation
+
+#### Tout garder
+
+La **journalisation**, également connue sous le nom de **logging**, consiste à enregistrer de manière systématique les événements significatifs qui se produisent dans un système, une application ou un réseau.
+Les informations enregistrées sont souvent les timestamps, les actions effectuées, les utilisateurs concernés, les machines cibles.
+
+### La journalisation dans le projet 
+
+#### Dans le contexte
+
+Les traces des activités effectuées sont dans le fichier **log_evt.log** qui contient l’enregistrement textuel de _toutes les activités de navigation dans les menus du script_, ainsi que _les demandes d’informations_ et _les actions_.
+Les informations enregistrées sont des éléments factuels (date, heure, utilisateur concerné, utilisateur distant, ordinateur distant, etc.).
+Ce fichier journal se situe :
+- Pour le serveur windows, dans **C:\Windows\System32\LogFiles**
+- Pour le serveur Linux, dans **/var/log**
+
+### Fichier journal
+
+#### Format
+
+Les enregistrements du **fichier log_evt.log** sont sous la forme :
+
+**<Date>-<Heure>-<Utilisateur>-<Evenement>**
+
+Avec:  
+Date : Date de l’evenement au format **yyyymmdd**  
+Heure : Heure de l’evenement au format **hhmmss**  
+Utilisateur : Nom de l’utilisateur courant exécutant le script  
+Evenement : Action effectuée (à définir par le groupe)  
+
+### Fichier journal (suite)
+
+#### Format du début et de la fin
+
+La 1ère entrée de journal (lancement du script) et la dernière (sortie du script) sont indiquées par des lignes spéciales :
+
+**<Date>-<Heure>-<Utilisateur>-StartScript**
+et
+**<Date>-<Heure>-<Utilisateur>-EndScript**
+
+### Documentation
+
+#### What’s up doc ?
+
+La documentation est sous format markdown.
+Elle est écrite en Français courant, correct, et technique.
+Elle peut inclure des copies d’écrans pour étayer les explications données.
+
+### Documentation générale
+
+#### La principale
+
+On doit avoir dans cette documentation :  
+- Présentation du projet, objectifs finaux  
+- Introduction : mise en contexte  
+- Membres du groupe de projet (rôles par sprint)  
+- Choix techniques : quel OS, quelle version, etc.  
+- Difficultés rencontrées : problèmes techniques rencontrés  
+- Solutions trouvées : Solutions et alternatives trouvées  
+- Améliorations possibles : suggestions d’améliorations futures  
+
+### Documentation administrateur
+
+#### Pour les admins
+
+On doit avoir dans cette documentation :
+- Prérequis techniques
+- Étapes d'installation et de conf. : instruction étape par étape
+- FAQ : solutions aux problèmes connus et communs liés à l’installation et à la configuration
+
+### Documentation utilisateur
+
+#### Pour les autres
+
+On doit avoir dans cette documentation :
+Utilisation de base : comment utiliser les fonctionnalités clés
+Utilisation avancée : comment utiliser au mieux les options
+FAQ : solutions aux problèmes connus et communs liés à l’utilisation
+
+### Synthèse des éléments à implémenter
+
+#### À mettre en place
+
+- 1 serveur Windows Server 2022 (avec GUI)
+- 1 client Windows 10
+- 1 serveur Debian 12 (en CLI sans GUI)
+- 1 client Ubuntu 22.04/24.04 LTS
+- 1 script PowerShell
+- 1 script shell bash
+
+## Livrables
+
+### Scripts
+
+#### À rendre à la fin
+
+- 1 scripts PowerShell
+- 1 script shell bash
+
+### Scripts (suite)
+
+#### Contenus
+
+Les scripts :
+- Ont des commentaires
+- Ont une structure de code hierarchisé (indentation, etc.)
+- Ont une syntaxe de code claire (nom des variables, etc.)
+
+### Dépôt Github
+
+#### En ligne
+
+Un dépôt Git/github par groupe dont le nom est sous la forme **TSSR-2409-P2-Gx** (avec x le numéro du groupe de projet).
+
+Les dépôts sont créer par ton formateur.
+L’adresse email que tu as fourni en début de formation est utilisée pour l'accès au dépôt Github. Si ce n’est pas la même pour ton compte Github, indique le à ton formateur.
+
+### Documentation
+
+#### À rendre à la fin
+
+- Un fichier README.md par groupe
+- Un fichier INSTALL.md par groupe
+- Un fichier USER_GUIDE.md par groupe
+- Un script PowerShell fonctionnel
+- Un script shell bash fonctionnel
+
+## Groupes
+
+### Rôles dans les groupes (SM et PO)
+
+#### Des rôles importants
+
+**Scrum Master (SM)**
+Le SM est le garant de la bonne application de la méthode Scrum. Il est responsable de la communication entre les membres de l'équipe et de la bonne réalisation des tâches.
+
+**Product Owner (PO)**
+Le PO est le représentant du client. Il est responsable de la définition des besoins et de la priorisation des tâches. Il est le garant de la qualité du produit final.
+
+### Rôles dans les groupes (SM et PO) (suite)
+
+#### Des rôles importants
+
+
+Les rôles seront attribués dans chaque groupe, et seront tournants (changement de rôle à chaque sprint).
+Le formateur aura comme seul interlocuteur du projet le PO de chaque groupe.
+
 
 ## Rôles et missions par sprint
 
@@ -163,5 +323,14 @@ Pour le sprint 1 :
 | Sam        | Membre | Création de la fonction addUser en Bash                                                           |
 | Charlène   | Membre | Création de l'architecture du menu en Bash                                                        |
 | Arnauld    |   PO   | Configuration et mise en réseau des VM Windows Serveur 2022 et Windows 10, préparation du Trello  |
+
+Pour le sprint 2 : 
+
+| Équipe     | Rôle   | Missions                                                                                          |
+| ---------- | ------ | ------------------------------------------------------------------------------------------------- |
+| Lamine     | Membre | Configuration et mise en réseau des VM Debian 12 et Ubuntu 24.04 LTS                              |
+| Sam        |   SM   | Création de la fonction addUser en Bash                                                           |
+| Charlène   |   PO   | Création de l'architecture du menu en Bash                                                        |
+| Arnauld    | Membre | Configuration et mise en réseau des VM Windows Serveur 2022 et Windows 10, préparation du Trello  |
 
 
