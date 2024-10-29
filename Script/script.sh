@@ -48,14 +48,19 @@ function addLog() {
 function testSSH() {
     ## Vérification si la saisie est bien une adresse dans le réseau
     if [[ ! $1 =~ ($networdl_prefix)(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?) ]]
-    then echo "L'adresse IP n'est pas valide ou n'appartient pas au réseau $network_prefix.0 . "
-    	exit 1 
-     ## test pour savoir si la connexion se fait
+    then 
+    	echo "L'adresse IP n'est pas valide ou n'appartient pas au réseau $network_prefix.0 . "
+	return 1
+	## test pour savoir si la connexion se fait
     elif ssh $user_ssh@$1 echo "Hello World" > /dev/null
-    then echo "Connexion réussie au PC $1 "
+    then 
+    	echo "Connexion réussie au PC $1 "
     	addLog "Connexion SSH avec le PC $1 "
-    else echo "Echec de la connexion "
+     	return 0
+    else 
+    	echo "Echec de la connexion "
     	addLog "Echec de la connexion SSH avec le PC $1 "
+     	return 1
     fi
 }
 
@@ -290,7 +295,7 @@ function actionComputer() {
 		
 		10) ## Choix de "Désactivation du pare-feu"
       		addLog "Choix de 'Désactivation du pare-feu'"
-		echo disableFirewall;
+		echo disableFirewall;;
 		
 		11) ## Choix de "Installation de logiciel"
       		addLog "Choix de 'Installation de logiciel'"
@@ -466,7 +471,7 @@ function infoComputer() {
 	
 	## Affichage selon le nombre d'info souhaitée
 	if [ $(echo $ans_info_computer | wc -w) -eq 1 ]
-	then tac $file_info_computer | sed -e '/Informations sur l\'ordinateur/q' | tac
+	then tac $file_info_computer | sed -e '/Informations sur l ordinateur/q' | tac
 	fi
 	echo " Les informations demandées sont dans le fichier $file_info_computer."
 	addLog "*********EndScript*********"
@@ -508,7 +513,11 @@ function infoScript() {
 
 echo "Début du script - Gestion à distance"
 addLog "********StartScript********"
-read -p "Quel est l'adresse IPv4 de l'ordinateur à cibler ? " address_IP
+read -p "Quel est l'adresse IPv4 de l'ordinateur à cibler ? " address_ip
+while testSSH $address_ip
+do
+	read -p "Quel est l'adresse IPv4 de l'ordinateur à cibler ? " address_ip
+done
 
 menu "Effectuer une action" "Récupérer une information"
 read ans_main
@@ -578,7 +587,8 @@ do
 	 		addLog "*********EndScript*********"
             		exit 0;;
 
-            		*) echo "Erreur de saisie, veuillez recommencer"
+            		*) ## Erreur de saisie
+	      		echo "Erreur de saisie, veuillez recommencer"
 	      		addLog "Échec de saisie, retour au menu 'Récupérer une information'"
             		sleep 1
             		continue;;
