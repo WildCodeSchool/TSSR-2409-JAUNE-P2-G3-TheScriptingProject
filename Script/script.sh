@@ -77,7 +77,22 @@ function ajout_utilisateur() {
 }
 
 ##### fonction pour changer de mdp --> change_mdp()
+ # Demande les informations de connexion SSH
+    read -p "Entrez l'utilisateur SSH de la machine distante : " ssh_user
+    read -p "Entrez l'IP de la machine distante : " ip_machine
+    
+    # Demande les informations de changement de mot de passe
+    read -p "Entrez le nom d'utilisateur pour changer le mot de passe : " user
+    read -s -p "Entrez le nouveau mot de passe : " password
+    echo
 
+    addLog "Changement de mot de passe pour $user"
+    ssh $ssh_user@$ip_machine "echo '$user:$password' | sudo -S chpasswd"
+    echo " modification de mot de passe effectué pour $user."
+
+    sleep 2
+    addLog "changement de mot de passe réussi pour $user"
+}
 ##### fonction pour supprimer un compte --> supp_utilisateur()
 
 ##### fonction pour désactiver un compte --> desact_utilisateur()
