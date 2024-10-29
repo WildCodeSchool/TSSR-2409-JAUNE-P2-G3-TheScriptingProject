@@ -78,6 +78,7 @@ function ajout_utilisateur() {
 
 ##### fonction pour changer de mdp --> change_mdp()
  # Demande les informations de connexion SSH
+ function mot_de_passe() {    
     read -p "Entrez l'utilisateur SSH de la machine distante : " ssh_user
     read -p "Entrez l'IP de la machine distante : " ip_machine
     
