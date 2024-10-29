@@ -17,7 +17,7 @@
 # Le compte utilisateur dédié à la connexion SSH sur chaque machine distante
 user_ssh="utilisateur_SSH"
 # Le préfixe du réseau de votre serveur
-network_prefix="172\.16\.30\."
+network_prefix="172.16.30."
 # Le chemin vers le dossier du fichier de jorunalisation
 path="/var/log" 
 
@@ -47,7 +47,7 @@ function addLog() {
 ## Prend en argument l'adresse IP de l'ordinateur ciblé
 function testSSH() {
     ## Vérification si la saisie est bien une adresse dans le réseau
-    if [[ ! $1 =~ ($networdl_prefix)(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?) ]]
+    if [[ ! $1 =~ ($network_prefix)(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?) ]]
     then 
     	echo "L'adresse IP n'est pas valide ou n'appartient pas au réseau $network_prefix.0 . "
 	return 1
