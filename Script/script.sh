@@ -49,7 +49,7 @@ function testSSH() {
     ## Vérification si la saisie est bien une adresse dans le réseau
     if [[ ! $1 =~ ($network_prefix)(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?) ]]
     then 
-    	echo "L'adresse IP n'est pas valide ou n'appartient pas au réseau $network_prefix.0 . "
+    	echo "L'adresse IP n'est pas valide ou n'appartient pas au réseau "$network_prefix"0. "
 	return 1
 	## test pour savoir si la connexion se fait
     elif ssh $user_ssh@$1 echo "Hello World" > /dev/null
@@ -58,9 +58,12 @@ function testSSH() {
     	addLog "Connexion SSH avec le PC $1 "
      	return 0
     else 
-    	echo "Echec de la connexion "
+    	echo "Echec de la connexion, veuillez vérifier votre configuration "
+     	echo "Fin du script"
+      	sleep 2
     	addLog "Echec de la connexion SSH avec le PC $1 "
-     	return 1
+     	addLog "*********EndScript*********"
+     	exit 1
     fi
 }
 
@@ -514,11 +517,12 @@ function infoScript() {
 echo "Début du script - Gestion à distance"
 addLog "********StartScript********"
 read -p "Quel est l'adresse IPv4 de l'ordinateur à cibler ? " address_ip
-while testSSH $address_ip
+while [ "$(testSSH $address_ip)"="1" ]
 do
 	read -p "Quel est l'adresse IPv4 de l'ordinateur à cibler ? " address_ip
+ 	testSSH $address_ip
 done
-
+sleep 2
 menu "Effectuer une action" "Récupérer une information"
 read ans_main
 addLog "Entrée dans le menu principal"
