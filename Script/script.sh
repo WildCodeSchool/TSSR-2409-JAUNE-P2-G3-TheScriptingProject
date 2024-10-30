@@ -15,7 +15,7 @@
 #------------------------------------------------------------------------------------------------#
 
 # Le compte utilisateur dédié à la connexion SSH sur chaque machine distante
-user_ssh="utilisateur_SSH"
+user_ssh="utilisateur_ssh"
 # Le préfixe du réseau de votre serveur
 network_prefix="172.16.30."
 # Le chemin vers le dossier du fichier de jorunalisation
@@ -414,12 +414,12 @@ function infoComputer() {
 			if [ -z $filter ]
 			then 
 				echo "Les applications et paquets installés :" >> $file_info_computer 
-				ssh $user_ssh@$address_ip 'apt list' >> $file_info_computer 
+				ssh $user_ssh@$address_ip 'apt list' >> $file_info_computer 2> /dev/null
 				echo -e "\n " >> $file_info_computer 
 				addLog "Consultation des applications et paquets installés de l'ordinateur client $address_ip"
 			else 
 				echo "Les applications et paquets installés filtrés avec $filter :" >> $file_info_computer 
-				ssh $user_ssh@$address_ip 'apt list | grep $filter' >> $file_info_computer 
+				ssh $user_ssh@$address_ip 'apt list | grep "$filter"' >> $file_info_computer 2> /dev/null
 				echo -e "\n " >> $file_info_computer 
 				addLog "Consultation des applications et paquets installés avec un filtre ($filter) de l'ordinateur client $address_ip"
 			fi;;
@@ -460,7 +460,7 @@ function infoComputer() {
 		
 		11) ## pour connaître la quantité de processeurs utilisée
 			echo "La quantité de processeurs utilisée :" >> $file_info_computer 
-			ssh $user_ssh@$address_ip 'top -n 1 | grep %Cpu'  >> $file_info_computer 
+			ssh $user_ssh@$address_ip 'top -n 1 | grep -i "Cpu"'  >> $file_info_computer 
 			echo -e "\n " >> $file_info_computer 
 			addLog "Consultation de la quantité de processeur utilisée de l'ordinateur client $address_ip";; 
 		
@@ -517,11 +517,19 @@ function infoScript() {
 echo "Début du script - Gestion à distance"
 addLog "********StartScript********"
 read -p "Quel est l'adresse IPv4 de l'ordinateur à cibler ? " address_ip
-while [ "$(testSSH $address_ip)"="1" ]
-do
+testSSH $address_ip
+if [ $? -eq 1 ]
+then
 	read -p "Quel est l'adresse IPv4 de l'ordinateur à cibler ? " address_ip
  	testSSH $address_ip
-done
+  	if [ $? -eq 1 ]
+   	then
+    		echo "Votre saisie n'est pas bonne, merci de vérifier et de relancer le script"
+      		addLog "Sortie du Script suite à deux erreurs de saisie de l'adresse IP cible"
+		addLog "*********EndScript*********"
+  		exit 1
+    	fi
+fi
 sleep 2
 menu "Effectuer une action" "Récupérer une information"
 read ans_main
