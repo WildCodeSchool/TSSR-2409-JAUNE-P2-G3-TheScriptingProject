@@ -239,7 +239,7 @@ function searchLog() {
 
 ##### fonction pour gérer les actions concernant un utilisateur
 function actionUser() {
-	menu "Création de compte utilisateur local" "Changement de mot de passe" "Suppression de compte utilisateur local" "Désactivation de compte utilisateur local" "Ajout à un groupe local" "Sortie d'un groupe local"
+	menu "Création de compte utilisateur local" "Changement de mot de passe" "Suppression de compte utilisateur local" "Désactivation de compte utilisateur local" "Ajout à un groupe local" "Sortie d'un groupe local" "Retour"
 	read ans_action_user
 	case $ans_action_user in 
 
@@ -272,6 +272,10 @@ function actionUser() {
       		addLog "Choix de 'Sortie d'un groupe local'"
       		exitGroup;; 
 
+ 		7) ### Retour au menu précédent
+		addLog "Retour au menu précédent"
+  		break 1;;
+
     		*) ## Erreur de saisie
       		echo "Erreur de saisie, veuillez recommencer"
 		addLog "Échec de saisie, retour au menu 'Action concernant un utilisateur local"
@@ -283,7 +287,7 @@ function actionUser() {
 
 #### fonction pour gérer les actions concernant un ordinateur client
 function actionComputer() {
-	menu "Arrêt" "Redémarrage" "Verrouillage" "Mise-à-jour du système" "Création de répertoire" "Modification de répertoire" "Suppression de répertoire" "Définition de règles de pare-feu" "Activation du pare-feu" "Désactivation du pare-feu" "Installation de logiciel" "Désinstallation de logiciel" "Exécution de script sur la machine distante"
+	menu "Arrêt" "Redémarrage" "Verrouillage" "Mise-à-jour du système" "Création de répertoire" "Modification de répertoire" "Suppression de répertoire" "Définition de règles de pare-feu" "Activation du pare-feu" "Désactivation du pare-feu" "Installation de logiciel" "Désinstallation de logiciel" "Exécution de script sur la machine distante" "Retour"
 	read ans_action_computer
 	case $ans_action_computer in 
 		0) ## Fin du script
@@ -360,6 +364,10 @@ function actionComputer() {
 		13) ## Choix de "Exécution de script sur la machine distante"
       		addLog "Choix de 'Exécution de script sur la machine distante'"
 		echo executeScript;;
+
+   		14) ### Retour au menu précédent
+		addLog "Retour au menu précédent"
+  		break 1;;
   
 		*) ## Erreur de saise
       		addLog "Erreur de saisie, retour au menu 'Action concernant un ordinateur client'"
@@ -371,7 +379,7 @@ function actionComputer() {
 
 #### fonction qui gère les informations sur l'utilisateur --> info_utilisateur()
 function infoUser() {
-	menu "Date de dernière connexion d’un utilisateur" "Date de dernière modification du mot de passe" "Liste des sessions ouvertes par l'utilisateur" "Groupe d’appartenance d’un utilisateur" "Historique des commandes exécutées par l'utilisateur" "Droits/permissions de l’utilisateur sur un dossier" "Droits/permissions de l’utilisateur sur un fichier"
+	menu "Date de dernière connexion d’un utilisateur" "Date de dernière modification du mot de passe" "Liste des sessions ouvertes par l'utilisateur" "Groupe d’appartenance d’un utilisateur" "Historique des commandes exécutées par l'utilisateur" "Droits/permissions de l’utilisateur sur un dossier" "Droits/permissions de l’utilisateur sur un fichier" "Retour"
 	read ans_info_user
 	case $ans_info_user in 
 		0) ## Fin du script
@@ -406,6 +414,10 @@ function infoUser() {
 		7) ## Choix de "Droits/permissions de l’utilisateur sur un fichier"
       		addLog "Choix de 'Droits/permissions de l’utilisateur sur un fichier'"
   		echo rights_file;;
+
+      		8) ### Retour au menu précédent
+		addLog "Retour au menu précédent"
+  		break 1;;
 		
 		*) ## Erreur de saise
       		addLog "Erreur de saisie, retour au menu 'Information concernant un utilisateur local'"
@@ -418,7 +430,7 @@ function infoUser() {
 
 #### fonction qui gère les informations sur l'ordinateur client
 function infoComputer() {
-	menu "Version de l'OS" "Nombre de disque" "Partition (nombre, nom, FS, taille) par disque" "Liste des applications/paquets installées" "Liste des services en cours d'execution" "Liste des utilisateurs locaux" "Type de CPU, nombre de coeurs, etc." "Mémoire RAM totale" "Utilisation de la RAM" "Utilisation du disque" "Utilisation du processeur"
+	menu "Version de l'OS" "Nombre de disque" "Partition (nombre, nom, FS, taille) par disque" "Liste des applications/paquets installées" "Liste des services en cours d'execution" "Liste des utilisateurs locaux" "Type de CPU, nombre de coeurs, etc." "Mémoire RAM totale" "Utilisation de la RAM" "Utilisation du disque" "Utilisation du processeur" "Retour"
 	echo "Si vous souhaitez plusieurs informations, écrivez les différents chiffres à la suite, avec un espace entre chaque. "
 	read ans_info_computer
  
@@ -512,6 +524,10 @@ function infoComputer() {
 			ssh $user_ssh@$address_ip 'top -n 1 | grep -i "Cpu"'  >> $file_info_computer 
 			echo -e "\n " >> $file_info_computer 
 			addLog "Consultation de la quantité de processeur utilisée de l'ordinateur client $address_ip";; 
+   
+   		12) ### Retour au menu précédent
+		addLog "Retour au menu précédent"
+  		break 1;;
 		
 		*) ## Erreur de saisie
 			echo "Erreur de saisie, veuillez recommencer"
@@ -532,7 +548,7 @@ function infoComputer() {
 
 #### fonction qui gère les informations sur le script
 function infoScript() {
-	menu "Recherche des événements dans le fichier log_evt.log pour un utilisateur" "Recherche des événements dans le fichier log_evt.log pour un ordinateur"
+	menu "Recherche des événements dans le fichier log_evt.log pour un utilisateur" "Recherche des événements dans le fichier log_evt.log pour un ordinateur" "Retour"
 	read ans_info_script
 	case $ans_info_script in 
 		0) ## Fin du script
@@ -547,6 +563,10 @@ function infoScript() {
 		2)  ## Choix de "Recherche des événements dans le fichier log_evt.log pour un ordinateur client"
   		addLog "Choix de 'Recherche des événements dans le fichier log_evt.log pour un ordinateur client'"
   		searchLog "ordinateur client";;
+
+      		3) ### Retour au menu précédent
+		addLog "Retour au menu précédent"
+  		break 1;;
 		
 		*) ## Erreur de saisie
   		echo "Erreur de saisie, veuillez recommencer"
@@ -593,7 +613,7 @@ do
 		exit 0 ;;  
 		
 		1) ## Choix de "Efectuer une action"
-  		menu "Une action concernant un utilisateur" "Une action concernant un ordinateur client"
+  		menu "Une action concernant un utilisateur" "Une action concernant un ordinateur client" "Retour"
 		read ans_action
   		addLog "Entrée dans le menu 'Effectuer une action' "
        		case $ans_action in
@@ -605,14 +625,35 @@ do
 			1) ## Choix de "Utilisateur"
    			addLog "Entrée dans le menu 'Action concernant un utilisateur'"
    			actionUser
-      			addLog "*********EndScript*********"
-			exit 0;;
+      			if [ $?=1 ]
+			then
+				ans_main=1
+    				addLog "Entrée dans le menu 'Effectuer une action' "
+				continue
+			else
+				addLog "*********EndScript*********"
+        			exit 0
+			fi;;
 			
 			2) ## Choix de "Ordinateur client"
    			addLog "Entrée dans le menu 'Action concernant un ordinateur client'"
    			actionComputer
-      			addLog "*********EndScript*********"
-			exit 0;;
+      			if [ $?=1 ]
+			then
+				ans_main=1
+    				addLog "Entrée dans le menu 'Effectuer une action' "
+				continue
+			else
+				addLog "*********EndScript*********"
+        			exit 0
+			fi;;
+
+   			3) ## Retour au menu précédent
+			addLog "Retour au menu précédent"
+			menu "Effectuer une action" "Récupérer une information"
+			read ans_main
+			addLog "Entrée dans le menu principal"
+			continue;;
 			
 			*) ## Erreur de saisie
    			echo "Erreur de saisie, veuillez recommencer"
@@ -622,8 +663,9 @@ do
 		esac;;
 		
 		2)  ## Choix de "Récupérer une information"
-  		menu "Une information sur un utilisateur" "Une information sur un ordinateur client" "Une information sur le Script"
+  		menu "Une information sur un utilisateur" "Une information sur un ordinateur client" "Une information sur le Script" "Retour"
        		read ans_info
+	 	addLog "Entrée dans le menu 'Récupérer une information' "
        		case $ans_info in 
             		O) ## Fin du script
 	      		echo "Fin du script"
@@ -633,20 +675,48 @@ do
             		1) ## Choix de "Utilisateur"
 	      		addLog "Entrée dans le menu 'Information concernant un utilisateur'"
 	      		infoUser
-	 		addLog "*********EndScript*********"
-            		exit 0;;
-
+	 		if [ $?=1 ] 
+			then
+   				addLog "Entrée dans le menu 'Récupérer une information' "
+				ans_main=2
+				continue
+			else
+				addLog "*********EndScript*********"
+        			exit 0
+			fi;;
+   
             		2) ## Choix de "Ordinateur"
 	      		addLog "Entrée dans le menu 'Information concernant un ordinateur client'"
 	      		infoComputer
-	 		addLog "*********EndScript*********"
-            		exit 0;;
+	 		if [ $?=1 ]
+			then
+   				addLog "Entrée dans le menu 'Récupérer une information' "
+				ans_main=2
+				continue
+			else
+				addLog "*********EndScript*********"
+        			exit 0
+			fi;;
 
             		3) ## Choix de "Script"
 	      		addLog "Entrée dans le menu 'Information concernant le script'"
 	      		infoScript
-	 		addLog "*********EndScript*********"
-            		exit 0;;
+	 		if [ $?=1 ]
+			then
+   				addLog "Entrée dans le menu 'Récupérer une information' "
+				ans_main=2
+				continue
+			else
+				addLog "*********EndScript*********"
+        			exit 0
+			fi;;
+
+	 		4) ## Retour au menu précédent
+			addLog "Retour au menu précédent"
+			menu "Effectuer une action" "Récupérer une information"
+			read ans_main
+			addLog "Entrée dans le menu principal"
+			continue;;
 
             		*) ## Erreur de saisie
 	      		echo "Erreur de saisie, veuillez recommencer"
