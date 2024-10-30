@@ -260,48 +260,66 @@ function actionComputer() {
   		addLog "*********EndScript*********"
     		exit 0;; 
 		
-		1) ## Choix de "Arrêt"
-      		addLog "Choix de 'Arrêt'"
-  		echo stop;;
+		1) ## Choix de "Arrêt de l'ordinateur $address_ip"
+      		addLog "Choix de 'Arrêt de l'ordinateur $address_ip'"
+		echo "L'ordinateur $address_ip va s'arrêter."
+  		ssh $user_ssh@$address_ip 'shutdown -h now'
+  		addLog "Réussite de l'arrêt  de l'ordinateur $address_ip";;
 		
-		2) ## Choix de "Redémarrage"
-      		addLog "Choix de 'Redémarrage'"
-  		echo restart;; 
+		2) ## Choix de "Redémarrage de l'ordinateur $address_ip"
+      		addLog "Choix de 'Redémarrage de l'ordinateur $address_ip'"
+		ssh $user_ssh@$address_ip 'reboot'
+  		addLog "Réussite du redémarrage de l'ordinateur $address_ip";; 
 		
-		3) ## Choix de "Verrouillage"
-      		addLog "Choix de 'Verrouillage'"
-  		echo lock;;
+		3) ## Choix de "Verrouillage de l'ordinateur $address_ip"
+      		addLog "Choix de 'Verrouillage de l'ordinateur $address_ip'"
+		ssh $user_ssh@$address_ip 'systemctl suspend'
+  		addLog "Réussite du verrouillage de l'ordinateur $address_ip";;
 		
-		4) ## Choix de "Mise à jour du système"
-      		addLog "Choix de 'Mise à jour du système'"
-  		echo update;;
+		4) ## Choix de "Mise à jour du système de l'ordinateur $address_ip"
+      		addLog "Choix de 'Mise à jour du système de l'ordinateur $address_ip'"
+		ssh $user_ssh@$address_ip 'apt upgrade && apt upgrade -y'
+  		addLog "Réussite de la mise à jour du système de l'ordinateur $address_ip'";;
 		
-		5) ## Choix de "Création d'un répertoire"
-      		addLog "Choix de 'Création d'un répertoire'"
-  		echo newRep;;
+		5) ## Choix de "Création d'un répertoire sur l'ordinateur $address_ip"
+      		addLog "Choix de 'Création d'un répertoire sur l'ordinateur $address_ip'"
+		read -p "Entrez l'endroit où vous voulez créer le nouveau dossier : " rep_path
+		while [ -z $rep_path ]
+  		do
+			read -p "Saisie vide. Entrez l'endroit où vous voulez créer le nouveau dossier : " rep_path
+		done
+  		read -p "Entrez le nom du dossier à créer: " rep_name
+     		if mkdir -p "$rep_path/$rep_name"
+       		then
+	 		echo "Création du répertoire $rep_name réussie."
+    			addLog "Réussite de la création du dossier $rep_name dans $rep_path de l'ordinateur $address_ip"
+   		else
+      			 echo "$rep_name existe dejà dans $rep_path"
+			addLog "Échec de la création du dossier $rep_name dans $rep_path de l'ordinateur $address_ip"
+		fi;;
 		
-		6) ## Choix de "Modification d'un répertoire"
-      		addLog "Choix de 'Modification d'un répertoire'"
+		6) ## Choix de "Modification d'un répertoire de l'ordinateur $address_ip"
+      		addLog "Choix de 'Modification d'un répertoire de l'ordinateur $address_ip'"
 		echo editRep;;
 		
-		7) ## Choix de "Suppression d'un répertoire"
-      		addLog "Choix de 'Suppression d'un répertoire'"
+		7) ## Choix de "Suppression d'un répertoire de l'ordinateur $address_ip"
+      		addLog "Choix de 'Suppression d'un répertoire de l'ordinateur $address_ip'"
 		echo deleteRep;;
 		
-		8) ## Choix de "Définitions de règles de pare-feu"
-      		addLog "Choix de 'Définitions de règles de pare-feu'"
+		8) ## Choix de "Définitions de règles de pare-feu de l'ordinateur $address_ip"
+      		addLog "Choix de 'Définitions de règles de pare-feu de l'ordinateur $address_ip'"
 		echo defineFirewall;;
 		
-		9) ## Choix de "Activation du pare-feu"
-      		addLog "Choix de 'Activation du pare-feu'"
+		9) ## Choix de "Activation du pare-feu de l'ordinateur $address_ip"
+      		addLog "Choix de 'Activation du pare-feu de l'ordinateur $address_ip'"
 		echo enableFirewall;;
 		
-		10) ## Choix de "Désactivation du pare-feu"
-      		addLog "Choix de 'Désactivation du pare-feu'"
+		10) ## Choix de "Désactivation du pare-feu de l'ordinateur $address_ip"
+      		addLog "Choix de 'Désactivation du pare-feu de l'ordinateur $address_ip'"
 		echo disableFirewall;;
 		
-		11) ## Choix de "Installation de logiciel"
-      		addLog "Choix de 'Installation de logiciel'"
+		11) ## Choix de "Installation de logiciel de l'ordinateur $address_ip"
+      		addLog "Choix de 'Installation de logiciel de l'ordinateur $address_ip'"
 		echo installSoftware;;
 		
 		12) ## Choix de "Désinstallation de logiciel"
@@ -313,7 +331,7 @@ function actionComputer() {
 		echo executeScript;;
   
 		*) ## Erreur de saise
-      		addLog "Erreur de saisie, retour au menu 'Action concernant un utilisateur local'"
+      		addLog "Erreur de saisie, retour au menu 'Action concernant un ordinateur client'"
 		echo "Erreur de saisie, veuillez recommencer"
 		sleep 1
 		actionComputer;;
