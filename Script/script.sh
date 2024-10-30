@@ -202,6 +202,37 @@ function exitGroup() {
         fi
 }
 
+##### fonction pour rechercher dans le journal du script
+## Prend en argument soit "utilisateur local" soit "ordinateur client
+function searchLog() {
+    read -p "Quel $1 voulez-vous rechercher ? " target_name
+    while [ -z target_name ]; do read -p "Quel $1 voulez-vous rechercher ? " target_name; done
+    read -p "Voulez vous chercher une date en particulier ? (au format YYYYMMJJ) " date
+    read -p "Voulez-vous chercher un mot clé en particulier ? " keyword
+    if [ -z $date ]
+    then
+        if [ -z $keyword ]
+        then
+            cat $path/log_evt.log | grep -i $target_name
+            addLog "Consultation de la journalisation du script concernant l'$1 $target_name"
+        else
+            cat $path/log_evt.log | grep -i $target_name | grep -i $keyword
+            addLog "Consultation de la journalisation du script concernant l'$1 $target_name avec le filtre $keyword"
+        fi
+    else 
+        if [ -z $keyword ]
+        then
+            cat $path/log_evt.log | grep -i $target_name | grep -i $date
+            addLog "Consultation de la journalisation du script concernant l'$1 $target_name à la date $date"
+        else
+            cat $path/log_evt.log | grep -i $target_name | grep -i $date | grep -i $keyword
+            addLog "Consultation de la journalisation du script concernant l'$1 $target_name à la date $date avec le filtre $keyword"
+        fi
+    fi
+}
+
+
+
 #------------------------------------------------------------------------------------------------#
 #                          Fonctions pour gérer les 4 sous-menus                                 #
 #------------------------------------------------------------------------------------------------#
@@ -511,11 +542,11 @@ function infoScript() {
     		
 		1) ## Choix de "Recherche des événements dans le fichier log_evt.log pour un utilisateur"
   		addLog "Choix de 'Recherche des événements dans le fichier log_evt.log pour un utilisateur'"
-  		echo searchUser;;
+  		searchLog "utilisateur local";;
 		
 		2)  ## Choix de "Recherche des événements dans le fichier log_evt.log pour un ordinateur client"
   		addLog "Choix de 'Recherche des événements dans le fichier log_evt.log pour un ordinateur client'"
-  		echo searchComputer;;
+  		searchLog "ordinateur client";;
 		
 		*) ## Erreur de saisie
   		echo "Erreur de saisie, veuillez recommencer"
