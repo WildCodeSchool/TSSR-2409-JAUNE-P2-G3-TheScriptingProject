@@ -54,14 +54,14 @@ function testSSH() {
 	## test pour savoir si la connexion se fait
     elif ssh $user_ssh@$1 echo "Hello World" > /dev/null
     then 
-    	echo "Connexion réussie au PC $1 "
-    	addLog "Connexion SSH avec le PC $1 "
+    	echo "Connexion réussie à l'ordinateur $1 "
+    	addLog "Connexion SSH avec l'ordinateur $1 "
      	return 0
     else 
     	echo "Echec de la connexion, veuillez vérifier votre configuration "
      	echo "Fin du script"
       	sleep 2
-    	addLog "Echec de la connexion SSH avec le PC $1 "
+    	addLog "Echec de la connexion SSH avec l'ordinateur $1 "
      	addLog "*********EndScript*********"
      	exit 1
     fi
@@ -134,6 +134,29 @@ function changePassword() {
 		addLog "Échec du changement de mot de passe pour l'utilisateur local $user_name sur la machine $address_ip"
   		return 1
     	fi    		
+}
+
+##### fonction pour changer le mot de passe d'un compte local sur une machine distante
+function removeUser() {
+	read -p "Entrez le nom de l'utilisateur à supprimer : " user_name
+	if ssh $user_ssh@$address_ip 'id "$user_name"' &>/dev/null
+	then
+        	ssh $user_ssh@$address_ip 'userdel $user_name'
+		echo "L'utilisateur $user_name a été supprimé."
+     		addLog "Réussite de la suppression de l'utilisateur local $user_name sur la machine $address_ip"
+     		
+        else
+        	echo "L'utilisateur $user_name n'existe pas."
+		addLog "Réussite de la suppression de l'utilisateur local $user_name sur la machine $address_ip"
+        fi
+}
+
+##### fonction pour désactiver un compte local sur une machine distante
+function disableUser() {
+	read -p "Entrez le nom de l'utilisateur dont vous souhaitez désactiver le compte:" user_name
+	ssh $user_ssh@$address_ip 'usermod -L $user_name'
+	echo "Le compte de $user_name est desactivé"
+	addLog "Réussite de la désactivation de l'utilisateur local $user_name sur la machine $address_ip"
 }
 
 
@@ -258,11 +281,11 @@ function actionUser() {
 
     		3) ## Choix de "Suppression de compte utilisateur local"
       		addLog "Choix de 'Suppression de compte utilisateur local'"
-      		echo removeUser;;
+      		removeUser;;
 	
     		4) ## Choix de "Désactivation de compte utilisateur local"
       		addLog "Choix de 'Désactivation de compte utilisateur local'"
-      		echo disableUser;;
+      		disableUser;;
 
     		5) ## Choix de "Ajout à un groupe local"
       		addLog "Choix de 'Ajout à un groupe local'"
@@ -297,24 +320,48 @@ function actionComputer() {
 		
 		1) ## Choix de "Arrêt de l'ordinateur $address_ip"
       		addLog "Choix de 'Arrêt de l'ordinateur $address_ip'"
-		echo "L'ordinateur $address_ip va s'arrêter."
-  		ssh $user_ssh@$address_ip 'shutdown -h now'
-  		addLog "Réussite de l'arrêt  de l'ordinateur $address_ip";;
+		if ssh $user_ssh@$address_ip 'shutdown -h now'
+  		then
+  			echo "L'ordinateur $address_ip est arrêté."
+  			addLog "Réussite de l'arrêt  de l'ordinateur $address_ip"
+     		else
+       			echo "L'ordinateur $address_ip ne s'est pas arrêté."
+  			addLog "Échec de l'arrêt  de l'ordinateur $address_ip"
+     		fi;;
 		
 		2) ## Choix de "Redémarrage de l'ordinateur $address_ip"
       		addLog "Choix de 'Redémarrage de l'ordinateur $address_ip'"
-		ssh $user_ssh@$address_ip 'reboot'
-  		addLog "Réussite du redémarrage de l'ordinateur $address_ip";; 
+		
+		if ssh $user_ssh@$address_ip 'reboot'
+  		then
+    			echo "L'ordinateur $address_ip a redemarré."
+    			addLog "Réussite du redémarrage de l'ordinateur $address_ip"
+       		else
+	 		echo "L'ordinateur $address_ip n'a pas redemarré."
+    			addLog "Échec du redémarrage de l'ordinateur $address_ip"
+       		fi;;
 		
 		3) ## Choix de "Verrouillage de l'ordinateur $address_ip"
       		addLog "Choix de 'Verrouillage de l'ordinateur $address_ip'"
-		ssh $user_ssh@$address_ip 'systemctl suspend'
-  		addLog "Réussite du verrouillage de l'ordinateur $address_ip";;
+		if ssh $user_ssh@$address_ip 'systemctl suspend'
+  		then
+	  		echo "L'ordinateur $address_ip est verrouillé."
+  			addLog "Réussite du verrouillage de l'ordinateur $address_ip"
+     		else
+       			echo "L'ordinateur $address_ip n'a pas été verrouillé."
+  			addLog "Échec du verrouillage de l'ordinateur $address_ip"
+     		fi;;
 		
 		4) ## Choix de "Mise à jour du système de l'ordinateur $address_ip"
       		addLog "Choix de 'Mise à jour du système de l'ordinateur $address_ip'"
-		ssh $user_ssh@$address_ip 'apt upgrade && apt upgrade -y'
-  		addLog "Réussite de la mise à jour du système de l'ordinateur $address_ip'";;
+		if ssh $user_ssh@$address_ip 'apt upgrade && apt upgrade -y'
+  		then
+    			echo "L'ordinateur $address_ip est mis à jour."
+  			addLog "Réussite de la mise à jour du système de l'ordinateur $address_ip'"
+     		else
+			echo "L'ordinateur $address_ip n'a pas été mis à jour."
+  			addLog "Échec de la mise à jour du système de l'ordinateur $address_ip'"
+	  	fi;;
 		
 		5) ## Choix de "Création d'un répertoire sur l'ordinateur $address_ip"
       		addLog "Choix de 'Création d'un répertoire sur l'ordinateur $address_ip'"
@@ -329,7 +376,7 @@ function actionComputer() {
 	 		echo "Création du répertoire $rep_name réussie."
     			addLog "Réussite de la création du dossier $rep_name dans $rep_path de l'ordinateur $address_ip"
    		else
-      			 echo "$rep_name existe dejà dans $rep_path"
+      			echo "$rep_name existe dejà dans $rep_path"
 			addLog "Échec de la création du dossier $rep_name dans $rep_path de l'ordinateur $address_ip"
 		fi;;
 		
@@ -339,20 +386,68 @@ function actionComputer() {
 		
 		7) ## Choix de "Suppression d'un répertoire de l'ordinateur $address_ip"
       		addLog "Choix de 'Suppression d'un répertoire de l'ordinateur $address_ip'"
-		echo deleteRep;;
+		while [ -z $rep_path ]
+    		do
+        		read -p "Entrez le nom du dossier avec son chemin absolu : " rep_path
+    		done
+    		if ssh $user_ssh@$address_ip 'rm -r "$rep_path"'
+    		then
+        		echo "Suppression du répertoire $rep_path réussie."
+	  		addLog "Réussite de la suppression du dossier $rep_path de l'ordinateur $address_ip"
+    		else
+        		echo "Erreur lors de la suppression"
+	  		addLog "Échec de la suppression du dossier $rep_path de l'ordinateur $address_ip"
+	  	fi;;
 		
 		8) ## Choix de "Définitions de règles de pare-feu de l'ordinateur $address_ip"
       		addLog "Choix de 'Définitions de règles de pare-feu de l'ordinateur $address_ip'"
-		echo defineFirewall;;
+		read -p "Voulez-vous autoriser ou refuser le HTTP sur le port 80 ? 1 pour autoriser, 2 pour refuser " ans_firewall
+  		case $ans_firewall in
+    			1) # Pour autoriser
+       			if ssh $user_ssh@$address_ip 'ufw allow 80'
+	  		then
+	  			echo "Le port 80 est autorisé sur la machine $address_ip"
+	  			addLog "Réussite de l'autorisation de l'utilisation du port 80 sur l'ordinateur client $address_ip"
+      			else
+	 			echo "Le port 80 n'a pas été autorisé sur la machine $address_ip"
+	  			addLog "Échec de l'autorisation de l'utilisation du port 80 sur l'ordinateur client $address_ip"
+	 		fi;;
+     			2) # Pour refuser
+			if ssh $user_ssh@$address_ip 'ufw deny 80'
+   			then
+   				echo "Le port 80 est refusé sur la machine $address_ip"
+	  			addLog "Réussite du refus de l'utilisation du port 80 sur l'ordinateur client $address_ip"
+      			else
+	 			echo "Le port 80 est refusé sur la machine $address_ip"
+	  			addLog "Réussite du refus de l'utilisation du port 80 sur l'ordinateur client $address_ip"
+      			fi;;
+     			*) # Erreur de saisie
+			echo "Erreur de saisie, échec du changement"
+			addLog "Échec du changement de l'utilisation du port 80 sur l'ordinateur client $address_ip";;
+     		esac;;
 		
 		9) ## Choix de "Activation du pare-feu de l'ordinateur $address_ip"
       		addLog "Choix de 'Activation du pare-feu de l'ordinateur $address_ip'"
-		echo enableFirewall;;
-		
+		if ssh $user_ssh@$address_ip 'ufw enable'
+  		then
+    			echo "Le pare-feu de la machine $address_ip a été activé."
+      			addLog "Réussite de l'activation du pare-feu de l'ordinateur $address_ip'"
+		else
+			echo "Le pare-feu de la machine $address_ip n'a pas été activé."
+      			addLog "Échec de l'activation du pare-feu de l'ordinateur $address_ip'"
+     		fi;;
+       
 		10) ## Choix de "Désactivation du pare-feu de l'ordinateur $address_ip"
-      		addLog "Choix de 'Désactivation du pare-feu de l'ordinateur $address_ip'"
-		echo disableFirewall;;
-		
+  		addLog "Choix de 'Désactivation du pare-feu de l'ordinateur $address_ip'"
+		if ssh $user_ssh@$address_ip 'ufw disable'
+    		then
+      			echo "Le pare-feu de la machine $address_ip a été désactivé."
+      			addLog "Réussite de la désactivation du pare-feu de l'ordinateur $address_ip'"
+	 	else
+			echo "Le pare-feu de la machine $address_ip n'a pas été désactivé."
+      			addLog "Échec de la désactivation du pare-feu de l'ordinateur $address_ip'"
+	 	fi;;
+   
 		11) ## Choix de "Installation de logiciel de l'ordinateur $address_ip"
       		addLog "Choix de 'Installation de logiciel de l'ordinateur $address_ip'"
 		echo installSoftware;;
