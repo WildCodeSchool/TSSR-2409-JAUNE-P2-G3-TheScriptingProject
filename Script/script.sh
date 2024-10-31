@@ -470,11 +470,37 @@ function actionComputer() {
    
 		11) ## Choix de "Installation de logiciel de l'ordinateur $address_ip"
       		addLog "Choix de 'Installation de logiciel de l'ordinateur $address_ip'"
-		echo installSoftware;;
+		read -p "Entrez le nom du logiciel à installer sur l'ordinateur $address_ip: " software_name
+		if ssh $user_ssh@$address_ip "dpkg -s $software_name" &> /dev/null
+		then
+    			echo -e "\033[31m$software_name est déjà installé sur l'ordinateur $address_ip"
+    			addLog "Échec de  l'installation du logiciel $software_name sur l'ordinateur $address_ip"
+		elif ssh $user_ssh@$address_ip "apt install $software_name" &> /dev/null
+		then
+    			echo -e "\033[31m$software_name est installé sur l'ordinateur $address_ip"
+    			addLog "Réussite de l'installation du logiciel $software_name sur l'ordinateur $address_ip"
+		else
+    			echo "Échec de l'installation"
+    			addLog "Échec de l'installation du logiciel $software_name sur l'ordinateur $address_ip"
+		fi;;
 		
 		12) ## Choix de "Désinstallation de logiciel"
       		addLog "Choix de 'Désinstallation de logiciel'"
-		echo uninstallSoftware;;
+		read -p "Entrez le nom du logiciel à désinstaller sur l'ordinateur $address_ip: " software_name
+		if ssh $user_ssh@$address_ip "dpkg -s $software_name" &> /dev/null
+		then
+    			if ssh $user_ssh@$address_ip "apt remove -auto-remove $software_name && apt-get purge --auto-remove $software_name" &> /dev/null
+    			then
+    				echo -e "\033[31m$software_name est désinstallé sur l'ordinateur $address_ip"
+    				addLog "Réussite de la désinstallation du logiciel $software_name sur l'ordinateur $address_ip"
+    			else
+       				echo "Échec de la désinstallation"
+        			addLog "Échec de la désinstallation du logiciel $software_name sur l'ordinateur $address_ip"
+   			fi
+		else
+    			echo -e "\033[31m$software_name n'est pas installé sur l'ordinateur $address_ip"
+    			addLog "Échec de  la désinstallation du logiciel $software_name sur l'ordinateur $address_ip"
+		fi;;
 		
 		13) ## Choix de "Exécution de script sur la machine distante"
       		addLog "Choix de 'Exécution de script sur la machine distante'"
