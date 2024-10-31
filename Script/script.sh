@@ -396,9 +396,9 @@ function actionComputer() {
 			addLog "Réussite du renommage du dossier $rep_name en $rep_newname sur l'ordinateur client $address_ip";;
 			2) ## Pour déplacer
      			read -p "Entrez le nouveau chemin absolu : " rep_newpath
-			ssh $user_ssh@$address_ip "mv $rep_path/$rep_name $rep_pnewath/$rep_name"
+			ssh $user_ssh@$address_ip "mv $rep_path/$rep_name $rep_newpath/$rep_name"
     			echo "Le dossier $rep_name a été déplacé en dans le dossier $rep_newpath"
-			addLog "Réussite du déplacement du dossier $rep_name vers $rep_newnpath sur l'ordinateur client $address_ip";;
+			addLog "Réussite du déplacement du dossier $rep_name vers $rep_newpath sur l'ordinateur client $address_ip";;
 			*) ## Erreur de saisie
 			echo "Erreur de saisie, échec de la modification du dossier"
    			addLog "Échec de la modification du dossier $rep_name sur l'ordinateur client $address_ip";;
@@ -565,7 +565,7 @@ function infoUser() {
 		2) ## Choix de "Date de dernière modification du mot de passe"
   		addLog "Choix de 'Date de dernière modification du mot de passe de l'utilisateru'"
             	echo "Date de dernière modification du mot de passe de l'utilisateur : " >> $file_info_user 
-		ssh $user_ssh@$address_ip "chage -l $username | head -n 1" >> $file_info_user
+		ssh $user_ssh@$address_ip "chage -l $user_name | head -n 1" >> $file_info_user
 		echo -e "\n " >> $file_info_user 
 		addLog "Consultation de la dernière modification du mot de passe de l'utilisateur local $user_name sur l'ordinateur client $address_ip";;
 		
@@ -610,11 +610,11 @@ function infoUser() {
                 	read -p " Entrez le nom et le chemin absolu du dossier sur lequel vous voulez vérifier les droits de $user_name" rep_name
             	done
             	echo "Droits de l'utilisateur local sur le dossier $rep_name : " >> $file_info_user
-            	ssh $user_ssh@$address_ip "ls -ld  $rep_name | awk '{print $1" "$3" "$4}'" >> $file_info_user
+            	ssh $user_ssh@$address_ip "ls -ld  $rep_name | awk -F: '{print $1" "$3" "$4}'" >> $file_info_user
 		if cat $file_info_user | tail -n 1 | grep $user_name > /dev/null 2>&1
             	then
                 	echo "$user_name est le propriétaire du dossier $rep_name" >> $file_info_user
-		elif ssh $user_ssh@$address_ip "groups $user_name | grep $(ls -ld  $rep_name | awk '{print $4}')" > /dev/null 2>&1
+		elif ssh $user_ssh@$address_ip "groups $user_name | grep $(ls -ld  $rep_name | awk -F: '{print $4}')" > /dev/null 2>&1
             	then
                 	echo "$user_name est dans le groupe propriétaire du dossier $rep_name" >> $file_info_user
             	else
@@ -633,11 +633,11 @@ function infoUser() {
 	                read -p " Entrez le nom et le chemin absolu du fichier sur lequel vous voulez vérifier les droits de $user_name" file_name
 	        done
 	        echo "Droits de l'utilisateur local sur le fichier $file_name : " >> $file_info_user
-	        ssh $user_ssh@$address_ip "ls -l $file_name | awk '{print $1" "$3" "$4}'" >> $file_info_user
+	        ssh $user_ssh@$address_ip "ls -l $file_name | awk -F: '{print $1" "$3" "$4}'" >> $file_info_user
 	        if cat $file_info_user | tail -n 1 | grep $user_name > /dev/null 2>&1
 	        then
 	        	echo "$user_name est le propriétaire du fichier $file_name" >> $file_info_user
-		elif ssh $user_ssh@$address_ip "groups $user_name | grep $(ls -l $file_name | awk '{print $4}')" > /dev/null 2>&1
+		elif ssh $user_ssh@$address_ip "groups $user_name | grep $(ls -l $file_name | awk -F: '{print $4}')" > /dev/null 2>&1
 	        then
 	        	echo "$user_name est dans le groupe propriétaire du fichier $file_name" >> $file_info_user
 	        else
@@ -695,7 +695,7 @@ function infoComputer() {
 		
 		1) ## pour avoir la version de l'OS
 			echo "Version de l'OS : " >> $file_info_computer 
-			ssh $user_ssh@$address_ip "lsb_release -a | grep Description" >> $file_info_computer
+			ssh $user_ssh@$address_ip "lsb_release -a | grep Description" >> $file_info_computer 2> /dev/null
 			echo -e "\n " >> $file_info_computer 
 			addLog "Consultation de la version de l'OS de l'ordinateur client $address_ip";;
 		
@@ -744,12 +744,12 @@ function infoComputer() {
 			addLog "Consultation des informations sur le CPU de l'ordinateur client $address_ip";; 
 		
 		8) ## pour connaître le nombre de RAM
-			echo "Taille de la RAM :" $(ssh $user_ssh@$address_ip "free -h | grep Mem: | awk '{print $2}'") >> $file_info_computer 
+			echo "Taille de la RAM :" $(ssh $user_ssh@$address_ip "free -h | grep Mem: | awk -F: '{print $2}'") >> $file_info_computer 
 			echo -e "\n " >> $file_info_computer 
 			addLog "Consultation de la taille de la RAM de l'ordinateur client $address_ip";; 
 		
 		9) ## pour connaître la quantité de RAM utilisée
-			echo "Quantité de RAM utilisée :" $(ssh $user_ssh@$address_ip "free -h | grep Mem: | awk '{print $3}'") >> $file_info_computer 
+			echo "Quantité de RAM utilisée :" $(ssh $user_ssh@$address_ip "free -h | grep Mem: | awk -F: '{print $3}'") >> $file_info_computer 
 			echo -e "\n " >> $file_info_computer 
 			addLog "Consultation de la quantité de RAM utilisée de l'ordinateur client $address_ip";; 
 		
@@ -798,11 +798,15 @@ function infoScript() {
     		
 		1) ## Choix de "Recherche des événements dans le fichier log_evt.log pour un utilisateur"
   		addLog "Choix de 'Recherche des événements dans le fichier log_evt.log pour un utilisateur'"
-  		searchLog "utilisateur local";;
+  		searchLog "utilisateur local"
+    		addLog "*********EndScript*********"
+    		exit 0;;
 		
 		2)  ## Choix de "Recherche des événements dans le fichier log_evt.log pour un ordinateur client"
   		addLog "Choix de 'Recherche des événements dans le fichier log_evt.log pour un ordinateur client'"
-  		searchLog "ordinateur client";;
+  		searchLog "ordinateur client"
+    		addLog "*********EndScript*********"
+    		exit 0;;
 
       		3) ### Retour au menu précédent
 		addLog "Retour au menu précédent"
