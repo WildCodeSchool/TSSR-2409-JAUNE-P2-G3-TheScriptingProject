@@ -96,16 +96,16 @@ function addUser() {
 	## Demander le nom d'utilisateur
  	read -p "Quel est le nom d'utilisateur ? " user_name
 	## Vérifier si l'utilisateur existe déjà
-	if ssh $user_ssh@$address_ip 'grep "$user_name:" /etc/passwd > /dev/null'
+	if ssh $user_ssh@$address_ip "grep $user_name: /etc/passwd" > /dev/null
 	then
         	echo "Utilisateur $user_name existe déjà."
         	return 1
 	else 
- 		ssh $user_ssh@$address_ip 'sudo -S useradd "$user_name"'
+ 		ssh $user_ssh@$address_ip "sudo -S useradd $user_name"
     	fi
      
 	## Vérifier si l'utilisateur a été créé correctement
-	if ssh $user_ssh@$address_ip 'grep "$user_name:" /etc/passwd > /dev/null'
+	if ssh $user_ssh@$address_ip "grep $user_name: /etc/passwd" > /dev/null
  	then
         	echo "L'utilisateur $user_name a été créé."
 		addLog "Réussite de la création de l'utilisateur local $user_name sur la machine $address_ip"
@@ -124,7 +124,7 @@ function changePassword() {
 	read -p "Entrez le nom d'utilisateur pour changer le mot de passe : " user_name
 	read -s -p "Entrez le nouveau mot de passe : " password 
  	## Changement + vérification de la réussite
-	if ssh $user_ssh@$address_ip 'echo "$user_name:$password" | sudo -S chpasswd'
+	if ssh $user_ssh@$address_ip "echo $user_name:$password | sudo -S chpasswd"
  	then 
   		echo " La modification de mot de passe a été effectuée pour $user_name."
 		addLog "Réussite du changement de mot de passe pour l'utilisateur local $user_name sur la machine $address_ip"
@@ -139,9 +139,9 @@ function changePassword() {
 ##### fonction pour changer le mot de passe d'un compte local sur une machine distante
 function removeUser() {
 	read -p "Entrez le nom de l'utilisateur à supprimer : " user_name
-	if ssh $user_ssh@$address_ip 'id "$user_name"' &>/dev/null
+	if ssh $user_ssh@$address_ip "id "$user_name" >/dev/null
 	then
-        	ssh $user_ssh@$address_ip 'userdel $user_name'
+        	ssh $user_ssh@$address_ip "userdel $user_name"
 		echo "L'utilisateur $user_name a été supprimé."
      		addLog "Réussite de la suppression de l'utilisateur local $user_name sur la machine $address_ip"
      		
@@ -154,7 +154,7 @@ function removeUser() {
 ##### fonction pour désactiver un compte local sur une machine distante
 function disableUser() {
 	read -p "Entrez le nom de l'utilisateur dont vous souhaitez désactiver le compte:" user_name
-	ssh $user_ssh@$address_ip 'usermod -L $user_name'
+	ssh $user_ssh@$address_ip "usermod -L $user_name"
 	echo "Le compte de $user_name est desactivé"
 	addLog "Réussite de la désactivation de l'utilisateur local $user_name sur la machine $address_ip"
 }
@@ -163,7 +163,7 @@ function disableUser() {
 ##### fonction pour ajouter un utilisateur local d'une machine distante à un groupe local
 function addGroup() {
 	read -p "Entrez le nom de l'utilisateur : " user_name
- 	if ! ssh $user_ssh@$address_ip 'grep "$user_name:" /etc/passwd > /dev/null'
+ 	if ! ssh $user_ssh@$address_ip "grep $user_name: /etc/passwd" > /dev/null
   	then
    		echo "L'utilisateur $user_name n'existe pas"
      		addLog "Échec de l'ajout de l'utilisateur local $user_name à un groupe sur la machine $address_ip"
@@ -172,10 +172,10 @@ function addGroup() {
  
         read -p "Entrez le nom du groupe : " group_name
         ## Vérifier si le groupe existe avant d'ajouter l'utilisateur
-        if ssh $user_ssh@$address_ip 'grep "$group_name:" /etc/group > /dev/null'
+        if ssh $user_ssh@$address_ip "grep $group_name: /etc/group" > /dev/null
         then
 		## Ajout + vérification de l'ajout
-		if ssh $user_ssh@$address_ip 'sudo -S usermod -aG "$group_name" "$user_name"'
+		if ssh $user_ssh@$address_ip "sudo -S usermod -aG $group_name $user_name"
   		then
     			echo "L'utilisateur $user_name a été ajouté au groupe $group_name."
        			addLog "Réussite de l'ajout de l'utilisateur local $user_name au groupe $group_name sur la machine $address_ip"
@@ -196,7 +196,7 @@ function addGroup() {
 ##### fonction pour sortir un utilisateur local sur une machine distante d'un groupe local
 function exitGroup() {
 	read -p "Entrez le nom de l'utilisateur : " user_name
- 	if ! ssh $user_ssh@$address_ip 'grep "$user_name:" /etc/passwd > /dev/null'
+ 	if ! ssh $user_ssh@$address_ip "grep $user_name: /etc/passwd" > /dev/null
   	then
    		echo "L'utilisateur $user_name n'existe pas"
      		addLog "Échec de la sortie de l'utilisateur local $user_name d'un groupe sur la machine $address_ip"
@@ -205,10 +205,10 @@ function exitGroup() {
  
         read -p "Entrez le nom du groupe : " group_name
         ## Vérifier si le groupe existe et que l'utilisateur fait partie du groupe
-        if ssh $user_ssh@$address_ip 'grep "$group_name:" /etc/group | grep $user_name > /dev/null'
+        if ssh $user_ssh@$address_ip "grep $group_name: /etc/group | grep $user_name" > /dev/null
         then
 		## Sortie + vérification de la sortie
-		if ssh $user_ssh@$address_ip 'sudo -S gpasswd -d  "$user_name" "$group_name"'
+		if ssh $user_ssh@$address_ip "sudo -S gpasswd -d  $user_name $group_name"
   		then
     			echo "L'utilisateur $user_name a été retiré du groupe $group_name."
        			addLog "Réussite de la sortie de l'utilisateur local $user_name du groupe $group_name sur la machine $address_ip"
@@ -320,7 +320,7 @@ function actionComputer() {
 		
 		1) ## Choix de "Arrêt de l'ordinateur $address_ip"
       		addLog "Choix de 'Arrêt de l'ordinateur $address_ip'"
-		if ssh $user_ssh@$address_ip 'shutdown -h now'
+		if ssh $user_ssh@$address_ip "shutdown -h now"
   		then
   			echo "L'ordinateur $address_ip est arrêté."
   			addLog "Réussite de l'arrêt  de l'ordinateur $address_ip"
@@ -343,7 +343,7 @@ function actionComputer() {
 		
 		3) ## Choix de "Verrouillage de l'ordinateur $address_ip"
       		addLog "Choix de 'Verrouillage de l'ordinateur $address_ip'"
-		if ssh $user_ssh@$address_ip 'systemctl suspend'
+		if ssh $user_ssh@$address_ip "systemctl suspend"
   		then
 	  		echo "L'ordinateur $address_ip est verrouillé."
   			addLog "Réussite du verrouillage de l'ordinateur $address_ip"
@@ -354,7 +354,7 @@ function actionComputer() {
 		
 		4) ## Choix de "Mise à jour du système de l'ordinateur $address_ip"
       		addLog "Choix de 'Mise à jour du système de l'ordinateur $address_ip'"
-		if ssh $user_ssh@$address_ip 'apt upgrade && apt upgrade -y'
+		if ssh $user_ssh@$address_ip "apt upgrade && apt upgrade -y"
   		then
     			echo "L'ordinateur $address_ip est mis à jour."
   			addLog "Réussite de la mise à jour du système de l'ordinateur $address_ip'"
@@ -371,7 +371,7 @@ function actionComputer() {
 			read -p "Saisie vide. Entrez l'endroit où vous voulez créer le nouveau dossier : " rep_path
 		done
   		read -p "Entrez le nom du dossier à créer: " rep_name
-     		if mkdir -p "$rep_path/$rep_name"
+     		if ssh $user_ssh@$address_ip "mkdir -p $rep_path/$rep_name"
        		then
 	 		echo "Création du répertoire $rep_name réussie."
     			addLog "Réussite de la création du dossier $rep_name dans $rep_path de l'ordinateur $address_ip"
@@ -382,7 +382,7 @@ function actionComputer() {
 		
 		6) ## Choix de "Modification d'un répertoire de l'ordinateur $address_ip"
       		addLog "Choix de 'Modification d'un répertoire de l'ordinateur $address_ip'"
-		while ! ssh $user_ssh@$address_ip "[ -d "$rep_path""$rep_name" ]"
+		while ! ssh $user_ssh@$address_ip "[ -d $rep_path$rep_name ]"
 		do
 			read -p "Entrez le nom du dossier : " rep_name
    			read -p "Entrez le dossier dans lequel $rep_name se trouve (chemin absolu) :" rep_path
@@ -391,12 +391,12 @@ function actionComputer() {
 		case $ans_modify in
   			1)  ## Pour renommer
      			read -p "Entrez le nouveau nom : " rep_newname
-			mv $rep_path/$rep_name $rep_path/$rep_newname
+			ssh $user_ssh@$address_ip "mv $rep_path/$rep_name $rep_path/$rep_newname"
     			echo "Le dossier $rep_name a été renommé en $rep_newname"
 			addLog "Réussite du renommage du dossier $rep_name en $rep_newname sur l'ordinateur client $address_ip";;
 			2) ## Pour déplacer
      			read -p "Entrez le nouveau chemin absolu : " rep_newpath
-			mv $rep_path/$rep_name $rep_pnewath/$rep_name
+			ssh $user_ssh@$address_ip "mv $rep_path/$rep_name $rep_pnewath/$rep_name"
     			echo "Le dossier $rep_name a été déplacé en dans le dossier $rep_newpath"
 			addLog "Réussite du déplacement du dossier $rep_name vers $rep_newnpath sur l'ordinateur client $address_ip";;
 			*) ## Erreur de saisie
@@ -410,7 +410,7 @@ function actionComputer() {
     		do
         		read -p "Entrez le nom du dossier avec son chemin absolu : " rep_path
     		done
-    		if ssh $user_ssh@$address_ip 'rm -r "$rep_path"'
+    		if ssh $user_ssh@$address_ip "rm -r $rep_path"
     		then
         		echo "Suppression du répertoire $rep_path réussie."
 	  		addLog "Réussite de la suppression du dossier $rep_path de l'ordinateur $address_ip"
@@ -424,7 +424,7 @@ function actionComputer() {
 		read -p "Voulez-vous autoriser ou refuser le HTTP sur le port 80 ? 1 pour autoriser, 2 pour refuser " ans_firewall
   		case $ans_firewall in
     			1) # Pour autoriser
-       			if ssh $user_ssh@$address_ip 'ufw allow 80'
+       			if ssh $user_ssh@$address_ip "ufw allow 80"
 	  		then
 	  			echo "Le port 80 est autorisé sur la machine $address_ip"
 	  			addLog "Réussite de l'autorisation de l'utilisation du port 80 sur l'ordinateur client $address_ip"
@@ -433,7 +433,7 @@ function actionComputer() {
 	  			addLog "Échec de l'autorisation de l'utilisation du port 80 sur l'ordinateur client $address_ip"
 	 		fi;;
      			2) # Pour refuser
-			if ssh $user_ssh@$address_ip 'ufw deny 80'
+			if ssh $user_ssh@$address_ip "ufw deny 80"
    			then
    				echo "Le port 80 est refusé sur la machine $address_ip"
 	  			addLog "Réussite du refus de l'utilisation du port 80 sur l'ordinateur client $address_ip"
@@ -448,7 +448,7 @@ function actionComputer() {
 		
 		9) ## Choix de "Activation du pare-feu de l'ordinateur $address_ip"
       		addLog "Choix de 'Activation du pare-feu de l'ordinateur $address_ip'"
-		if ssh $user_ssh@$address_ip 'ufw enable'
+		if ssh $user_ssh@$address_ip "ufw enable"
   		then
     			echo "Le pare-feu de la machine $address_ip a été activé."
       			addLog "Réussite de l'activation du pare-feu de l'ordinateur $address_ip'"
@@ -459,7 +459,7 @@ function actionComputer() {
        
 		10) ## Choix de "Désactivation du pare-feu de l'ordinateur $address_ip"
   		addLog "Choix de 'Désactivation du pare-feu de l'ordinateur $address_ip'"
-		if ssh $user_ssh@$address_ip 'ufw disable'
+		if ssh $user_ssh@$address_ip "ufw disable"
     		then
       			echo "Le pare-feu de la machine $address_ip a été désactivé."
       			addLog "Réussite de la désactivation du pare-feu de l'ordinateur $address_ip'"
@@ -496,7 +496,7 @@ function actionComputer() {
 function infoUser() {
 	## Demande quel utilisateur
 	read -p "Quel est le nom d'utilisateur sur lequel vous souhaitez des informations? " user_name
-	while ! ssh $user_ssh@$address_ip 'grep "$user_name:" /etc/passwd > /dev/null'
+	while ! ssh $user_ssh@$address_ip "grep $user_name: /etc/passwd" > /dev/null
     	do
         	echo "$user_name n'est pas un utilisateur local de la machine $address_ip"
         	read -p "Quel est le nom d'utilisateur ? " user_name
@@ -532,21 +532,21 @@ function infoUser() {
 		1) ## Choix de "Date de dernière connexion d’un utilisateur"
             	addLog "Choix de 'Date de dernière modification du mot de passe de l'utilisateru'"
             	echo "Date de dernière connexion de l'utilisateur : " >> $file_info_user 
-		ssh $user_ssh@$address_ip 'last -R $user_name | head -n 1' >> $file_info_user
+		ssh $user_ssh@$address_ip "last -R $user_name | head -n 1" >> $file_info_user
 		echo -e "\n " >> $file_info_user 
 		addLog "Consultation de la dernière connexion de l'utilisateur local $user_name sur l'ordinateur client $address_ip";;
 		
 		2) ## Choix de "Date de dernière modification du mot de passe"
   		addLog "Choix de 'Date de dernière modification du mot de passe de l'utilisateru'"
-            	echo "Date de dernière connexion de l'utilisateur : " >> $file_info_user 
-		ssh $user_ssh@$address_ip 'last -R $user_name | head -n 1' >> $file_info_user
+            	echo "Date de dernière modification du mot de passe de l'utilisateur : " >> $file_info_user 
+		ssh $user_ssh@$address_ip "chage -l $username | grep -E 'Dernière modification du mot de passe'" >> $file_info_user
 		echo -e "\n " >> $file_info_user 
-		addLog "Consultation de la dernière connexion de l'utilisateur local $user_name sur l'ordinateur client $address_ip";;
+		addLog "Consultation de la dernière modification du mot de passe de l'utilisateur local $user_name sur l'ordinateur client $address_ip";;
 		
 		3) ## Choix de "Liste des sessions ouvertes par l'utilisateur"
             	addLog "Choix de 'Liste des sessions ouvertes par l'utilisateur'"
             	echo "Liste des sessions ouvertes par l'utilisateur : " >> $file_info_user 
-            	if ! ssh $user_ssh@$address_ip 'who | grep $user_name' >> $file_info_user
+            	if ! ssh $user_ssh@$address_ip "who | grep $user_name" >> $file_info_user
             	then    
 	                echo "Aucune session ouverte par l'utilisateur $user_name" >> $file_info_user
         	fi
@@ -556,7 +556,7 @@ function infoUser() {
 		4) ## Choix de "Groupe d’appartenance d’un utilisateur"
             	addLog "Choix de 'Groupe d’appartenance d’un utilisateur'"
             	echo "Groupe d'appartenance de l'utilisateur local : " >> $file_info_user 
-		ssh $user_ssh@$address_ip 'groups $user_name' >> $file_info_user
+		ssh $user_ssh@$address_ip "groups $user_name" >> $file_info_user
 		echo -e "\n " >> $file_info_user 
 		addLog "Consultation des groupes d'appartenance de l'utilisateur local $user_name sur l'ordinateur client $address_ip";;
 		
@@ -566,10 +566,10 @@ function infoUser() {
             	read -p "Voulez-vous voir l'intégrité des commandes exécutées par $user_name ou uniquement une partie ? Tapez le nombre de lignes voulues ou la touche 'Entrée' pour la totalité : " ans_history
 	     	if [ -z $ans_history ]
             	then
-                	ssh $user_ssh@$address_ip 'cat /home/$user_name/.bash_history' >> $file_info_user
+                	ssh $user_ssh@$address_ip "cat /home/$user_name/.bash_history" >> $file_info_user
 	                addLog "Consultation de l'historique des ccommandes exécutées par l'utilisateur local $user_name sur l'ordinateur client $address_ip"
         	else
-                	ssh $user_ssh@$address_ip 'tail -n "$ans_history" /home/$user_name/.bash_history' >> $file_info_user
+                	ssh $user_ssh@$address_ip "tail -n $ans_history /home/$user_name/.bash_history" >> $file_info_user
                 	addLog "Consultation des $ans_history dernières lignes de l'historique des ccommandes exécutées par l'utilisateur local $user_name sur l'ordinateur client $address_ip"
             	fi
             	echo -e "\n " >> $file_info_user;;
@@ -578,17 +578,17 @@ function infoUser() {
             	addLog "Choix de 'Droits/permissions de l’utilisateur sur un dossier'"
             	## Choix + vérif du dossier
             	read -p " Entrez le nom et le chemin absolu du dossier sur lequel vous voulez vérifier les droits de $user_name" rep_name
-            	while ssh $user_ssh@$address_ip '[ -d $rep_name ]'
+            	while ! ssh $user_ssh@$address_ip "[ -d $rep_name ]"
             	do 
                 	echo "Le dossier n'existe pas."
                 	read -p " Entrez le nom et le chemin absolu du dossier sur lequel vous voulez vérifier les droits de $user_name" rep_name
             	done
             	echo "Droits de l'utilisateur local sur le dossier $rep_name : " >> $file_info_user
             	ssh $user_ssh@$address_ip "ls -ld  $rep_name | awk '{print $1" "$3" "$4}'" >> $file_info_user
-		if cat $file_info_user | tail -n 1 | grep $user_name
+		if cat $file_info_user | tail -n 1 | grep $user_name 2>&1
             	then
                 	echo "$user_name est le propriétaire du dossier $rep_name" >> $file_info_user
-		elif groups $user_name | grep $(ssh $user_ssh@$address_ip "ls -ld  $rep_name | awk '{print $4}'") > /dev/null
+		elif ssh $user_ssh@$address_ip "groups $user_name | grep $(ls -ld  $rep_name | awk '{print $4}')" > /dev/null 2>&1
             	then
                 	echo "$user_name est dans le groupe propriétaire du dossier $rep_name" >> $file_info_user
             	else
@@ -601,17 +601,17 @@ function infoUser() {
             	addLog "Choix de 'Droits/permissions de l’utilisateur sur un fichier'"
             	## Choix + vérif du fichier
 	        read -p " Entrez le nom et le chemin absolu du fichier sur lequel vous voulez vérifier les droits de $user_name" file_name
-	        while ssh $user_ssh@$address_ip '[ -e $file_name ]'
+	        while ! ssh $user_ssh@$address_ip "[ -e $file_name ]"
 	        do 
 	        	echo "Le fichier n'existe pas."
 	                read -p " Entrez le nom et le chemin absolu du fichier sur lequel vous voulez vérifier les droits de $user_name" file_name
 	        done
-	        echo "Droits de l'utilisateur local sur le dossier $file_name : " >> $file_info_user
+	        echo "Droits de l'utilisateur local sur le fichier $file_name : " >> $file_info_user
 	        ssh $user_ssh@$address_ip "ls -l $file_name | awk '{print $1" "$3" "$4}'" >> $file_info_user
-	        if cat $file_info_user | tail -n 1 | grep $user_name
+	        if cat $file_info_user | tail -n 1 | grep $user_name > /dev/null 2>&1
 	        then
 	        	echo "$user_name est le propriétaire du fichier $file_name" >> $file_info_user
-		elif groups $user_name | grep $(ssh $user_ssh@$address_ip "ls -l  $file_name | awk '{print $4}'") > /dev/null
+		elif ssh $user_ssh@$address_ip "groups $user_name | grep $(ls -l  $file_name | awk '{print $4}')" > /dev/null 2>&1
 	        then
 	        	echo "$user_name est dans le groupe propriétaire du fichier $file_name" >> $file_info_user
 	        else
@@ -635,7 +635,7 @@ function infoUser() {
 	## Affichage selon le nombre d'info souhaitée
 	if [ $(echo $ans_info_user | wc -w) -eq 1 ]
 	then 
-        	tac $file_info_user | sed -e '/Informations sur l utilisateru local/q' | tac
+        	tac $file_info_user | sed -e '/Informations sur l utilisateur local/q' | tac
 	fi
 	echo " Les informations demandées sont dans le fichier $file_info_user ."
 	addLog "*********EndScript*********"
@@ -669,18 +669,18 @@ function infoComputer() {
 		
 		1) ## pour avoir la version de l'OS
 			echo "Version de l'OS : " >> $file_info_computer 
-			ssh $user_ssh@$address_ip 'lsb_release -a | grep Description' >> $file_info_computer
+			ssh $user_ssh@$address_ip "lsb_release -a | grep Description" >> $file_info_computer
 			echo -e "\n " >> $file_info_computer 
 			addLog "Consultation de la version de l'OS de l'ordinateur client $address_ip";;
 		
 		2) ## pour avoir le nombre de disques
-			echo "Nombre de disques :" $(ssh $user_ssh@$address_ip 'lsblk | grep disk | wc -l') >> $file_info_computer 
+			echo "Nombre de disques :" $(ssh $user_ssh@$address_ip "lsblk | grep disk | wc -l") >> $file_info_computer 
 			echo -e "\n " >> $file_info_computer 
 			addLog "Consultation du nombre de disques de l'ordinateur client $address_ip";; 
 		
 		3) ## pour avoir les partitions par disque
 			echo "Les partitions :" >> $file_info_computer 
-			ssh $user_ssh@$address_ip 'lsblk -f' >> $file_info_computer 
+			ssh $user_ssh@$address_ip "lsblk -f" >> $file_info_computer 
 			echo -e "\n " >> $file_info_computer 
 			addLog "Consultation des partitions de l'ordinateur client $address_ip";; 
 
@@ -689,12 +689,12 @@ function infoComputer() {
 			if [ -z $filter ]
 			then 
 				echo "Les applications et paquets installés :" >> $file_info_computer 
-				ssh $user_ssh@$address_ip 'apt list' >> $file_info_computer 2> /dev/null
+				ssh $user_ssh@$address_ip "apt list">> $file_info_computer 2> /dev/null
 				echo -e "\n " >> $file_info_computer 
 				addLog "Consultation des applications et paquets installés de l'ordinateur client $address_ip"
 			else 
 				echo "Les applications et paquets installés filtrés avec $filter :" >> $file_info_computer 
-				ssh $user_ssh@$address_ip 'apt list | grep "$filter"' >> $file_info_computer 2> /dev/null
+				ssh $user_ssh@$address_ip apt list | grep $filter" >> $file_info_computer 2> /dev/null
 				echo -e "\n " >> $file_info_computer 
 				addLog "Consultation des applications et paquets installés avec un filtre ($filter) de l'ordinateur client $address_ip"
 			fi;;
@@ -713,7 +713,7 @@ function infoComputer() {
 		
 		7) ## pour connaître le type de CPU
 			echo "Les informations sur le CPU :" >> $file_info_computer 
-			ssh $user_ssh@$address_ip 'lscpu | head -n13' >> $file_info_computer 
+			ssh $user_ssh@$address_ip "lscpu | head -n13" >> $file_info_computer 
 			echo -e "\n " >> $file_info_computer 
 			addLog "Consultation des informations sur le CPU de l'ordinateur client $address_ip";; 
 		
@@ -729,13 +729,13 @@ function infoComputer() {
 		
 		10) ## pour connaître la quantité de disque utilisée
 			echo "Les quantités de disque utilisées :" >> $file_info_computer 
-			ssh $user_ssh@$address_ip 'df -h' >> $file_info_computer 
+			ssh $user_ssh@$address_ip "df -h" >> $file_info_computer 
 			echo -e "\n " >> $file_info_computer 
 			addLog "Consultation des quantités de disque utilisées de l'ordinateur client $address_ip";; 
 		
 		11) ## pour connaître la quantité de processeurs utilisée
 			echo "La quantité de processeurs utilisée :" >> $file_info_computer 
-			ssh $user_ssh@$address_ip 'top -n 1 | grep -i "Cpu"'  >> $file_info_computer 
+			ssh $user_ssh@$address_ip "top -n 1 | grep -i Cpu"  >> $file_info_computer 
 			echo -e "\n " >> $file_info_computer 
 			addLog "Consultation de la quantité de processeur utilisée de l'ordinateur client $address_ip";; 
    
