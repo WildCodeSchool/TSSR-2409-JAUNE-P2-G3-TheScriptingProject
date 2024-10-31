@@ -565,7 +565,7 @@ function infoUser() {
 		2) ## Choix de "Date de dernière modification du mot de passe"
   		addLog "Choix de 'Date de dernière modification du mot de passe de l'utilisateru'"
             	echo "Date de dernière modification du mot de passe de l'utilisateur : " >> $file_info_user 
-		ssh $user_ssh@$address_ip "chage -l $username | grep -E 'Dernière modification du mot de passe'" >> $file_info_user
+		ssh $user_ssh@$address_ip "chage -l $username | head -n 1" >> $file_info_user
 		echo -e "\n " >> $file_info_user 
 		addLog "Consultation de la dernière modification du mot de passe de l'utilisateur local $user_name sur l'ordinateur client $address_ip";;
 		
@@ -611,7 +611,7 @@ function infoUser() {
             	done
             	echo "Droits de l'utilisateur local sur le dossier $rep_name : " >> $file_info_user
             	ssh $user_ssh@$address_ip "ls -ld  $rep_name | awk '{print $1" "$3" "$4}'" >> $file_info_user
-		if cat $file_info_user | tail -n 1 | grep $user_name 2>&1
+		if cat $file_info_user | tail -n 1 | grep $user_name > /dev/null 2>&1
             	then
                 	echo "$user_name est le propriétaire du dossier $rep_name" >> $file_info_user
 		elif ssh $user_ssh@$address_ip "groups $user_name | grep $(ls -ld  $rep_name | awk '{print $4}')" > /dev/null 2>&1
@@ -637,7 +637,7 @@ function infoUser() {
 	        if cat $file_info_user | tail -n 1 | grep $user_name > /dev/null 2>&1
 	        then
 	        	echo "$user_name est le propriétaire du fichier $file_name" >> $file_info_user
-		elif ssh $user_ssh@$address_ip "groups $user_name | grep $(ls -l  $file_name | awk '{print $4}')" > /dev/null 2>&1
+		elif ssh $user_ssh@$address_ip "groups $user_name | grep $(ls -l $file_name | awk '{print $4}')" > /dev/null 2>&1
 	        then
 	        	echo "$user_name est dans le groupe propriétaire du fichier $file_name" >> $file_info_user
 	        else
@@ -650,7 +650,7 @@ function infoUser() {
             	addLog "Retour au menu précédent"
             	break 1;;
 		
-		*) ## Erreur de saise
+		*) ## Erreur de saisie
             	addLog "Erreur de saisie, retour au menu 'Information concernant un utilisateur local'"
             	echo "Erreur de saisie, veuillez recommencer"
             	sleep 1
