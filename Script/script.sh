@@ -139,7 +139,7 @@ function changePassword() {
 ##### fonction pour changer le mot de passe d'un compte local sur une machine distante
 function removeUser() {
 	read -p "Entrez le nom de l'utilisateur à supprimer : " user_name
-	if ssh $user_ssh@$address_ip "id "$user_name" >/dev/null
+	if ssh $user_ssh@$address_ip "id $user_name" >/dev/null
 	then
         	ssh $user_ssh@$address_ip "userdel $user_name"
 		echo "L'utilisateur $user_name a été supprimé."
@@ -720,7 +720,7 @@ function infoComputer() {
 				addLog "Consultation des applications et paquets installés de l'ordinateur client $address_ip"
 			else 
 				echo "Les applications et paquets installés filtrés avec $filter :" >> $file_info_computer 
-				ssh $user_ssh@$address_ip apt list | grep $filter" >> $file_info_computer 2> /dev/null
+				ssh $user_ssh@$address_ip "apt list | grep $filter" >> $file_info_computer 2> /dev/null
 				echo -e "\n " >> $file_info_computer 
 				addLog "Consultation des applications et paquets installés avec un filtre ($filter) de l'ordinateur client $address_ip"
 			fi;;
