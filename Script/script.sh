@@ -382,7 +382,27 @@ function actionComputer() {
 		
 		6) ## Choix de "Modification d'un répertoire de l'ordinateur $address_ip"
       		addLog "Choix de 'Modification d'un répertoire de l'ordinateur $address_ip'"
-		echo editRep;;
+		while ! ssh $user_ssh@$address_ip "[ -d "$rep_path""$rep_name" ]"
+		do
+			read -p "Entrez le nom du dossier : " rep_name
+   			read -p "Entrez le dossier dans lequel $rep_name se trouve (chemin absolu) :" rep_path
+		done
+		read -p  "Souhaitez-vous renommer ou déplacer votre dossier ? Tapez 1 pour renommer, 2 pour déplacer " ans_modify
+		case $ans_modify in
+  			1)  ## Pour renommer
+     			read -p "Entrez le nouveau nom : " rep_newname
+			mv $rep_path/$rep_name $rep_path/$rep_newname
+    			echo "Le dossier $rep_name a été renommé en $rep_newname"
+			addLog "Réussite du renommage du dossier $rep_name en $rep_newname sur l'ordinateur client $address_ip";;
+			2) ## Pour déplacer
+     			read -p "Entrez le nouveau chemin absolu : " rep_newpath
+			mv $rep_path/$rep_name $rep_pnewath/$rep_name
+    			echo "Le dossier $rep_name a été déplacé en dans le dossier $rep_newpath"
+			addLog "Réussite du déplacement du dossier $rep_name vers $rep_newnpath sur l'ordinateur client $address_ip";;
+			*) ## Erreur de saisie
+			echo "Erreur de saisie, échec de la modification du dossier"
+   			addLog "Échec de la modification du dossier $rep_name sur l'ordinateur client $address_ip";;
+   		esac;;
 		
 		7) ## Choix de "Suppression d'un répertoire de l'ordinateur $address_ip"
       		addLog "Choix de 'Suppression d'un répertoire de l'ordinateur $address_ip'"
@@ -472,55 +492,154 @@ function actionComputer() {
 	esac
 }
 
-#### fonction qui gère les informations sur l'utilisateur --> info_utilisateur()
+#### fonction qui gère les informations sur l'utilisateur
 function infoUser() {
+	## Demande quel utilisateur
+	read -p "Quel est le nom d'utilisateur sur lequel vous souhaitez des informations? " user_name
+	while ! ssh $user_ssh@$address_ip 'grep "$user_name:" /etc/passwd > /dev/null'
+    	do
+        	echo "$user_name n'est pas un utilisateur local de la machine $address_ip"
+        	read -p "Quel est le nom d'utilisateur ? " user_name
+    	done
+    	addLog " Choix de récupérer des informations sur l'uilisateur local $user_name de l'ordinateur $address_ip"
 	menu "Date de dernière connexion d’un utilisateur" "Date de dernière modification du mot de passe" "Liste des sessions ouvertes par l'utilisateur" "Groupe d’appartenance d’un utilisateur" "Historique des commandes exécutées par l'utilisateur" "Droits/permissions de l’utilisateur sur un dossier" "Droits/permissions de l’utilisateur sur un fichier" "Retour"
+	echo "Si vous souhaitez plusieurs informations, écrivez les différents chiffres à la suite, avec un espace entre chaque. "
 	read ans_info_user
-	case $ans_info_user in 
+
+	## chemin vers le fichier d'enregistrement d'informations
+	file_info_user="/home/$SUDO_USER/info_"$user_name"_$(date +"%Y%m%d").txt"
+
+	## sortie du script si il y a un 0
+	if echo $ans_info_user | grep " 0 " > /dev/null
+	then 
+        	echo "Fin du script"
+        	addLog "*********EndScript*********"
+        	exit 0 
+	else
+		touch $file_info_user > /dev/null 2>&1 
+		echo -e "####### \n# Informations sur l'utilisateur local $user_name de l'ordinateur $address_ip demandées le $(date +"%Y%m%d") à $(date +"%H:%M") \n#######\n" >> $file_info_user
+	fi
+
+	## Traitement de chaque réponse
+	for ans in $ans_info_user
+	do 
+		case $ans in 
 		0) ## Fin du script
-  		echo "Fin du script"
-  		addLog "*********EndScript*********"
-    		exit 0;; 
-    		
+            	echo "Fin du script"
+            	addLog "*********EndScript*********"
+            	exit 0;; 
+
 		1) ## Choix de "Date de dernière connexion d’un utilisateur"
-      		addLog "Choix de 'Date de dernière connexion d’un utilisateur'"
-  		echo date_last_connection;;
+            	addLog "Choix de 'Date de dernière modification du mot de passe de l'utilisateru'"
+            	echo "Date de dernière connexion de l'utilisateur : " >> $file_info_user 
+		ssh $user_ssh@$address_ip 'last -R $user_name | head -n 1' >> $file_info_user
+		echo -e "\n " >> $file_info_user 
+		addLog "Consultation de la dernière connexion de l'utilisateur local $user_name sur l'ordinateur client $address_ip";;
 		
 		2) ## Choix de "Date de dernière modification du mot de passe"
-      		addLog "Choix de 'Date de dernière modification du mot de passe'"
-  		echo date_change_password;;
+  		addLog "Choix de 'Date de dernière modification du mot de passe de l'utilisateru'"
+            	echo "Date de dernière connexion de l'utilisateur : " >> $file_info_user 
+		ssh $user_ssh@$address_ip 'last -R $user_name | head -n 1' >> $file_info_user
+		echo -e "\n " >> $file_info_user 
+		addLog "Consultation de la dernière connexion de l'utilisateur local $user_name sur l'ordinateur client $address_ip";;
 		
 		3) ## Choix de "Liste des sessions ouvertes par l'utilisateur"
-      		addLog "Choix de 'Liste des sessions ouvertes par l'utilisateur'"
-  		echo list_session;;
+            	addLog "Choix de 'Liste des sessions ouvertes par l'utilisateur'"
+            	echo "Liste des sessions ouvertes par l'utilisateur : " >> $file_info_user 
+            	if ! ssh $user_ssh@$address_ip 'who | grep $user_name' >> $file_info_user
+            	then    
+	                echo "Aucune session ouverte par l'utilisateur $user_name" >> $file_info_user
+        	fi
+		echo -e "\n " >> $file_info_user 
+		addLog "Consultation de la liste des sessions ouvertes par l'utilisateur local $user_name sur l'ordinateur client $address_ip";;
 		
 		4) ## Choix de "Groupe d’appartenance d’un utilisateur"
-      		addLog "Choix de 'Groupe d’appartenance d’un utilisateur'"
-  		echo group_user;;
+            	addLog "Choix de 'Groupe d’appartenance d’un utilisateur'"
+            	echo "Groupe d'appartenance de l'utilisateur local : " >> $file_info_user 
+		ssh $user_ssh@$address_ip 'groups $user_name' >> $file_info_user
+		echo -e "\n " >> $file_info_user 
+		addLog "Consultation des groupes d'appartenance de l'utilisateur local $user_name sur l'ordinateur client $address_ip";;
 		
 		5) ## Choix de "Historique des commandes exécutées par l'utilisateur"
-      		addLog "Choix de 'Historique des commandes exécutées par l'utilisateur'"
-  		echo history_user;;
+            	addLog "Choix de 'Historique des commandes exécutées par l'utilisateur'"
+            	echo "Historique des commandes exécutées par l'utilisateur local : " >> $file_info_user
+            	read -p "Voulez-vous voir l'intégrité des commandes exécutées par $user_name ou uniquement une partie ? Tapez le nombre de lignes voulues ou la touche 'Entrée' pour la totalité : " ans_history
+	     	if [ -z $ans_history ]
+            	then
+                	ssh $user_ssh@$address_ip 'cat /home/$user_name/.bash_history' >> $file_info_user
+	                addLog "Consultation de l'historique des ccommandes exécutées par l'utilisateur local $user_name sur l'ordinateur client $address_ip"
+        	else
+                	ssh $user_ssh@$address_ip 'tail -n "$ans_history" /home/$user_name/.bash_history' >> $file_info_user
+                	addLog "Consultation des $ans_history dernières lignes de l'historique des ccommandes exécutées par l'utilisateur local $user_name sur l'ordinateur client $address_ip"
+            	fi
+            	echo -e "\n " >> $file_info_user;;
 		
 		6) ## Choix de "Droits/permissions de l’utilisateur sur un dossier"
-      		addLog "Choix de 'Droits/permissions de l’utilisateur sur un dossier'"
-  		echo rights_repertory;;
-    
-		7) ## Choix de "Droits/permissions de l’utilisateur sur un fichier"
-      		addLog "Choix de 'Droits/permissions de l’utilisateur sur un fichier'"
-  		echo rights_file;;
+            	addLog "Choix de 'Droits/permissions de l’utilisateur sur un dossier'"
+            	## Choix + vérif du dossier
+            	read -p " Entrez le nom et le chemin absolu du dossier sur lequel vous voulez vérifier les droits de $user_name" rep_name
+            	while ssh $user_ssh@$address_ip '[ -d $rep_name ]'
+            	do 
+                	echo "Le dossier n'existe pas."
+                	read -p " Entrez le nom et le chemin absolu du dossier sur lequel vous voulez vérifier les droits de $user_name" rep_name
+            	done
+            	echo "Droits de l'utilisateur local sur le dossier $rep_name : " >> $file_info_user
+            	ssh $user_ssh@$address_ip "ls -ld  $rep_name | awk '{print $1" "$3" "$4}'" >> $file_info_user
+		if cat $file_info_user | tail -n 1 | grep $user_name
+            	then
+                	echo "$user_name est le propriétaire du dossier $rep_name" >> $file_info_user
+		elif groups $user_name | grep $(ssh $user_ssh@$address_ip "ls -ld  $rep_name | awk '{print $4}'") > /dev/null
+            	then
+                	echo "$user_name est dans le groupe propriétaire du dossier $rep_name" >> $file_info_user
+            	else
+                	echo "$user_name fait partie des Autres" >> $file_info_user
+            	fi
+            	echo -e "\n " >> $file_info_user 
+            	addLog "Consultation des droits de l'utilisateur local $user_name du dossier $rep_name sur l'ordinateur client $address_ip";;
 
-      		8) ### Retour au menu précédent
-		addLog "Retour au menu précédent"
-  		break 1;;
+		7) ## Choix de "Droits/permissions de l’utilisateur sur un fichier"
+            	addLog "Choix de 'Droits/permissions de l’utilisateur sur un fichier'"
+            	## Choix + vérif du fichier
+	        read -p " Entrez le nom et le chemin absolu du fichier sur lequel vous voulez vérifier les droits de $user_name" file_name
+	        while ssh $user_ssh@$address_ip '[ -e $file_name ]'
+	        do 
+	        	echo "Le fichier n'existe pas."
+	                read -p " Entrez le nom et le chemin absolu du fichier sur lequel vous voulez vérifier les droits de $user_name" file_name
+	        done
+	        echo "Droits de l'utilisateur local sur le dossier $file_name : " >> $file_info_user
+	        ssh $user_ssh@$address_ip "ls -l $file_name | awk '{print $1" "$3" "$4}'" >> $file_info_user
+	        if cat $file_info_user | tail -n 1 | grep $user_name
+	        then
+	        	echo "$user_name est le propriétaire du fichier $file_name" >> $file_info_user
+		elif groups $user_name | grep $(ssh $user_ssh@$address_ip "ls -l  $file_name | awk '{print $4}'") > /dev/null
+	        then
+	        	echo "$user_name est dans le groupe propriétaire du fichier $file_name" >> $file_info_user
+	        else
+	                echo "$user_name fait partie des Autres" >> $file_info_user
+	        fi 
+	        echo -e "\n " >> $file_info_user 
+	        addLog "Consultation des droits de l'utilisateur local $user_name du fichier $file_name sur l'ordinateur client $address_ip";;
+
+        	8) ### Retour au menu précédent
+            	addLog "Retour au menu précédent"
+            	break 1;;
 		
 		*) ## Erreur de saise
-      		addLog "Erreur de saisie, retour au menu 'Information concernant un utilisateur local'"
-  		echo "Erreur de saisie, veuillez recommencer"
-		sleep 1
-		infoUser;;
+            	addLog "Erreur de saisie, retour au menu 'Information concernant un utilisateur local'"
+            	echo "Erreur de saisie, veuillez recommencer"
+            	sleep 1
+            	infoUser;;
+        	esac
+    	done
 	
-	esac
+	## Affichage selon le nombre d'info souhaitée
+	if [ $(echo $ans_info_user | wc -w) -eq 1 ]
+	then 
+        	tac $file_info_user | sed -e '/Informations sur l utilisateru local/q' | tac
+	fi
+	echo " Les informations demandées sont dans le fichier $file_info_user ."
+	addLog "*********EndScript*********"
+    	exit 0
 }
 
 #### fonction qui gère les informations sur l'ordinateur client
