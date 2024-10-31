@@ -273,27 +273,33 @@ function actionUser() {
 
     		1) ## Choix de "Création de compte utilisateur local"
       		addLog "Choix de 'Création de compte utilisateur local'"
-      		addUser;; 
+      		addUser
+		sleep 3;;
 
     		2) ## Choix de "Changement de mot de passe"
       		addLog "Choix de 'Changement de mot de passe'"
-      		changePassword;;
+      		changePassword
+		sleep 3;;
 
     		3) ## Choix de "Suppression de compte utilisateur local"
       		addLog "Choix de 'Suppression de compte utilisateur local'"
-      		removeUser;;
+      		removeUser
+		sleep 3;;
 	
     		4) ## Choix de "Désactivation de compte utilisateur local"
       		addLog "Choix de 'Désactivation de compte utilisateur local'"
-      		disableUser;;
+      		disableUser
+		sleep 3;;
 
     		5) ## Choix de "Ajout à un groupe local"
       		addLog "Choix de 'Ajout à un groupe local'"
-      		addGroup;; 
+      		addGroup
+		sleep 3;;
 
     		6) ## Choix de "Sortie d'un groupe local"
       		addLog "Choix de 'Sortie d'un groupe local'"
-      		exitGroup;; 
+      		exitGroup
+		sleep 3;; 
 
  		7) ### Retour au menu précédent
 		addLog "Retour au menu précédent"
@@ -327,7 +333,8 @@ function actionComputer() {
      		else
        			echo "L'ordinateur $address_ip ne s'est pas arrêté."
   			addLog "Échec de l'arrêt  de l'ordinateur $address_ip"
-     		fi;;
+     		fi
+       		sleep 3;;
 		
 		2) ## Choix de "Redémarrage de l'ordinateur $address_ip"
       		addLog "Choix de 'Redémarrage de l'ordinateur $address_ip'"
@@ -339,7 +346,8 @@ function actionComputer() {
        		else
 	 		echo "L'ordinateur $address_ip n'a pas redemarré."
     			addLog "Échec du redémarrage de l'ordinateur $address_ip"
-       		fi;;
+       		fi
+	 	sleep 3;;
 		
 		3) ## Choix de "Verrouillage de l'ordinateur $address_ip"
       		addLog "Choix de 'Verrouillage de l'ordinateur $address_ip'"
@@ -350,7 +358,8 @@ function actionComputer() {
      		else
        			echo "L'ordinateur $address_ip n'a pas été verrouillé."
   			addLog "Échec du verrouillage de l'ordinateur $address_ip"
-     		fi;;
+     		fi
+       		sleep 3;;
 		
 		4) ## Choix de "Mise à jour du système de l'ordinateur $address_ip"
       		addLog "Choix de 'Mise à jour du système de l'ordinateur $address_ip'"
@@ -361,7 +370,8 @@ function actionComputer() {
      		else
 			echo "L'ordinateur $address_ip n'a pas été mis à jour."
   			addLog "Échec de la mise à jour du système de l'ordinateur $address_ip'"
-	  	fi;;
+	  	fi
+    		sleep 3;;
 		
 		5) ## Choix de "Création d'un répertoire sur l'ordinateur $address_ip"
       		addLog "Choix de 'Création d'un répertoire sur l'ordinateur $address_ip'"
@@ -378,7 +388,8 @@ function actionComputer() {
    		else
       			echo "$rep_name existe dejà dans $rep_path"
 			addLog "Échec de la création du dossier $rep_name dans $rep_path de l'ordinateur $address_ip"
-		fi;;
+		fi
+  		sleep 3;;
 		
 		6) ## Choix de "Modification d'un répertoire de l'ordinateur $address_ip"
       		addLog "Choix de 'Modification d'un répertoire de l'ordinateur $address_ip'"
@@ -402,7 +413,8 @@ function actionComputer() {
 			*) ## Erreur de saisie
 			echo "Erreur de saisie, échec de la modification du dossier"
    			addLog "Échec de la modification du dossier $rep_name sur l'ordinateur client $address_ip";;
-   		esac;;
+   		esac
+     		sleep 3;;
 		
 		7) ## Choix de "Suppression d'un répertoire de l'ordinateur $address_ip"
       		addLog "Choix de 'Suppression d'un répertoire de l'ordinateur $address_ip'"
@@ -417,7 +429,8 @@ function actionComputer() {
     		else
         		echo "Erreur lors de la suppression"
 	  		addLog "Échec de la suppression du dossier $rep_path de l'ordinateur $address_ip"
-	  	fi;;
+	  	fi
+    		sleep 3;;
 		
 		8) ## Choix de "Définitions de règles de pare-feu de l'ordinateur $address_ip"
       		addLog "Choix de 'Définitions de règles de pare-feu de l'ordinateur $address_ip'"
@@ -444,7 +457,8 @@ function actionComputer() {
      			*) # Erreur de saisie
 			echo "Erreur de saisie, échec du changement"
 			addLog "Échec du changement de l'utilisation du port 80 sur l'ordinateur client $address_ip";;
-     		esac;;
+     		esac
+       		sleep 3;;
 		
 		9) ## Choix de "Activation du pare-feu de l'ordinateur $address_ip"
       		addLog "Choix de 'Activation du pare-feu de l'ordinateur $address_ip'"
@@ -455,7 +469,8 @@ function actionComputer() {
 		else
 			echo "Le pare-feu de la machine $address_ip n'a pas été activé."
       			addLog "Échec de l'activation du pare-feu de l'ordinateur $address_ip'"
-     		fi;;
+     		fi
+       		sleep 3;;
        
 		10) ## Choix de "Désactivation du pare-feu de l'ordinateur $address_ip"
   		addLog "Choix de 'Désactivation du pare-feu de l'ordinateur $address_ip'"
@@ -466,7 +481,8 @@ function actionComputer() {
 	 	else
 			echo "Le pare-feu de la machine $address_ip n'a pas été désactivé."
       			addLog "Échec de la désactivation du pare-feu de l'ordinateur $address_ip'"
-	 	fi;;
+	 	fi
+   		sleep 3;;
    
 		11) ## Choix de "Installation de logiciel de l'ordinateur $address_ip"
       		addLog "Choix de 'Installation de logiciel de l'ordinateur $address_ip'"
@@ -482,7 +498,8 @@ function actionComputer() {
 		else
     			echo "Échec de l'installation"
     			addLog "Échec de l'installation du logiciel $software_name sur l'ordinateur $address_ip"
-		fi;;
+		fi
+  		sleep 3;;
 		
 		12) ## Choix de "Désinstallation de logiciel"
       		addLog "Choix de 'Désinstallation de logiciel'"
@@ -500,7 +517,8 @@ function actionComputer() {
 		else
     			echo -e "\033[31m$software_name n'est pas installé sur l'ordinateur $address_ip"
     			addLog "Échec de  la désinstallation du logiciel $software_name sur l'ordinateur $address_ip"
-		fi;;
+		fi
+  		sleep 3;;
 		
 		13) ## Choix de "Exécution de script sur la machine distante"
       		addLog "Choix de 'Exécution de script sur la machine distante'"
