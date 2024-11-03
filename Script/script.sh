@@ -148,7 +148,7 @@ function removeUser() {
 	read -p "Entrez le nom de l'utilisateur à supprimer : " user_name
 	if ssh $user_ssh@$address_ip "id $user_name" >/dev/null
 	then
-        	ssh $user_ssh@$address_ip "userdel $user_name"
+        	ssh $user_ssh@$address_ip "sudo userdel $user_name"
 		echo "L'utilisateur $user_name a été supprimé."
      		addLog "Réussite de la suppression de l'utilisateur local $user_name sur la machine $address_ip"
      		
