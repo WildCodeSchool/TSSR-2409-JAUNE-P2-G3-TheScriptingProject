@@ -445,7 +445,7 @@ function actionComputer() {
 		read -p "Voulez-vous autoriser ou refuser le HTTP sur le port 80 ? 1 pour autoriser, 2 pour refuser " ans_firewall
   		case $ans_firewall in
     			1) # Pour autoriser
-       			if ssh $user_ssh@$address_ip "ufw allow 80"
+       			if ssh $user_ssh@$address_ip "sudo ufw allow 80"
 	  		then
 	  			echo "Le port 80 est autorisé sur la machine $address_ip"
 	  			addLog "Réussite de l'autorisation de l'utilisation du port 80 sur l'ordinateur client $address_ip"
@@ -454,7 +454,7 @@ function actionComputer() {
 	  			addLog "Échec de l'autorisation de l'utilisation du port 80 sur l'ordinateur client $address_ip"
 	 		fi;;
      			2) # Pour refuser
-			if ssh $user_ssh@$address_ip "ufw deny 80"
+			if ssh $user_ssh@$address_ip "sudo ufw deny 80"
    			then
    				echo "Le port 80 est refusé sur la machine $address_ip"
 	  			addLog "Réussite du refus de l'utilisation du port 80 sur l'ordinateur client $address_ip"
