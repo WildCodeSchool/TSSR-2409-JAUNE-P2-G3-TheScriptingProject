@@ -401,7 +401,7 @@ function actionComputer() {
 		
 		6) ## Choix de "Modification d'un répertoire de l'ordinateur $address_ip"
       		addLog "Choix de 'Modification d'un répertoire de l'ordinateur $address_ip'"
-		while ! ssh $user_ssh@$address_ip "[ -d $rep_path$rep_name ]"
+		while ! ssh $user_ssh@$address_ip "[ $rep_path$rep_name ]"
 		do
 			read -p "Entrez le nom du dossier : " rep_name
    			read -p "Entrez le dossier dans lequel $rep_name se trouve (chemin absolu) :" rep_path
