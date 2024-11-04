@@ -711,13 +711,13 @@ function infoComputer() {
 	file_info_computer="/home/$SUDO_USER/info_"$address_ip"_$(date +"%Y%m%d").txt"
  
 	## sortie du script si il y a un 0, retour si 12. Création et/ou initialisation du fichier d'enregistrement
-	if echo $ans_info_computer | grep " 0 " > /dev/null
+	if echo $ans_info_computer | grep " 0" > /dev/null
 	then 
  		## Fin du script
             	echo "Fin du script"
             	addLog "*********EndScript*********"
             	exit 0
-   	elif echo $ans_info_computer | grep " 12 " > /dev/null
+   	elif echo $ans_info_computer | grep "12" > /dev/null
 	then 
  		### Retour au menu précédent
 		addLog "Retour au menu précédent"
@@ -772,7 +772,7 @@ function infoComputer() {
 		
 		6) ## pour lister les utilisateurs locaux
 			echo "La liste des utilisateurs locaux :" >> $file_info_computer 
-			ssh $user_ssh@$address_ip "awk -F: '{ print $1}' /etc/passwd" >> $file_info_computer 
+			ssh $user_ssh@$address_ip "awk -F: '{print $1}' /etc/passwd" >> $file_info_computer 
 			echo -e "\n " >> $file_info_computer 
 			addLog "Consultation de la liste des utilisateurs locaux de l'ordinateur client $address_ip";; 
 		
@@ -783,12 +783,12 @@ function infoComputer() {
 			addLog "Consultation des informations sur le CPU de l'ordinateur client $address_ip";; 
 		
 		8) ## pour connaître le nombre de RAM
-			echo "Taille de la RAM :" $(ssh $user_ssh@$address_ip "free -h | awk '/^Mem:/{print $2}'") >> $file_info_computer 
+			echo "Taille de la RAM :" $(ssh $user_ssh@$address_ip "free -h | awk -F: '/^Mem:/{print $2}'") >> $file_info_computer 
 			echo -e "\n " >> $file_info_computer 
 			addLog "Consultation de la taille de la RAM de l'ordinateur client $address_ip";; 
 		
 		9) ## pour connaître la quantité de RAM utilisée
-			echo "Quantité de RAM utilisée :" $(ssh $user_ssh@$address_ip "free -h | awk '/^Mem:/{print $3}'") >> $file_info_computer 
+			echo "Quantité de RAM utilisée :" $(ssh $user_ssh@$address_ip "free -h | awk -F: '/^Mem:/{print $3}'") >> $file_info_computer 
 			echo -e "\n " >> $file_info_computer 
 			addLog "Consultation de la quantité de RAM utilisée de l'ordinateur client $address_ip";; 
 		
@@ -1007,7 +1007,9 @@ do
 
     		*) echo "Erreur de saisie, veuillez recommencer"
       		addLog "Échec de saisie, retour au menu principal"
-    		sleep 1
+		sleep 1
+		menu "Effectuer une action" "Récupérer une information"
+		read ans_main
     		continue;;
     
 	esac
