@@ -497,7 +497,7 @@ function actionComputer() {
 		then
     			echo -e "\033[31m$software_name est déjà installé sur l'ordinateur $address_ip"
     			addLog "Échec de  l'installation du logiciel $software_name sur l'ordinateur $address_ip"
-		elif ssh $user_ssh@$address_ip "apt install $software_name" &> /dev/null
+		elif ssh $user_ssh@$address_ip "sudo apt install $software_name" &> /dev/null
 		then
     			echo -e "\033[31m$software_name est installé sur l'ordinateur $address_ip"
     			addLog "Réussite de l'installation du logiciel $software_name sur l'ordinateur $address_ip"
@@ -512,7 +512,7 @@ function actionComputer() {
 		read -p "Entrez le nom du logiciel à désinstaller sur l'ordinateur $address_ip: " software_name
 		if ssh $user_ssh@$address_ip "dpkg -s $software_name" &> /dev/null
 		then
-    			if ssh $user_ssh@$address_ip "apt remove -auto-remove $software_name && apt-get purge --auto-remove $software_name" &> /dev/null
+    			if ssh $user_ssh@$address_ip "sudo apt-get -y purge $software_name" &> /dev/null
     			then
     				echo -e "\033[31m$software_name est désinstallé sur l'ordinateur $address_ip"
     				addLog "Réussite de la désinstallation du logiciel $software_name sur l'ordinateur $address_ip"
