@@ -50,10 +50,10 @@ function addLog {
     if ( ! ( Test-Path $path\log_evt.log ) )
     {
         New-Item -Path $path -Name "log_evt.log" -ItemType "file" `
-            -Value "# Journal des activités de script.ps1" *> $NULL
+            -Value "# Journal des activités de script.ps1 `r`n" *> $NULL
     }
     ## ajoute l'entrée sous le format YYYYMMDD-HHMMSS-Utilisateur-Événement
-    add-Content - Path $path\log_evt.log (get-date -Format "yyyyMMdd - HHmmss") "-" $env:USERNAME $event 
+    add-Content -Path $path\log_evt.log "$(get-date -Format "yyyyMMdd") - $(get-date -Format "HHmmss") - $env:USERNAME - $event" 
 }
 
 
@@ -118,7 +118,7 @@ Get-WmiObject -Class Win32_Processor | Out-File D:\Backup\informations.txt -Appe
 function actionUser {
 	menu "Création de compte utilisateur local" "Changement de mot de passe" "Suppression de compte utilisateur local" "Désactivation de compte utilisateur local" "Ajout à un groupe local" "Sortie d'un groupe local" "Retour"
 	Read-Host $ans_action_user
-	switch ($ans_action_user) 
+	switch ($ans_action_user) {
 
         0 { ## Fin du script
         Write-Host "Fin du script"
@@ -157,6 +157,7 @@ function actionUser {
         Write-Host "Erreur de saisie, veuillez recommencer"
 		addLog "Échec de saisie, retour au menu 'Action concernant un utilisateur local"
         }
+	}
 }
 
 
