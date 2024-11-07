@@ -52,8 +52,7 @@ function addLog {
             -Value "# Journal des activités de script.ps1 `r`n" *> $NULL
     }
     ## ajoute l'entrée sous le format YYYYMMDD-HHMMSS-Utilisateur-Événement
-    add-Content -Path $path\log_evt.log "$(get-date -Format "yyyyMMdd")  - $(get-date -Format "HHmmss") - $env:USERNAME - $event"
-
+    add-Content -Path $path\log_evt.log "$(get-date -Format "yyyyMMdd") - $(get-date -Format "HHmmss") - $env:USERNAME - $event" 
 }
 #endregion
 
@@ -152,6 +151,7 @@ function CPUUSe
 
 #endregion
 
+
 #------------------------------------------------------------------------------------------------#
 #                          Fonctions pour gérer les 4 sous-menus                                 #
 #------------------------------------------------------------------------------------------------#
@@ -159,8 +159,10 @@ function CPUUSe
 
 ##### fonction pour gérer les actions concernant un utilisateur
 function actionUser {
-	menu "Création de compte utilisateur local" "Changement de mot de passe" "Suppression de compte utilisateur local" "Désactivation de compte utilisateur local" "Ajout à un groupe local" "Sortie d'un groupe local" "Retour"
+	menu "Création de compte utilisateur local" "Changement de mot de passe" "Suppression de compte utilisateur local" `
+    "Désactivation de compte utilisateur local" "Ajout à un groupe local" "Sortie d'un groupe local" "Retour"
 	$ans_action_user=Read-Host 
+
 	switch ($ans_action_user) {
 
         0 { ## Fin du script
@@ -195,7 +197,7 @@ function actionUser {
         7 { ### Retour au menu précédent
 		addLog "Retour au menu précédent"
         }
-
+        
         default { ## Erreur de saisie
         Write-Host "Erreur de saisie, veuillez recommencer"
 		addLog "Échec de saisie, retour au menu 'Action concernant un utilisateur local"
@@ -279,6 +281,7 @@ function actionComputer {
 		addLog "Retour au menu précédent"
         }
         
+
 		default { ## Erreur de saise
         addLog "Erreur de saisie, retour au menu 'Action concernant un ordinateur client'"
 		Read-Host "Erreur de saisie, veuillez recommencer"
@@ -289,7 +292,6 @@ function actionComputer {
     }
 }
 
-#### fonction qui gère les informations sur l'utilisateur local
 function infoUser {
     menu "Date de dernière connexion d’un utilisateur" "Date de dernière modification du mot de passe" `
         "Liste des sessions ouvertes par l'utilisateur" "Groupe d’appartenance d’un utilisateur" `
@@ -301,12 +303,12 @@ function infoUser {
         
         Switch ($ans)
         {
+
             0 { ## Fin du script
             Write-Host "Fin du script"
             addLog "*********EndScript*********"
             return
             }
-
             1 {}
             2 {}
             3 {}
@@ -315,6 +317,7 @@ function infoUser {
             6 {}
             7 {}
             8 {}
+            
             default {## Erreur de saisie
             Write-Host "Erreur de saisie, veuillez recommencer"
             Start-Sleep -Seconds 1
@@ -428,7 +431,6 @@ function infoScript {
         }
     }
 }
-
 
 
 #*******************************************************************************************************************************************#
