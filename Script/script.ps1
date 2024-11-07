@@ -76,14 +76,14 @@ function addLog {
 # Version de l'OS
 function osVersion
 {
-    $OS=Invoke-Command -session $session -ScriptBlock {Get-Computerinfo | Select-Object -Property OsName, OsVersion | Format-List}
-    addLog "Consultation de la version de l'OS de l'ordinateur $address_ip"    return $OS
+    Invoke-Command -session $session -ScriptBlock {Get-Computerinfo | Select-Object -Property OsName, OsVersion | Format-List} >> $file_info_computer
+    addLog "Consultation de la version de l'OS de l'ordinateur $address_ip"
 }
 
 ## Nombre de disque
 function diskNumber
 {
-    $DiskNbr=Invoke-Command -session $session -ScriptBlock {Get-Disk}
+    $DiskNbr=Invoke-Command -session $session -ScriptBlock {Get-Disk | Select-Object -Property FriendlyName,Number}
     addLog "Consultation du nombre de disques de l'ordinateur $address_ip"
     return $DiskNbr
 }
@@ -91,7 +91,7 @@ function diskNumber
 ## Partition (nombre, nom, FS, taille) par disque
 function partDisk
 {
-    $Part=Invoke-Command -session $session -ScriptBlock {Get-Partition}
+    $Part=Invoke-Command -session $session -ScriptBlock {Get-Partition | Select-Object DriveLetter,PartitionNumber,Size,UniqueId,Type}
     addLog "Consultation des partitions de l'ordinateur $address_ip"
     return $Part
 }
@@ -99,7 +99,7 @@ function partDisk
 ## Liste des applications/paquets installées
 function appInstalled
 {
-    $App=Invoke-Command -session $session -ScriptBlock {Get-Package}
+    $App=Invoke-Command -session $session -ScriptBlock {Get-Package | Select-Object -Property Name | Format-List}
     addLog "Consultation de la liste des applications installées de l'ordinateur $address_ip"
     return $App
 }
@@ -115,7 +115,7 @@ function serviceRunning
 ## Liste des utilisateurs locaux
 function localUser
 {
-    $LocalUser=Invoke-Command -session $session -ScriptBlock {Get-LocalUser}
+    $LocalUser=Invoke-Command -session $session -ScriptBlock {Get-LocalUser | Select-Object -Property Name,Enabled}
     addLog "Consultation de la liste des utilisateurs locaux de l'ordinateur $address_ip"
     return $LocalUser
 }
@@ -131,13 +131,16 @@ function cpuInfo
 ## Mémoire RAM totale
 function ramTotal
 {
-
+    Invoke-Command  -session $session -scriptblock `
+        { $ram = ([math]::Round((Get-CimInstance -ClassName Win32_ComputerSystem).TotalPhysicalMemory / 1GB, 2))}
+    return $ram
 }
 
 ## Utilisation du disque
 function diskUse 
 {
-
+    Invoke-Command  -session $session -scriptblock `
+        {Get-CimInstance -ClassName Win32_LogicalDisk | Where-Object { $_.DeviceID -eq "C:" }} >> $file_info_computer
 }
 
 ## Utilisation du processeur
@@ -338,10 +341,10 @@ function infoComputer {
 	$ans_info_computer=Read-Host 
 
 	## chemin vers le fichier d'enregistrement d'informations
-	$file_info_computer="C:\Users\$env:USERNAME\Documents\info_$address_ip_$(get-date -Format "yyyyMMdd").txt"
+	$file_info_computer="C:\Users\$env:USERNAME\Documents\info_$($address_ip)_$(get-date -Format "yyyyMMdd").txt"
 
 	## sortie du script si il y a un 0, retour si 12. Création et/ou initialisation du fichier d'enregistrement
-	New-Item $file_info_computer *> $NULL
+	New-Item -type file $file_info_computer *> $NULL
 	add-Content -Value "####### `n# Informations sur l'ordinateur $address_ip demandées le $(get-date -Format "yyyyMMdd") à $(get-date -Format "HHmm") `n#######`n" `
         -path $file_info_computer
 
@@ -355,43 +358,77 @@ function infoComputer {
         }
 
         1 { ## Version de l'OS
-        osVersion >> $file_info_computer
+        add-Content -Path $file_info_computer -Value " La version de l'OS : `n"
+        write-output osVersion >> $file_info_computer
+        add-Content -Path $file_info_computer -Value "`n"
         }
 
         2 { ## Nombre de disque
-        diskNumber >> $file_info_computer
+        add-Content -Path $file_info_computer -Value " Le nombre de disques : `n"
+        write-output diskNumber >> $file_info_computer
+        add-Content -Path $file_info_computer -Value "`n"
         }
 
         3 { ## Partition (nombre, nom, FS, taille) par disque
-        partDisk >> $file_info_computer
+        add-Content -Path $file_info_computer -Value " Les partitions : `n"
+        write-output partDisk >> $file_info_computer
+        add-Content -Path $file_info_computer -Value "`n"
         }
 
         4 { ## Liste des applications/paquets installées
+        add-Content -Path $file_info_computer -Value " Les applications installées : `n"
         appInstalled >> $file_info_computer
+        add-Content -Path $file_info_computer -Value "`n"
         }
 
         5 { ## Liste des services en cours d'execution
+        add-Content -Path $file_info_computer -Value " Les services en cours d'exécution : `n"
         serviceRunning >> $file_info_computer
+        add-Content -Path $file_info_computer -Value "`n"
         }
 
         6 { ## Liste des utilisateurs locaux
+        add-Content -Path $file_info_computer -Value " Les utilisateurs locaux : `n"
         localUser >> $file_info_computer
+        add-Content -Path $file_info_computer -Value "`n"
         }
 
         7 { ## Type de CPU, nombre de coeurs, etc.
+        add-Content -Path $file_info_computer -Value " Les informations sur le CPU : `n"
         cpuInfo >> $file_info_computer
+        add-Content -Path $file_info_computer -Value "`n"
         }
 
-        8 {}
-        9 {}
-        10 {}
-        11 {}
-        12 {}
+        8 { # Mémoire RAM totale
+        add-Content -Path $file_info_computer -Value " La taille de la RAM : `n"
+        add-Content -Path $file_info_computer -Value "`n"
+        }
+
+        9 { ## Utilisation de la RAM
+        add-Content -Path $file_info_computer -Value " L'utilisation de la RAM : `n"
+        add-Content -Path $file_info_computer -Value "`n"
+        }
+
+        10 { ## Utilisation des disques
+        add-Content -Path $file_info_computer -Value " L'utilisation des disques : `n"
+        add-Content -Path $file_info_computer -Value "`n"
+        }
+        
+        11 { ## Utilisation du processeur
+        add-Content -Path $file_info_computer -Value " L'utilisation du processeur : `n"
+        add-Content -Path $file_info_computer -Value "`n"
+        }
+        
+        12 { ## Retour en arrière
+        addLog "Retour au menu précédent, le menu Information"
+        break
+        }
+        
         default { ## Erreur de saisie
-            Write-Host "Erreur de saisie, veuillez recommencer"
-            Start-Sleep -Seconds 1
-            addLog "Échec de saisie, retour au menu 'Récupérer une information sur un ordinateur'"
-            continue
+        Write-Host "Erreur de saisie, veuillez recommencer"
+        Start-Sleep -Seconds 1
+        addLog "Échec de saisie, retour au menu 'Récupérer une information sur un ordinateur'"
+        continue
         }
     }
 }
