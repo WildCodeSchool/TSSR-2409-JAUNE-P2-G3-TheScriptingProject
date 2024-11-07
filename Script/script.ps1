@@ -105,9 +105,8 @@ function ramTotal
 }
 
 
+# Get-WmiObject -Class Win32_Processor | Out-File D:\Backup\informations.txt -Append
 
-
-Get-WmiObject -Class Win32_Processor | Out-File D:\Backup\informations.txt -Append
 
 #------------------------------------------------------------------------------------------------#
 #                          Fonctions pour gérer les 4 sous-menus                                 #
@@ -116,8 +115,10 @@ Get-WmiObject -Class Win32_Processor | Out-File D:\Backup\informations.txt -Appe
 
 ##### fonction pour gérer les actions concernant un utilisateur
 function actionUser {
-	menu "Création de compte utilisateur local" "Changement de mot de passe" "Suppression de compte utilisateur local" "Désactivation de compte utilisateur local" "Ajout à un groupe local" "Sortie d'un groupe local" "Retour"
-	Read-Host $ans_action_user
+	menu "Création de compte utilisateur local" "Changement de mot de passe" "Suppression de compte utilisateur local" `
+    "Désactivation de compte utilisateur local" "Ajout à un groupe local" "Sortie d'un groupe local" "Retour"
+	$ans_action_user=Read-Host 
+
 	switch ($ans_action_user) {
 
         0 { ## Fin du script
@@ -152,12 +153,13 @@ function actionUser {
         7 { ### Retour au menu précédent
 		addLog "Retour au menu précédent"
         }
-
-        defaults { ## Erreur de saisie
+        
+        default { ## Erreur de saisie
         Write-Host "Erreur de saisie, veuillez recommencer"
 		addLog "Échec de saisie, retour au menu 'Action concernant un utilisateur local"
+        continue
         }
-	}
+    }
 }
 
 
@@ -168,7 +170,7 @@ function actionComputer {
         "Activation du pare-feu" "Désactivation du pare-feu" "Installation de logiciel" `
         "Désinstallation de logiciel" "Exécution de script sur la machine distante" `
         "Prise de main à distance (CLI)" "Retour"
-	Read-Host $ans_action_computer
+	$ans_action_computer=Read-Host 
 	Switch ($ans_action_computer) { 
 		0 { ## Fin du script
         Write-Host "Fin du script"
@@ -235,9 +237,13 @@ function actionComputer {
 		addLog "Retour au menu précédent"
         }
         
-		defaults { ## Erreur de saise
+
+		default { ## Erreur de saise
         addLog "Erreur de saisie, retour au menu 'Action concernant un ordinateur client'"
 		Read-Host "Erreur de saisie, veuillez recommencer"
+        Write-Host "Erreur de saisie, veuillez recommencer"
+        Start-Sleep -Seconds 1
+        continue
         }
     }
 }
@@ -248,12 +254,17 @@ function infoUser {
         "Historique des commandes exécutées par l'utilisateur" "Droits/permissions de l’utilisateur sur un dossier" `
         "Droits/permissions de l’utilisateur sur un fichier" "Retour"
 	Write-Host "Si vous souhaitez plusieurs informations, écrivez les différents chiffres à la suite, avec un espace entre chaque. "
-	Read-Host $ans_info_user
+	$ans_info_user=Read-Host 
     foreach ($ans in $ans_info_user) {
         
         Switch ($ans_inf_computer)
         {
-            0 {}
+
+            0 { ## Fin du script
+            Write-Host "Fin du script"
+            addLog "*********EndScript*********"
+            return
+            }
             1 {}
             2 {}
             3 {}
@@ -262,11 +273,18 @@ function infoUser {
             6 {}
             7 {}
             8 {}
-            defaults {}
+            
+            default {## Erreur de saisie
+            Write-Host "Erreur de saisie, veuillez recommencer"
+            Start-Sleep -Seconds 1
+            addLog "Échec de saisie, retour au menu 'Récupérer une information sur un utilisateur'"
+            continue
+            }
         }
     }
 }
 
+#### fonction qui gère les informations sur l'ordinateur client
 function infoComputer
 {
     menu "Version de l'OS" "Nombre de disque" "Partition (nombre, nom, FS, taille) par disque" `
@@ -274,10 +292,14 @@ function infoComputer
         "Liste des utilisateurs locaux" "Type de CPU, nombre de coeurs, etc." "Mémoire RAM totale" `
         "Utilisation de la RAM" "Utilisation du disque" "Utilisation du processeur" "Retour"
 	Write-Host "Si vous souhaitez plusieurs informations, écrivez les différents chiffres à la suite, avec un espace entre chaque. "
-	Read-Host ans_info_computer
+	$ans_info_computer=Read-Host 
     Switch ($ans_inf_computer)
     {
-        0 {}
+        0 { ## Fin du script
+        Write-Host "Fin du script"
+        addLog "*********EndScript*********"
+        return
+        }
         1 {}
         2 {}
         3 {}
@@ -290,11 +312,50 @@ function infoComputer
         10 {}
         11 {}
         12 {}
-        defaults {}
+        default { ## Erreur de saisie
+            Write-Host "Erreur de saisie, veuillez recommencer"
+            Start-Sleep -Seconds 1
+            addLog "Échec de saisie, retour au menu 'Récupérer une information sur un ordinateur'"
+            continue
+        }
     }
 }
 
 
+#### fonction qui gère les informations sur le script
+function infoScript {
+	menu "Recherche des événements dans le fichier log_evt.log pour un utilisateur" `
+        "Recherche des événements dans le fichier log_evt.log pour un ordinateur" "Retour"
+	$ans_info_script=Read-Host
+	Switch ($ans_info_script) { 
+		0 { ## Fin du script
+        Write-Host "Fin du script"
+        addLog "*********EndScript*********"
+        return
+        }
+
+		1 { ## Choix de "Recherche des événements dans le fichier log_evt.log pour un utilisateur"
+        addLog "Choix de 'Recherche des événements dans le fichier log_evt.log pour un utilisateur'"
+        return
+        }
+		
+		2 { ## Choix de "Recherche des événements dans le fichier log_evt.log pour un ordinateur client"
+        addLog "Choix de 'Recherche des événements dans le fichier log_evt.log pour un ordinateur client'"
+        return
+        }
+
+        3 { ### Retour au menu précédent
+		addLog "Retour au menu précédent"
+        }
+		
+		default { ## Erreur de saisie
+        Write-Host "Erreur de saisie, veuillez recommencer"
+        Start-Sleep -Seconds 1
+        addLog "Erreur de saisie, retour au menu 'Une information concernant le script'"
+		continue
+        }
+    }
+}
 
 
 #*******************************************************************************************************************************************#
@@ -309,13 +370,105 @@ menu "Effectuer une action" "Récupérer une information"
 $ans_main=Read-Host
 addLog "Entrée dans le menu principal"
 
-Switch ($ans_main)
-{
-    O {}
-    1 {}
-    2 {}
-    defaults {
-        Write-Host "Erreur de saisie, veuillez recommencer."
-        addLog "Erreur de saisie, retour au menu principal"
+while ($TRUE) {
+	Switch ($ans_main) {
+		0 { ## Fin du script
+        Write-Host "Fin de Script"
+        addLog "*********EndScript*********"
+		return
+        }  
+		
+		1 { ## Choix de "Effectuer une action"
+        menu "Une action concernant un utilisateur" "Une action concernant un ordinateur client" "Retour"
+		$ans_action=Read-Host 
+        addLog "Entrée dans le menu 'Effectuer une action' "
+        Switch ($ans_action) {
+            0 { ## Fin du script
+            Write-Host "Fin du script"
+            addLog "*********EndScript*********"
+            return
+            }
+			
+			1 { ## Choix de "Utilisateur"
+            addLog "Entrée dans le menu 'Action concernant un utilisateur'"
+            actionUser
+            }
+			
+			2 { ## Choix de "Ordinateur client"
+            addLog "Entrée dans le menu 'Action concernant un ordinateur client'"
+            actionComputer
+            }
+
+            3 { ## Retour au menu précédent
+			addLog "Retour au menu précédent"
+            addLog "Entrée dans le menu principal"
+			menu "Effectuer une action" "Récupérer une information"
+			$ans_main=Read-Host 
+            continue
+            }
+			
+			default { ## Erreur de saisie
+            Write-Host "Erreur de saisie, veuillez recommencer"
+            Start-Sleep -Seconds 1
+            addLog "Échec de saisie, retour au menu 'Effectuer une action'"
+			continue
+            }
+        }
+        }
+		
+		2 {  ## Choix de "Récupérer une information"
+        menu "Une information sur un utilisateur" "Une information sur un ordinateur client" "Une information sur le Script" "Retour"
+        $ans_info=Read-Host 
+        addLog "Entrée dans le menu 'Récupérer une information' "
+        Switch ($ans_info) {
+            O {## Fin du script
+            Write-Host "Fin du script"
+            addLog "*********EndScript*********"
+            return
+            }
+            
+            1 { ## Choix de "Utilisateur"
+            addLog "Entrée dans le menu 'Information concernant un utilisateur'"
+            infoUser
+            }
+            
+            2 { ## Choix de "Ordinateur"
+            addLog "Entrée dans le menu 'Information concernant un ordinateur client'"
+            infoComputer
+            }
+
+            3 { ## Choix de "Script"
+            addLog "Entrée dans le menu 'Information concernant le script'"
+            infoScript
+            }
+
+            4 { ## Retour au menu précédent
+			addLog "Retour au menu précédent"
+			menu "Effectuer une action" "Récupérer une information"
+			$ans_main=Read-Host 
+			addLog "Entrée dans le menu principal"
+			continue
+            }
+
+            default { ## Erreur de saisie
+            Write-Host "Erreur de saisie, veuillez recommencer"
+            Start-Sleep -Seconds 1
+            addLog "Échec de saisie, retour au menu 'Récupérer une information'"
+            continue
+            }
+        }
+        }    
+
+    default { ## Erreur de saisie
+    Write-Host "Erreur de saisie, veuillez recommencer"
+    Start-Sleep -Seconds 1
+    addLog "Échec de saisie, retour au menu principal"
+    menu "Effectuer une action" "Récupérer une information"
+	$ans_main=Read-Host 
+    continue
+    }
     }
 }
+
+Write-Host "Fin du script"
+addLog "*********EndScript*********"
