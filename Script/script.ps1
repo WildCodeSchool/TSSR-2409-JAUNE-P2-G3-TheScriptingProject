@@ -13,8 +13,6 @@
 #                                         Initialisation                                         #
 #------------------------------------------------------------------------------------------------#
 
-# Le compte utilisateur dédié à la connexion SSH sur chaque machine distante
-$user_ssh="utilisateur_ssh"
 # Le préfixe du réseau de votre serveur
 $network_prefix="172.16.30."
 # Le chemin vers le dossier du fichier de jorunalisation
@@ -25,6 +23,7 @@ $path="C:\Windows\System32\Logfiles"
 #                                      Fonctions annexes                                         #
 #------------------------------------------------------------------------------------------------#
 
+#region Fonction annexe
 ##### fonction pour gérer l'affichage d'un menu
 ## Les arguments sont les différents choix.
 function menu {
@@ -56,48 +55,79 @@ function addLog {
     add-Content -Path $path\log_evt.log "$(get-date -Format "yyyyMMdd")  - $(get-date -Format "HHmmss") - $env:USERNAME - $event"
 
 }
-
+#endregion
 
 #------------------------------------------------------------------------------------------------#
 #                    Fonctions d'actions et de demande d'informations                            #
 #------------------------------------------------------------------------------------------------#
 
+#region Action Computer
+
+#endregion
+
+#region Action User
+
+#endregion
+
+#region Information User
+
+#endregion
+
+#region Information Computer
 # Version de l'OS
 function osVersion
 {
-    Get-Computerinfo | Select-Object -Property OsName, OsVersion | Format-List
+    $OS=Invoke-Command -session $session -ScriptBlock {Get-Computerinfo | Select-Object -Property OsName, OsVersion | Format-List}
+    addLog "Consultation de la version de l'OS de l'ordinateur $address_ip"    return $OS
 }
 
 ## Nombre de disque
 function diskNumber
 {
-    Get-Disk
+    $DiskNbr=Invoke-Command -session $session -ScriptBlock {Get-Disk}
+    addLog "Consultation du nombre de disques de l'ordinateur $address_ip"
+    return $DiskNbr
 }
 
 ## Partition (nombre, nom, FS, taille) par disque
 function partDisk
 {
-    Get-Partition
+    $Part=Invoke-Command -session $session -ScriptBlock {Get-Partition}
+    addLog "Consultation des partitions de l'ordinateur $address_ip"
+    return $Part
 }
+
 ## Liste des applications/paquets installées
 function appInstalled
 {
-    Get-Package
+    $App=Invoke-Command -session $session -ScriptBlock {Get-Package}
+    addLog "Consultation de la liste des applications installées de l'ordinateur $address_ip"
+    return $App
 }
+
 ## Liste des services en cours d'execution
 function serviceRunning
 {
-    Get-Service | Where-Object {$_.Status -eq "Running"}
+    $Service=Invoke-Command -session $session -ScriptBlock {Get-Service | Where-Object {$_.Status -eq "Running"}}
+    addLog "Consultation de la liste des services en cours d'exécution de l'ordinateur $address_ip"
+    return $Service
 }
+
 ## Liste des utilisateurs locaux
 function localUser
 {
-    Get-LocalUser
+    $LocalUser=Invoke-Command -session $session -ScriptBlock {Get-LocalUser}
+    addLog "Consultation de la liste des utilisateurs locaux de l'ordinateur $address_ip"
+    return $LocalUser
 }
+
 ## Type de CPU, nombre de coeurs, etc.
 function cpuInfo
 {
-    Get-CimInstance -ClassName Win32_Processor | Select-Object -ExcludeProperty "CIM*"
+    $CPU=Invoke-Command -session $session -ScriptBlock {Get-CimInstance -ClassName Win32_Processor | Select-Object -ExcludeProperty "CIM*"}
+    addLog "Consultation des informations sur le CPU de l'ordinateur $address_ip"
+    return $CPU
+    
 }
 ## Mémoire RAM totale
 function ramTotal
@@ -105,8 +135,22 @@ function ramTotal
 
 }
 
+## Utilisation du disque
+function diskUse 
+{
 
-# Get-WmiObject -Class Win32_Processor | Out-File D:\Backup\informations.txt -Append
+}
+
+## Utilisation du processeur
+function CPUUSe
+{
+
+}
+#endregion
+
+#region Information Script
+
+#endregion
 
 #------------------------------------------------------------------------------------------------#
 #                          Fonctions pour gérer les 4 sous-menus                                 #
@@ -255,7 +299,7 @@ function infoUser {
 	$ans_info_user=Read-Host 
     foreach ($ans in $ans_info_user) {
         
-        Switch ($ans_inf_computer)
+        Switch ($ans)
         {
             0 { ## Fin du script
             Write-Host "Fin du script"
@@ -282,15 +326,24 @@ function infoUser {
 }
 
 #### fonction qui gère les informations sur l'ordinateur client
-function infoComputer
-{
+function infoComputer {
     menu "Version de l'OS" "Nombre de disque" "Partition (nombre, nom, FS, taille) par disque" `
         "Liste des applications/paquets installées" "Liste des services en cours d'execution" `
         "Liste des utilisateurs locaux" "Type de CPU, nombre de coeurs, etc." "Mémoire RAM totale" `
         "Utilisation de la RAM" "Utilisation du disque" "Utilisation du processeur" "Retour"
 	Write-Host "Si vous souhaitez plusieurs informations, écrivez les différents chiffres à la suite, avec un espace entre chaque. "
 	$ans_info_computer=Read-Host 
-    Switch ($ans_inf_computer)
+
+	## chemin vers le fichier d'enregistrement d'informations
+	$file_info_computer="C:\Users\$env:USERNAME\Documents\info_$address_ip_$(get-date -Format "yyyyMMdd").txt"
+
+	## sortie du script si il y a un 0, retour si 12. Création et/ou initialisation du fichier d'enregistrement
+	New-Item $file_info_computer *> $NULL
+	add-Content -Value "####### `n# Informations sur l'ordinateur $address_ip demandées le $(get-date -Format "yyyyMMdd") à $(get-date -Format "HHmm") `n#######`n" `
+        -path $file_info_computer
+
+
+    Switch ($ans_info_computer)
     {
         0 { ## Fin du script
         Write-Host "Fin du script"
@@ -298,13 +351,34 @@ function infoComputer
         return
         }
 
-        1 {}
-        2 {}
-        3 {}
-        4 {}
-        5 {}
-        6 {}
-        7 {}
+        1 { ## Version de l'OS
+        osVersion >> $file_info_computer
+        }
+
+        2 { ## Nombre de disque
+        diskNumber >> $file_info_computer
+        }
+
+        3 { ## Partition (nombre, nom, FS, taille) par disque
+        partDisk >> $file_info_computer
+        }
+
+        4 { ## Liste des applications/paquets installées
+        appInstalled >> $file_info_computer
+        }
+
+        5 { ## Liste des services en cours d'execution
+        serviceRunning >> $file_info_computer
+        }
+
+        6 { ## Liste des utilisateurs locaux
+        localUser >> $file_info_computer
+        }
+
+        7 { ## Type de CPU, nombre de coeurs, etc.
+        cpuInfo >> $file_info_computer
+        }
+
         8 {}
         9 {}
         10 {}
@@ -365,6 +439,28 @@ function infoScript {
 
 Write-Host "Début du script - Gestion à distance"
 addLog "********StartScript********"
+
+## Connexion avec la cible
+$address_ip=Read-Host "Quel est l'adresse IPv4 de l'ordinateur à cibler ? "
+$user=Read-Host "Quel est le nom de l'utilisateur local à cibler ? Par défaut, wilder. "
+if ([String]::IsNullOrEmpty($user))
+{
+    $user="wilder"
+}
+$session=New-PSSEssion -computerName $address_ip -credential $user
+
+if (! ($session))
+{
+    Write-Host "La connexion n'a pas fonctionné. Merci de recommencer "
+    addLog "Sortie du Script suite à une erreur de connexion avec la machine cible"
+	addLog "*********EndScript*********"
+    exit
+}
+else
+{
+    addLog "Connexion réussie avec l'ordinateur $address_ip et l'utilisateur $user "
+}
+
 menu "Effectuer une action" "Récupérer une information"
 $ans_main=Read-Host
 addLog "Entrée dans le menu principal"
