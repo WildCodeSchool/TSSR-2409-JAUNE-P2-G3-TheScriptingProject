@@ -128,6 +128,23 @@ function actionUser {
 
         1 { ## Choix de "Création de compte utilisateur local"
         addLog "Choix de 'Création de compte utilisateur local'"
+	$username = Read-Host "Entrez le nom du nouvel utilisateur"
+    $password = Read-Host "Entrez le mot de passe pour le nouvel utilisateur"
+
+    # Conventir le mdp en format sécurisé
+    $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+
+    try {
+        New-LocalUser -Name $username -Password $securePassword -FullName $username -ErrorAction Stop
+        Write-Host "L'utilisateur '$username' a été créé avec succès."
+
+        addLog -event "Succès: L'utilisateur '$username' a été créé."
+    }
+    catch {
+        Write-Host "Erreur lors de la création de l'utilisateur '$username'."
+
+        addLog -event "Echec: Erreur lors de la création l'utilisateur '$username'. Erreur: $_" 
+    } 
         }
 
         2 { ## Choix de "Changement de mot de passe"
@@ -136,6 +153,24 @@ function actionUser {
 
         3 { ## Choix de "Suppression de compte utilisateur local"
         addLog "Choix de 'Suppression de compte utilisateur local'"
+	$username = Read-Host "Entrez le nom de l'utilisateur à supprimer"
+
+    if (Get-LocalUser -Name $username) {
+        try {
+            Remove-LocalUser -Name $username -ErrorAction Stop
+            Write-Host "L'utilisateur '$username' a été supprimé avec succès."
+
+            addLog -event "Succès: L'utilisateur '$username' a été supprimé."
+        }
+        catch {
+            Write-Host "Erreur lors de la suppression de l'utilisateur '$username'."
+            addLog -event "Echec: Erreur lors de la suppression de l'utilisateur '$username'. Erreur: $_"
+        }
+        
+    } else {
+        Write-Host "L'utilisateur '$username' n'existe pas."
+        addLog -event "Info: L'utilisateur '$username' n'existe pas."
+    }
         }
 
         4 { ## Choix de "Désactivation de compte utilisateur local"
@@ -144,10 +179,37 @@ function actionUser {
 
         5 { ## Choix de "Ajout à un groupe local"
         addLog "Choix de 'Ajout à un groupe local'"
+	$username = Read-Host "Entrez le nom de l'utilisateur à ajouter au groupe"
+    $groupname = Read-Host "Entrez le nom du groupe local"
+
+    try {
+        Add-LocalGroupMember -Group $groupname -Member $username -ErrorAction Stop
+        Write-Host "L'utilisateur '$username' a été ajouté au groupe '$groupname' avec succès."
+
+        addLog -event "Succès: L'utilisateur '$username' a été ajouté au groupe '$groupname'."
+    }
+    catch {
+        Write-Host "Erreur lors de l'ajout de l'utilisateur '$username' au groupe '$groupname'."
+        addLog -event "Echec: Erreur lors de l'ajout de l'utilisateur '$username' au groupe '$groupname'. Erreur: $_"
+    }
         }
 
         6 { ## Choix de "Sortie d'un groupe local"
         addLog "Choix de 'Sortie d'un groupe local'"
+	$username = Read-Host "Entrez le nom de l'utilisateur à retirer du groupe"
+    $groupname = Read-Host "Entrez le nom du groupe local"
+
+    try {
+        Remove-LocalGroupMember -Group $groupname -Member $username -ErrorAction Stop
+        Write-Host "L'utilisateur '$username' a été retiré du groupe '$groupname' avec succès."
+
+        addLog -event "Succès: L'utilisateur '$username' a été retiré du groupe '$groupname'."
+    }
+    catch {
+        Write-Host "Erreur lors du retrait de l'utilisateur '$username' du groupe '$groupname'."
+
+        addLog -event "Échec: L'utilisateur '$username' n'a pas pu être retiré du groupe '$groupname'. Erreur: $_"
+    }
         }
 
         7 { ### Retour au menu précédent
