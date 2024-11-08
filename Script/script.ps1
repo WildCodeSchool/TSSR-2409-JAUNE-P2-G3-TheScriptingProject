@@ -136,11 +136,13 @@ function ramTotal
     return $ram
 }
 
+
 ## Utilisation de la RAM
 function ramUSe
 {
     $ramFree=Invoke-Command -session $session -scriptblock {([math]::Round((Get-CimInstance -ClassName Win32_ComputerSystem).freePhysicalMemory/1MB, 2))}
-    $ramUsed=$(ramTotal)-$ramFree
+    $ramTotal=ramTotal
+    $ramUsed=$RamTotal-$ramFree
     return $ramUsed
 }
 
@@ -156,10 +158,11 @@ function diskUse
 function cpuUSe
 {
     $use=Invoke-Command -session $session -scriptblock `
-        {Get-WmiObject Win32_Processor | Measure-Object -Property LoadPercentage -Average).Average}
-    return $user
+        {(Get-WmiObject Win32_Processor | Measure-Object -Property LoadPercentage -Average).Average}
+    return $use
 }
 #endregion
+
 
 #region Information Script
 
@@ -371,7 +374,7 @@ function infoUser {
         "Droits/permissions de l’utilisateur sur un fichier" "Retour"
 	Write-Host "Si vous souhaitez plusieurs informations, écrivez les différents chiffres à la suite, avec un espace entre chaque. "
 	$ans_info_user=Read-Host 
-    foreach ($ans in $ans_info_user) {
+    foreach ($ans in $ans_info_user.Split(" ")) {
         
         Switch ($ans)
         {
@@ -408,7 +411,7 @@ function infoComputer {
         "Utilisation de la RAM" "Utilisation du disque" "Utilisation du processeur" "Retour"
 	Write-Host "Si vous souhaitez plusieurs informations, écrivez les différents chiffres à la suite, avec un espace entre chaque. "
 	$ans_info_computer=Read-Host 
-  
+
 	## chemin vers le fichier d'enregistrement d'informations
 	$file_info_computer="C:\Users\$env:USERNAME\Documents\info_$($address_ip)_$(get-date -Format "yyyyMMdd").txt"
 
@@ -417,9 +420,10 @@ function infoComputer {
 	add-Content -Value "####### `n# Informations sur l'ordinateur $address_ip demandées le $(get-date -Format "yyyyMMdd") à $(get-date -Format "HHmm") `n#######`n" `
         -path $file_info_computer
 
-    Foreach ($ans in $ans_action_computer)
+
+    Foreach ($ans in $ans_info_computer.Split(" "))
     {
-        Switch ($ans_info_computer)
+        Switch ($ans)
         {
             0 { ## Fin du script
             Write-Host "Fin du script"
@@ -475,7 +479,8 @@ function infoComputer {
             }
 
             9 { ## Utilisation de la RAM
-            add-Content -Path $file_info_computer -Value " L'utilisation de la RAM : $( ramUsed ) Go utilisée `n"
+
+            add-Content -Path $file_info_computer -Value " L'utilisation de la RAM : $( ramUse ) Go utilisée `n"
             add-Content -Path $file_info_computer -Value "`n"
             }
 
@@ -502,6 +507,8 @@ function infoComputer {
             continue
             }
         }   }
+    Write-Host "Les informations sont dans le fichier $file_info_computer."
+    Start-Sleep -Seconds 2
 }
 
 
