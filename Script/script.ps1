@@ -187,22 +187,17 @@ function actionUser {
         1 { ## Choix de "Création de compte utilisateur local"
         addLog "Choix de 'Création de compte utilisateur local'"
 	$username = Read-Host "Entrez le nom du nouvel utilisateur"
-    $password = Read-Host "Entrez le mot de passe pour le nouvel utilisateur"
-
-    # Conventir le mdp en format sécurisé
-    $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+    $password = Read-Host "Entrez le mot de passe pour le nouvel utilisateur" -AsSecureString
 
     try {
-        New-LocalUser -Name $username -Password $securePassword -FullName $username -ErrorAction Stop
+        Invoke-Command -session $Session -ScriptBlock { param ( $username , $password ) New-LocalUser -Name $username -Password $Password -FullName $username -ErrorAction Stop} -ArgumentList $username,$password *> $null
         Write-Host "L'utilisateur '$username' a été créé avec succès."
-
-        addLog -event "Succès: L'utilisateur '$username' a été créé."
+        Start-Sleep -Seconds 1
     }
     catch {
         Write-Host "Erreur lors de la création de l'utilisateur '$username'."
-
-        addLog -event "Echec: Erreur lors de la création l'utilisateur '$username'. Erreur: $_" 
-    } 
+        Start-Sleep -Seconds 1 
+    }
         }
 
         2 { ## Choix de "Changement de mot de passe"
