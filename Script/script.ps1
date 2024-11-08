@@ -218,13 +218,16 @@ function actionUser {
             Remove-LocalUser -Name $username -ErrorAction Stop
             } -ArgumentList $username *> $null
             Write-Host "L'utilisateur '$username' a été supprimé avec succès."
+	    Start-Sleep -Seconds 1
         }
         catch {
             Write-Host "Erreur lors de la suppression de l'utilisateur '$username'."
+	    Start-Sleep -Seconds 1
         }
         
     } else {
-        Write-Host "L'utilisateur '$username' n'existe pas." 
+        Write-Host "L'utilisateur '$username' n'existe pas."
+	Start-Sleep -Seconds 1
     } 
         }
 
@@ -244,11 +247,12 @@ function actionUser {
         } -ArgumentList $username, $groupname *> $null
 
         Write-Host "L'utilisateur '$username' a été ajouté au groupe '$groupname' avec succès."
+	Start-Sleep -Seconds 1
 
     }
     catch {
         Write-Host "Erreur lors de l'ajout de l'utilisateur '$username' au groupe '$groupname'."
-        
+	Start-Sleep -Seconds 1        
     }
         }
 
@@ -264,9 +268,11 @@ try {
     } -ArgumentList $username, $groupname *> $null
 
     Write-Host "L'utilisateur '$username' a été retiré du groupe '$groupname' avec succès."
+    Start-Sleep -Seconds 1
 }
 catch {
     Write-Host "Erreur lors du retrait de l'utilisateur '$username' du groupe '$groupname'."
+    Start-Sleep -Seconds 1
 }
         }
 
