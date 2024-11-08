@@ -213,20 +213,19 @@ function actionUser {
 
     if (Get-LocalUser -Name $username) {
         try {
+            Invoke-Command -session $Session -ScriptBlock {
+                param ($username)
             Remove-LocalUser -Name $username -ErrorAction Stop
+            } -ArgumentList $username *> $null
             Write-Host "L'utilisateur '$username' a été supprimé avec succès."
-
-            addLog -event "Succès: L'utilisateur '$username' a été supprimé."
         }
         catch {
             Write-Host "Erreur lors de la suppression de l'utilisateur '$username'."
-            addLog -event "Echec: Erreur lors de la suppression de l'utilisateur '$username'. Erreur: $_"
         }
         
     } else {
-        Write-Host "L'utilisateur '$username' n'existe pas."
-        addLog -event "Info: L'utilisateur '$username' n'existe pas."
-    }
+        Write-Host "L'utilisateur '$username' n'existe pas." 
+    } 
         }
 
         4 { ## Choix de "Désactivation de compte utilisateur local"
@@ -239,33 +238,36 @@ function actionUser {
     $groupname = Read-Host "Entrez le nom du groupe local"
 
     try {
+        Invoke-Command -session $Session -ScriptBlock {
+            param ($username, $groupname)
         Add-LocalGroupMember -Group $groupname -Member $username -ErrorAction Stop
+        } -ArgumentList $username, $groupname *> $null
+
         Write-Host "L'utilisateur '$username' a été ajouté au groupe '$groupname' avec succès."
 
-        addLog -event "Succès: L'utilisateur '$username' a été ajouté au groupe '$groupname'."
     }
     catch {
         Write-Host "Erreur lors de l'ajout de l'utilisateur '$username' au groupe '$groupname'."
-        addLog -event "Echec: Erreur lors de l'ajout de l'utilisateur '$username' au groupe '$groupname'. Erreur: $_"
+        
     }
         }
 
         6 { ## Choix de "Sortie d'un groupe local"
         addLog "Choix de 'Sortie d'un groupe local'"
 	$username = Read-Host "Entrez le nom de l'utilisateur à retirer du groupe"
-    $groupname = Read-Host "Entrez le nom du groupe local"
+$groupname = Read-Host "Entrez le nom du groupe local"
 
-    try {
+try {
+    Invoke-Command -session $Session -ScriptBlock {
+        param ($username, $groupname)
         Remove-LocalGroupMember -Group $groupname -Member $username -ErrorAction Stop
-        Write-Host "L'utilisateur '$username' a été retiré du groupe '$groupname' avec succès."
+    } -ArgumentList $username, $groupname *> $null
 
-        addLog -event "Succès: L'utilisateur '$username' a été retiré du groupe '$groupname'."
-    }
-    catch {
-        Write-Host "Erreur lors du retrait de l'utilisateur '$username' du groupe '$groupname'."
-
-        addLog -event "Échec: L'utilisateur '$username' n'a pas pu être retiré du groupe '$groupname'. Erreur: $_"
-    }
+    Write-Host "L'utilisateur '$username' a été retiré du groupe '$groupname' avec succès."
+}
+catch {
+    Write-Host "Erreur lors du retrait de l'utilisateur '$username' du groupe '$groupname'."
+}
         }
 
         7 { ### Retour au menu précédent
