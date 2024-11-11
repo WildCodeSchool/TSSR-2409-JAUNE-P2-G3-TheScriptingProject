@@ -359,8 +359,17 @@ try {
 
 		7 { ## Choix de "Suppression d'un répertoire de l'ordinateur $address_ip"
         addLog "Choix de 'Suppression d'un répertoire de l'ordinateur $address_ip'"
-        }
-		
+        $suppDir = Read-Host "Entrez le nom du dossier que vous voulez supprimer"
+        $pathDir = Read-Host "Entrez le chemin où se trouve le dossier"
+    
+    try {
+        Remove-Item -Path "$pathDir\$suppDir" 
+        Write-Host "Le dossier $suppDir est supprimé du chemin $pathDir"
+        addLog "Réussite de la suppression du dossier $NewDir"
+    } catch {
+        Write-Host "Veuillez réessayer"
+    }
+}		
 		8 { ## Choix de "Définitions de règles de pare-feu de l'ordinateur $address_ip"
         addLog "Choix de 'Définitions de règles de pare-feu de l'ordinateur $address_ip'"
         }
