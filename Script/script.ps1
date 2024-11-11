@@ -430,14 +430,165 @@ function infoUser {
             addLog "*********EndScript********"
             exit
             }
-            1 {}
-            2 {}
-            3 {}
-            4 {}
-            5 {}
-            6 {}
-            7 {}
-            8 {}
+            1 {
+                $username = Read-Host "Entrez le nom de l'utilisateur"
+
+                    try { Invoke-Command -Session $Session -ScriptBlock {
+                        param ($username)
+                            $derniereConnexion = Get-EventLog -LogName Security -InstanceId 4624 | 
+                            Where-Object { $_.ReplacementStrings[5] -eq $username } |
+                            Select-Object -Last 1
+        
+                    if ($derniereConnexion) {
+                        Write-Host "L'utilisateur '$username' s'est connecté pour la dernière fois le : $($derniereConnexion.TimeGenerated)"
+                        addLog -event "Dernière connexion de l'utilisateur '$username' le : $($derniereConnexion.TimeGenerated)"
+                    } else {
+                        Write-Host "Aucune connexion trouvée pour l'utilisateur '$username'." *> $null
+                        addLog -event "Aucune connexion trouvée pour l'utilisateur '$username'."
+                    }
+                } -ArgumentList $username
+                    }
+                    catch {
+                        Write-Host "Erreur lors de la récupération des informations de connexion pour '$username'." *> $null
+                        addLog -event "Erreur lors de la récupération des informations de connexion pour '$username'."
+                    }
+            }
+
+            2 {
+                $username = Read-Host "Entrez le nom de l'utilisateur"
+                try { Invoke-Command -Session $Session -ScriptBlock {
+                    param ($username)
+                        $user = Get-LocalUser -Name $username
+        
+                            if ($user) {
+                            Write-Host "Dernière modification du mot de passe de l'utilisateur '$username' : $($user.PasswordLastSet)"
+                            addLog -event "Dernière modification du mot de passe de '$username' : $($user.PasswordLastSet)"
+                            }
+                            else {
+                                Write-Host "L'utilisateur '$username' n'existe pas." *> $null
+                                addLog -event "L'utilisateur '$username' n'existe pas."
+                            }
+                        } -ArgumentList $username
+                    }
+                catch {
+                    Write-Host "Erreur lors de la récupération de la date de modification du mot de passe pour '$username'." *> $null
+                    addLog -event "Erreur lors de la récupération de la date de modification du mot de passe pour '$username'."
+                }
+            }
+
+            3 {
+                $username = Read-Host "Entrez le nom de l'utilisateur"
+                try {
+                    Invoke-Command -Session $Session -ScriptBlock {
+                    param ($username)
+                    $sessions = query user | Select-String $username
+        
+                    if ($sessions) {
+                        Write-Host "Sessions ouvertes pour l'utilisateur '$username' :"
+                        $sessions
+                        addLog -event "Sessions ouvertes pour '$username' listées avec succès."
+                    }
+                    else {
+                        Write-Host "Aucune session ouverte trouvée pour l'utilisateur '$username'." *> $null
+                        addLog -event "Aucune session ouverte trouvée pour '$username'."
+                    }
+                } -ArgumentList $username
+                }
+                catch {
+                    Write-Host "Erreur lors de la récupération des sessions ouvertes pour '$username'." *> $null
+                    addLog -event "Erreur lors de la récupération des sessions ouvertes pour '$username'."
+                }
+            }
+
+            4 {
+                $username = Read-Host "Entrez le nom de l'utilisateur"
+
+                try {
+                    Invoke-Command -Session $Session -ScriptBlock {
+                    param ($username)
+                    $groupes = Get-LocalGroup | Where-Object { (Get-LocalGroupMember -Group $_.Name | Where-Object { $_.Name -eq $username }) }
+        
+                    if ($groupes) {
+                        Write-Host "Groupes d'appartenance de l'utilisateur '$username' :"
+                        $groupes | ForEach-Object { $_.Name }
+                        addLog -event "Groupes pour '$username' listés avec succès."
+                    }
+                    else {
+                        Write-Host "Aucun groupe trouvé pour l'utilisateur '$username'."
+                        addLog -event "Aucun groupe trouvé pour '$username'."
+                    }
+                    } -ArgumentList $username
+                }
+                catch {
+                    Write-Host "Erreur lors de la récupération des groupes pour '$username'." *> $null
+                    addLog -event "Erreur lors de la récupération des groupes pour '$username'."
+                }
+            }
+
+            5 {
+                $username = Read-Host "Entrez le nom de l'utilisateur"
+            try { Invoke-Command -Session $Session -ScriptBlock {
+                    param ($username)
+                    $historyFilePath = "C:\Users\$username\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt"
+
+                if (Test-Path $historyFilePath) {
+                    Write-Host "Historique des commandes pour l'utilisateur '$username' :"
+                    Get-Content $historyFilePath | ForEach-Object { Write-Host $_ }
+                    addLog -event "Historique des commandes pour '$username' listé avec succès."
+                }
+                else {
+                    Write-Host "Aucun historique de commandes trouvé pour l'utilisateur '$username'."
+                    addLog -event "Aucun historique de commandes trouvé pour l'utilisateur '$username'."
+                }
+                } -ArgumentList $username
+            }
+            catch {
+                Write-Host "Erreur lors de la récupération de l'historique des commandes pour '$username'." *> $null
+                addLog -event "Erreur lors de la récupération de l'historique des commandes pour '$username'."
+            }
+            }
+
+            6 {
+                $username = Read-Host "Entrez le nom de l'utilisateur."
+                $dossier = Read-Host "Entrez le chemin du dossier"
+
+                try {
+                    Invoke-Command -Session $Session -ScriptBlock {
+                    param ($username, $dossier)
+                    $getacl = Get-Acl -Path $dossier
+                    Write-Host "Permissions de l'utilisateur '$username' sur le dossier '$dossier' :"
+                    $getacl.Access | Where-Object { $_.IdentityReference -match $username }
+                    } -ArgumentList $username, $dossier
+                    addLog -event "Permissions sur le dossier '$dossier' listées avec succès pour '$username'."
+                }
+                catch {
+                    Write-Host "Erreur lors de la récupération des permissions pour '$username' sur le dossier '$dossier'." *> $null
+                    addLog -event "Erreur lors de la récupération des permissions pour '$username' sur le dossier '$dossier'."
+                }
+            }
+
+            7 {
+                $username = Read-Host "Entrez le nom de l'utilisateur"
+                $fichier = Read-Host "Entrez le chemin du fichier"
+
+                try {
+                    Invoke-Command -Session $Session -ScriptBlock {
+                    param ($username, $fichier)
+                    $getacl = Get-Acl -Path $fichier
+                    Write-Host "Permissions de l'utilisateur '$username' sur le fichier '$fichier' :"
+                    $getacl.Access | Where-Object { $_.IdentityReference -match $username }
+                    } -ArgumentList $username, $fichier
+                    addLog -event "Permissions sur le fichier '$fichier' listées avec succès pour '$username'."
+                }
+                catch {
+                    Write-Host "Erreur lors de la récupération des permissions pour '$username' sur le fichier '$fichier'." *> $null
+                    addLog -event "Erreur lors de la récupération des permissions pour '$username' sur le fichier '$fichier'."
+                }
+            }
+            
+            8 {
+                Write-Host "Retour au menu principal"
+            }
             
             default {## Erreur de saisie
             Write-Host "Erreur de saisie, veuillez recommencer"
