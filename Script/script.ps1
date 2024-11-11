@@ -233,6 +233,26 @@ function actionUser {
 
         4 { ## Choix de "Désactivation de compte utilisateur local"
         addLog "Choix de 'Désactivation de compte utilisateur local'"
+        $username = Read-Host "Entrez le nom de l'utilisateur que vous souhaitez désactiver "
+
+    if (Get-LocalUser -Name $username) {
+        try {
+            Invoke-Command -session $Session -ScriptBlock {
+                param ($username)
+            Disable-LocalUser -Name $username -ErrorAction Stop
+            } -ArgumentList $username *> $null
+            Write-Host "L'utilisateur '$username' a été désactivé avec succès."
+	    Start-Sleep -Seconds 1
+        }
+        catch {
+            Write-Host "Erreur lors de la désactivation de l'utilisateur '$username'."
+	    Start-Sleep -Seconds 1
+        }
+        
+    } else {
+        Write-Host "L'utilisateur '$username' n'existe pas."
+	Start-Sleep -Seconds 1
+    } 
         }
 
         5 { ## Choix de "Ajout à un groupe local"
