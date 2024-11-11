@@ -342,8 +342,17 @@ function actionComputer {
 
 		5 {## Choix de "Création d'un répertoire sur l'ordinateur $address_ip"
         addLog "Choix de 'Création d'un répertoire sur l'ordinateur $address_ip'"
-        }
+         $NewDir = Read-Host "Entrez le nom du dossier que vous voulez créer"
+  $pathDir = Read-Host "Entrez le chemin où vous souhaitez créer le dossier"
 
+try {
+  New-Item -Path "$pathDir\$NewDir" -ItemType Directory
+  Write-Host "Le dossier $NewDir a été crée dans le chemin $pathDir"
+  addLog "Réussite de la création du dossier $NewDir"
+} catch {
+  Write-Host "Veuillez réessayer"
+}
+}
 		6 { ## Choix de "Modification d'un répertoire de l'ordinateur $address_ip"
         addLog "Choix de 'Modification d'un répertoire de l'ordinateur $address_ip'"
         }
