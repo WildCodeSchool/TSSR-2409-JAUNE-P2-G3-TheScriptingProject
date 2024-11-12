@@ -13,8 +13,6 @@
 #                                         Initialisation                                         #
 #------------------------------------------------------------------------------------------------#
 
-# Le préfixe du réseau de votre serveur
-$network_prefix="172.16.30."
 # Le chemin vers le dossier du fichier de jorunalisation
 $path="C:\Windows\System32\Logfiles" 
 
@@ -416,6 +414,19 @@ function infoComputer {
 	$file_info_computer="C:\Users\$env:USERNAME\Documents\info_$($address_ip)_$(get-date -Format "yyyyMMdd").txt"
 
 	## sortie du script si il y a un 0, retour si 12. Création et/ou initialisation du fichier d'enregistrement
+    if ($ans_info_computer | Select-String -Pattern " 0 |^0| 0$")
+    {
+        ## Fin du script
+        Write-Host "Fin du script"
+        addLog "*********EndScript*********"
+        exit
+    }
+    if ($ans_info_computer | Select-String -Pattern "12")
+    {
+        ## Retour en arrière
+        addLog "Retour au menu précédent, le menu Information"
+        break
+    }
 	New-Item -type file $file_info_computer *> $NULL
 	add-Content -Value "####### `n# Informations sur l'ordinateur $address_ip demandées le $(get-date -Format "yyyyMMdd") à $(get-date -Format "HHmm") `n#######`n" `
         -path $file_info_computer
@@ -425,12 +436,6 @@ function infoComputer {
     {
         Switch ($ans)
         {
-            0 { ## Fin du script
-            Write-Host "Fin du script"
-            addLog "*********EndScript*********"
-            exit
-            }
-
             1 { ## Version de l'OS
             add-Content -Path $file_info_computer -Value " La version de l'OS : `n"
             osVersion 
@@ -495,11 +500,6 @@ function infoComputer {
             add-Content -Path $file_info_computer -Value "`n"
             }
             
-            12 { ## Retour en arrière
-            addLog "Retour au menu précédent, le menu Information"
-            break
-            }
-            
             default { ## Erreur de saisie
             Write-Host "Erreur de saisie, veuillez recommencer"
             Start-Sleep -Seconds 1
@@ -521,21 +521,32 @@ function infoScript {
 		0 { ## Fin du script
         Write-Host "Fin du script"
         addLog "*********EndScript*********"
-        return
+        exit
         }
 
 		1 { ## Choix de "Recherche des événements dans le fichier log_evt.log pour un utilisateur"
         addLog "Choix de 'Recherche des événements dans le fichier log_evt.log pour un utilisateur'"
+        $user=Read-Host "Quel utilisateur voulez-vous cibler ?"
+        Get-content $path\log_evt.log | Select-String -Pattern $computer
+        if (!(Get-content $path\log_evt.log | Select-String -Pattern $computer))
+        { write-host "Aucune correspondance trouvée" }
+        read-host "Appuyez sur Entrée pour continuer."
         return
         }
 		
 		2 { ## Choix de "Recherche des événements dans le fichier log_evt.log pour un ordinateur client"
         addLog "Choix de 'Recherche des événements dans le fichier log_evt.log pour un ordinateur client'"
+        $computer=Read-Host "Quelle est l'adresse ip de l'ordinateur cible ?"
+        Get-content $path\log_evt.log | Select-String -Pattern $computer
+        if (!(Get-content $path\log_evt.log | Select-String -Pattern $computer))
+        { write-host "Aucune correspondance trouvée" }
+        read-host "Appuyez sur Entrée pour continuer."
         return
         }
 
         3 { ### Retour au menu précédent
 		addLog "Retour au menu précédent"
+        break
         }
 		
 		default { ## Erreur de saisie
