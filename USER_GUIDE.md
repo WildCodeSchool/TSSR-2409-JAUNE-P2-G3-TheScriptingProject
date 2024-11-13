@@ -10,7 +10,8 @@ Vous trouverez dans ce document la manière d'utiliser ```script.sh```et ```scri
 #### Étape 1
 Depuis votre serveur Linux, vous connectez avec un compte utilisateur local, "wilder" pour l'exemple. Le script ```script.sh```se trouve dans le dossier personnel de votre utilisateur.  
 #### Étape 2
-Entrez l'adresse IP de l'ordinateur client auquel vous voulez accéder. La connexion se fait grâce à une clé publique.  
+Entrez l'adresse IP de l'ordinateur client auquel vous voulez accéder. La connexion se fait grâce à une clé publique.
+![screen](./Images/Installation/screen-projet2/1.png)
 #### Étape 3
 Vous pouvez naviguer dans le menu et choisir si vous voulez une action ou une information. Vous aurez ensuite le choix entre cibler un utilisateur local au client précédemment choisi ou cibler l'ordinateur lui-même.  
 #### Étape 4
