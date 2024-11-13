@@ -22,6 +22,7 @@ création du compte utilisateur_ssh sur les clients
 ### 1) Définir une adresse ip fixe
 Il faudra se rendre dans le ficher interfaces et le modifier avec une adresse ip,un DNS,un pont et un masque de sous-réseau.
 ```sudo nano /etc/network/interfaces```
+
 ![Mise à jour du système](./Images/Installation/interfaces.png) 
 
 ```#The primary network interface```
