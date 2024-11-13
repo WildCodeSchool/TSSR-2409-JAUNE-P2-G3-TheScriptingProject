@@ -428,16 +428,19 @@ function infoUser {
         
                     if ($derniereConnexion) {
                         Write-Host "L'utilisateur '$username' s'est connecté pour la dernière fois le : $($derniereConnexion.TimeGenerated)"
-                        addLog -event "Dernière connexion de l'utilisateur '$username' le : $($derniereConnexion.TimeGenerated)"
+                        addLog "Dernière connexion de l'utilisateur '$username' le : $($derniereConnexion.TimeGenerated)"
+                        Start-Sleep -Seconds 1
                     } else {
                         Write-Host "Aucune connexion trouvée pour l'utilisateur '$username'." *> $null
-                        addLog -event "Aucune connexion trouvée pour l'utilisateur '$username'."
+                        addLog "Aucune connexion trouvée pour l'utilisateur '$username'."
+                        Start-Sleep -Seconds 1
                     }
                 } -ArgumentList $username
                     }
                     catch {
                         Write-Host "Erreur lors de la récupération des informations de connexion pour '$username'." *> $null
-                        addLog -event "Erreur lors de la récupération des informations de connexion pour '$username'."
+                        addLog "Erreur lors de la récupération des informations de connexion pour '$username'."
+                        Start-Sleep -Seconds 1
                     }
             }
 
@@ -449,17 +452,20 @@ function infoUser {
         
                             if ($user) {
                             Write-Host "Dernière modification du mot de passe de l'utilisateur '$username' : $($user.PasswordLastSet)"
-                            addLog -event "Dernière modification du mot de passe de '$username' : $($user.PasswordLastSet)"
+                            addLog "Dernière modification du mot de passe de '$username' : $($user.PasswordLastSet)"
+                            Start-Sleep -Seconds 1
                             }
                             else {
                                 Write-Host "L'utilisateur '$username' n'existe pas." *> $null
-                                addLog -event "L'utilisateur '$username' n'existe pas."
+                                addLog "L'utilisateur '$username' n'existe pas."
+                                Start-Sleep -Seconds 1
                             }
                         } -ArgumentList $username
                     }
                 catch {
                     Write-Host "Erreur lors de la récupération de la date de modification du mot de passe pour '$username'." *> $null
-                    addLog -event "Erreur lors de la récupération de la date de modification du mot de passe pour '$username'."
+                    addLog "Erreur lors de la récupération de la date de modification du mot de passe pour '$username'."
+                    Start-Sleep -Seconds 1
                 }
             }
 
@@ -473,17 +479,20 @@ function infoUser {
                     if ($sessions) {
                         Write-Host "Sessions ouvertes pour l'utilisateur '$username' :"
                         $sessions
-                        addLog -event "Sessions ouvertes pour '$username' listées avec succès."
+                        addLog "Sessions ouvertes pour '$username' listées avec succès."
+                        Start-Sleep -Seconds 1
                     }
                     else {
                         Write-Host "Aucune session ouverte trouvée pour l'utilisateur '$username'." *> $null
-                        addLog -event "Aucune session ouverte trouvée pour '$username'."
+                        addLog "Aucune session ouverte trouvée pour '$username'."
+                        Start-Sleep -Seconds 1
                     }
                 } -ArgumentList $username
                 }
                 catch {
                     Write-Host "Erreur lors de la récupération des sessions ouvertes pour '$username'." *> $null
-                    addLog -event "Erreur lors de la récupération des sessions ouvertes pour '$username'."
+                    addLog "Erreur lors de la récupération des sessions ouvertes pour '$username'."
+                    Start-Sleep -Seconds 1
                 }
             }
 
@@ -498,17 +507,20 @@ function infoUser {
                 if ($groupes) {
                     Write-Host "Groupes d'appartenance de l'utilisateur '$username' :"
                     $groupes | ForEach-Object { $_.Name }
-                    addLog -event "Groupes pour '$username' listés avec succès."
+                    addLog "Groupes pour '$username' listés avec succès."
+                    Start-Sleep -Seconds 1
                 }
                 else {
                     Write-Host "Aucun groupe trouvé pour l'utilisateur '$username'."
-                    addLog -event "Aucun groupe trouvé pour '$username'."
+                    addLog "Aucun groupe trouvé pour '$username'."
+                    Start-Sleep -Seconds 1
                 }
                 } -ArgumentList $username
                 }
                 catch {
                     Write-Host "Erreur lors de la récupération des groupes pour '$username'." *> $null
-                    addLog -event "Erreur lors de la récupération des groupes pour '$username'."
+                    addLog "Erreur lors de la récupération des groupes pour '$username'."
+                    Start-Sleep -Seconds 1
                 }
             }
 
@@ -520,17 +532,20 @@ function infoUser {
                 if (Test-Path $historyFilePath) {
                     Write-Host "Historique des commandes pour l'utilisateur '$username' :"
                     Get-Content $historyFilePath | ForEach-Object { Write-Host $_ }
-                    addLog -event "Historique des commandes pour '$username' listé avec succès."
+                    addLog "Historique des commandes pour '$username' listé avec succès."
+                    Start-Sleep -Seconds 1
                 }
                 else {
                     Write-Host "Aucun historique de commandes trouvé pour l'utilisateur '$username'."
-                    addLog -event "Aucun historique de commandes trouvé pour l'utilisateur '$username'."
+                    addLog "Aucun historique de commandes trouvé pour l'utilisateur '$username'."
+                    Start-Sleep -Seconds 1
                 }
                 } -ArgumentList $username
             }
             catch {
                 Write-Host "Erreur lors de la récupération de l'historique des commandes pour '$username'." *> $null
-                addLog -event "Erreur lors de la récupération de l'historique des commandes pour '$username'."
+                addLog "Erreur lors de la récupération de l'historique des commandes pour '$username'."
+                Start-Sleep -Seconds 1
             }
             }
 
@@ -545,11 +560,13 @@ function infoUser {
                     Write-Host "Permissions de l'utilisateur '$username' sur le dossier '$dossier' :"
                     $getacl.Access | Where-Object { $_.IdentityReference -match $username }
                     } -ArgumentList $username, $dossier
-                addLog -event "Permissions sur le dossier '$dossier' listées avec succès pour '$username'."
+                addLog "Permissions sur le dossier '$dossier' listées avec succès pour '$username'."
+                Start-Sleep -Seconds 1
                 }
             catch {
                     Write-Host "Erreur lors de la récupération des permissions pour '$username' sur le dossier '$dossier'." *> $null
-                    addLog -event "Erreur lors de la récupération des permissions pour '$username' sur le dossier '$dossier'."
+                    addLog "Erreur lors de la récupération des permissions pour '$username' sur le dossier '$dossier'."
+                    Start-Sleep -Seconds 1
             }
             }
 
@@ -563,11 +580,13 @@ function infoUser {
                     Write-Host "Permissions de l'utilisateur '$username' sur le fichier '$fichier' :"
                     $getacl.Access | Where-Object { $_.IdentityReference -match $username }
                     } -ArgumentList $username, $fichier
-                    addLog -event "Permissions sur le fichier '$fichier' listées avec succès pour '$username'."
+                    addLog "Permissions sur le fichier '$fichier' listées avec succès pour '$username'."
+                    Start-Sleep -Seconds 1
                 }
                 catch {
                     Write-Host "Erreur lors de la récupération des permissions pour '$username' sur le fichier '$fichier'." *> $null
-                    addLog -event "Erreur lors de la récupération des permissions pour '$username' sur le fichier '$fichier'."
+                    addLog "Erreur lors de la récupération des permissions pour '$username' sur le fichier '$fichier'."
+                    Start-Sleep -Seconds 1
                 }
             }
             
