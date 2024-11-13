@@ -150,6 +150,11 @@ Pour installer SSH sur la ubuntu vous devrez effectuer exactement les mêmes ét
 ## Un serveur Windows et son client Windows
 
 ### Les prérequis techniques
+Serveur + client
+connaissance de la configuration du réseau
+connaissance de Windows et console
+droit admin sur serveur et client
+
 
 ### Les étapes d'installation et de configuration
 
