@@ -19,7 +19,7 @@ ajout du sudo au compte utilisateur du serveur
 création du compte utilisateur_ssh sur les clients  
 ##### Étape 1 
 Il est fortement conseillé que vous mettiez à jour votre débian pour permettre une installation fluide de SSH et vérifier que tous les paquets soit à jours.Vous devrez utiliser les commandes ```sudo apt update && sudo apt upgrade```
-
+![Mise à jour du système](./Images/Installation/Screen_ssh1.png) 
 ##### Étape 2
 Installer le SSH sur le serveur et les clients  
 ##### Étape 3
