@@ -111,12 +111,16 @@ cherchez la ligne ```PermitRootLogin```,enlevez le # et faites ```yes```
 ## Étapes d'installations sur Ubuntu 
 
 ### 1) Définir une adresse ip fixe
-On reprend les mêmes étapes que précédemment mais l'adresse ip sera ```172.16.30.30```
+Pour définir une adresse ip fixe il faudra vous rendre dans les paramètres filaires de votre machine cliente.
+![group](./Images/Installation/1.png) 
+![group](./Images/Installation/2.png) 
+
 
 ### 2) Renommer le client
+
 On reprend les mêmes étapes mais le client aura pour nom cette fois-ci Clilin01
 
-### 3) Fixer une adresse ip
+### 3) Installation SSH
 
 #### Étape 1
 Vous pouvez créér un utilisateur local sur lequel SSH sera installé (par exemple utilisateur_ssh pour le besoin du script) et ajoutez le au groupe sudo avec ```sudo usermod -aG sudo utilisateur_ssh```et vérifiez avec ```groups utilisateur_ssh```
