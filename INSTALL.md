@@ -18,10 +18,13 @@ check des ping
 ajout du sudo au compte utilisateur du serveur  
 création du compte utilisateur_ssh sur les clients  
 ##### Étape 1 
-Installer le SSH sur le serveur et les clients  
+Il est fortement conseillé que vous mettiez à jour votre débian pour permettre une installation fluide de SSH et vérifier que tous les paquets soit à jours.Vous devrez utiliser les commandes ```sudo apt update && sudo apt upgrade```
+
 ##### Étape 2
-Activer le SSH sur le serveur et les clients  
+Installer le SSH sur le serveur et les clients  
 ##### Étape 3
+Activer le SSH sur le serveur et les clients  
+##### Étape 4
 Se connecter sur le compte "root" et créer la clé publique grâce à la commande ```ssh-keygen -t rsa -b 4096```.  
 ![Création de clé publique sur le root du serveur](./Images/Installation/creation_cle_publique.png)  
 Envoyer la clé aux comptes utilisateur_ssh sur chaque client grâce à la commande ```ssh-copy-id USERNAME@ADDRESSIP```.  
