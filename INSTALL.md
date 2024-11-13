@@ -11,12 +11,7 @@ connaissance de la configuration du réseau
 connaissance de Linux et console
 droit admin sur serveur et client
 
-#### La configuration de la connexion SSH entre le serveur et les clients
-config IP serveur  
-config IP client  
-check des ping  
-ajout du sudo au compte utilisateur du serveur  
-création du compte utilisateur_ssh sur les clients  
+
 ## Étapes d'installation sur Débian 12
 
 ### 1) Définir une adresse ip fixe
@@ -110,7 +105,19 @@ cherchez la ligne ```PermitRootLogin```,enlevez le # et faites ```yes```
 ![copie_script](./Images/Installation/Scp.png)  
 
 
+
+
+
 ## Étapes d'installations sur Ubuntu 
+
+### 1) Définir une adresse ip fixe
+On reprend les mêmes étapes que précédemment mais l'adresse ip sera ```172.16.30.30```
+
+### 2) Renommer le client
+On reprend les mêmes étapes mais le client aura pour nom cette fois-ci Clilin01
+
+### 3) Fixer une adresse ip
+
 #### Étape 1
 Vous pouvez créér un utilisateur local sur lequel SSH sera installé (par exemple utilisateur_ssh pour le besoin du script) et ajoutez le au groupe sudo avec ```sudo usermod -aG sudo utilisateur_ssh```et vérifiez avec ```groups utilisateur_ssh```
 ![group](./Images/Installation/group.png)  
