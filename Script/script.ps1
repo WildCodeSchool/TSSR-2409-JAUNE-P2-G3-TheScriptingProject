@@ -358,6 +358,32 @@ function actionComputer {
 		
 		8 { ## Choix de "Définitions de règles de pare-feu de l'ordinateur $address_ip"
         addLog "Choix de 'Définitions de règles de pare-feu de l'ordinateur $address_ip'"
+	$choose_firewall = Read-Host "Voulez-vous autoriser ou refuser le HTTP sur le port 80 ? 1 pour autoriser, 2 pour refuser"
+	switch ($choose_firewall) {
+		1 {
+	        	$result = Invoke-Command -ComputerName $address_ip -Credential $user_ssh -ScriptBlock {
+	            	sudo ufw allow 80
+        		}
+        		if ($result) {
+            			Write-Host "Le port 80 est autorisé sur la machine $address_ip"
+        		} else {
+            			Write-Host "Le port 80 n'a pas été autorisé sur la machine $address_ip"
+        		}
+    		}
+    		2 {
+        		$result = Invoke-Command -ComputerName $address_ip -Credential $user_ssh -ScriptBlock {
+            		sudo ufw deny 80
+        		}
+        		if ($result) {
+            			Write-Host "Le port 80 est refusé sur la machine $address_ip"
+        		} else {
+            			Write-Host "Le port 80 n'a pas été refusé sur la machine $address_ip"
+        		}
+    		}
+    		Default {
+        		Write-Host "Erreur de saisie, échec du changement"
+    		}
+	}
         }
 		
 		9 { ## Choix de "Activation du pare-feu de l'ordinateur $address_ip"
@@ -370,10 +396,28 @@ function actionComputer {
         
 		11 { ## Choix de "Installation de logiciel de l'ordinateur $address_ip"
         addLog "Choix de 'Installation de logiciel de l'ordinateur $address_ip'"
+	$name = Read-Host "Entrez le nom du logiciel à installer: "
+	$install = choco list --local-only
+	if ($install -contains $name) {
+  		Write-Host "$name est déjà installé, donc n'oublie plus que tu la déja installer." -ForegroundColor Red
+	} else {
+ 		Write-Host "Installation de $name..."
+   		choco install $name -y
+    		Write-Host "$name a été installé avec succès." -ForegroundColor Green
+	}
         }
 		
 		12 { ## Choix de "Désinstallation de logiciel"
         addLog "Choix de 'Désinstallation de logiciel'"
+	$name = Read-Host "Entrez le nom du logiciel à désinstaller: "
+	$install = choco list --local-only
+	if ($install -contains $name) {
+    		Write-Host "Désinstallation de $name..."
+    		choco uninstall $name -y
+    		Write-Host "$name a été désinstallé avec succès." -ForegroundColor Green
+	} else {
+    		Write-Host "$name n'est pas installé, il n'y a rien à désinstaller." -ForegroundColor Red
+	}
         }
 		
 		13 { ## Choix de "Exécution de script sur la machine distante"
