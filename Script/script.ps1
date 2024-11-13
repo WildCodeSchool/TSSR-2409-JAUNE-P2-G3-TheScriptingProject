@@ -422,7 +422,7 @@ function infoUser {
 
                     try { Invoke-Command -Session $Session -ScriptBlock {
                         param ($username)
-                            $derniereConnexion = Get-EventLog -LogName Security -InstanceId 4624 | 
+                        $derniereConnexion = Get-WinEvent -LogName Security -FilterXPath "*[System/EventID=4624]" | 
                             Where-Object { $_.ReplacementStrings[5] -eq $username } |
                             Select-Object -Last 1
         
@@ -448,7 +448,7 @@ function infoUser {
                 $username = Read-Host "Entrez le nom de l'utilisateur"
                 try { Invoke-Command -Session $Session -ScriptBlock {
                     param ($username)
-                        $user = Get-LocalUser -Name $username
+                        $user = Get-LocalUser -Name $username -ErrorAction SilentlyContinue
         
                             if ($user) {
                             Write-Host "Dernière modification du mot de passe de l'utilisateur '$username' : $($user.PasswordLastSet)"
@@ -456,7 +456,7 @@ function infoUser {
                             Start-Sleep -Seconds 1
                             }
                             else {
-                                Write-Host "L'utilisateur '$username' n'existe pas." *> $null
+                                Write-Host "L'utilisateur '$username' n'existe pas."
                                 addLog "L'utilisateur '$username' n'existe pas."
                                 Start-Sleep -Seconds 1
                             }
