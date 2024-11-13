@@ -37,6 +37,7 @@ Envoyer la clé aux comptes utilisateur_ssh sur chaque client grâce à la comma
 Tester la connexion SSH grâce à ```ssh USERNAME@ADDRESSIP```.  
 
 #### La récupération du Script
+Lorsque l'installation SSH sera terminée,vous devrez récupérer votre script.Vous pouvez passer depuis votre ordinateur client pour télécharger votre script depuis github et le transférer en toute sécurité sur votre serveur
 
 
 
