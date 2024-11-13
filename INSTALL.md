@@ -190,6 +190,10 @@ tandis que pour la windows 10 ce sera:
 
 ```passerelle par défaut 172.16.30.254```
 
+Redémarrez votre ordinateur et faites ensuite ```ìp a``` pour vérifier l'adresse ip.
+
+
+
 
 
 ### Les étapes d'installation et de configuration
