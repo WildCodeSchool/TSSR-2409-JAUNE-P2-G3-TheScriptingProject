@@ -194,17 +194,16 @@ function actionUser {
         3 { ## Choix de "Suppression de compte utilisateur local"
         addLog "Choix de 'Suppression de compte utilisateur local'"
         $username = Read-Host "Entrez le nom de l'utilisateur à supprimer"
+        Invoke-Command -Session $Session -ScriptBlock {
+            param ($username)
+
         if (Get-LocalUser -Name $username) {
             try {
-                Invoke-Command -session $Session -ScriptBlock {
-                    param ($username)
-                    Remove-LocalUser -Name $username -ErrorAction Stop
-                } -ArgumentList $username *> $null
+                Remove-LocalUser -Name $username -ErrorAction Stop
                 Write-Host "L'utilisateur '$username' a été supprimé avec succès."
                 addLog "Réussite de la suppression de l'utilisateur $username"
                 Start-Sleep -Seconds 1
-            }
-            catch {
+            } catch {
                 Write-Host "Erreur lors de la suppression de l'utilisateur '$username'."
                 addLog "Échec de la suppression de l'utilisateur $username"
                 Start-Sleep -Seconds 1
@@ -214,6 +213,7 @@ function actionUser {
             addLog "Échec de la suppression de l'utilisateur $username"
             Start-Sleep -Seconds 1
         } 
+        } -ArgumentList $username
         }
 
         4 { ## Choix de "Désactivation de compte utilisateur local"
