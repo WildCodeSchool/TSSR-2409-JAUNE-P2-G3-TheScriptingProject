@@ -142,10 +142,6 @@ Vous pouvez créér un utilisateur local sur lequel SSH sera installé (par exem
 Pour installer SSH sur la ubuntu vous devrez effectuer exactement les mêmes étapes que pour la débian dans la même ordre.
 
 
-
-### La Foire aux Questions
-
-
 ---
 ## Un serveur Windows et son client Windows
 
@@ -154,6 +150,46 @@ Serveur + client
 connaissance de la configuration du réseau
 connaissance de Windows et console
 droit admin sur serveur et client
+
+## 1) Étapes d'installation sur les windows pour l'adresse ip
+La configuation de l'ip est la même pour les 2 windows,seul l'adresse ip changera.
+
+Rendez-vous dans l'onglet réseau en bas à droite de l'écran et cliquez sur ```modifier les options d'adaptateur```
+
+![group](./Images/Installation/6.png)
+
+Faites un clique droit sur ```ethernet``` et sélectionnez ```propriétés```.
+
+![group](./Images/Installation/7.png)
+
+Cliquez sur protocole internet version 4 et sélectionnez une nouvelle fois propriété.
+
+![group](./Images/Installation/8.png)
+
+Ensuite faites les modifications nécessaires pour votre adresse IP
+
+![group](./Images/Installation/9.png)
+
+Pour votre windows server 2022 ce sera:
+
+```addresse IP 172.16.30.5```
+	
+ ```masque de sous-réseau 255.255.255.0```
+
+ ```serveur DNS préféré 8.8.8.8```
+
+```passerelle par défaut 172.16.30.254```
+
+tandis que pour la windows 10 ce sera:
+
+```addresse IP 172.16.30.30```
+	
+ ```masque de sous-réseau 255.255.255.0```
+
+ ```serveur DNS préféré 8.8.8.8```
+
+```passerelle par défaut 172.16.30.254```
+
 
 
 ### Les étapes d'installation et de configuration
