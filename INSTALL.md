@@ -15,7 +15,7 @@ droit admin sur serveur et client
 ## Étapes d'installation sur Débian 12
 
 ### 1) Définir une adresse ip fixe
-Il faudra se rendre dans le ficher interfaces et le modifier avec une adresse ip,un DNS,un pont et un masque de sous-réseau.
+Il faudra se rendre dans le ficher interfaces et le modifier avec une adresse ip,un DNS,une passerelle et un masque de sous-réseau.
 ```sudo nano /etc/network/interfaces```
 
 ![Mise à jour du système](./Images/Installation/interfaces.png) 
@@ -114,6 +114,18 @@ cherchez la ligne ```PermitRootLogin```,enlevez le # et faites ```yes```
 Pour définir une adresse ip fixe il faudra vous rendre dans les paramètres filaires de votre machine cliente.
 ![group](./Images/Installation/1.png) 
 ![group](./Images/Installation/2.png) 
+
+Selectionnez ipv4 et faites les modifications suivantes manuellement
+
+```addresse 172.16.30.30```
+	
+ ```masque de réseau 255.255.255.0```
+
+ ```DNS 8.8.8.8```
+
+```passerelle 172.16.30.254```
+
+![group](./Images/Installation/3.png)
 
 
 ### 2) Renommer le client
