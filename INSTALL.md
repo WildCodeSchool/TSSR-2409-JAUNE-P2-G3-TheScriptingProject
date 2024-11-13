@@ -37,9 +37,14 @@ Envoyer la clé aux comptes utilisateur_ssh sur chaque client grâce à la comma
 Tester la connexion SSH grâce à ```ssh USERNAME@ADDRESSIP```.  
 
 #### La récupération du Script
-Lorsque l'installation SSH sera terminée,vous devrez récupérer votre script.Vous pouvez passer depuis votre ordinateur client pour télécharger votre script depuis github et le transférer en toute sécurité sur votre serveur
+Lorsque l'installation SSH sera terminée,vous devrez récupérer votre script.Vous pouvez passer depuis votre ordinateur client pour télécharger votre script depuis github et le transférer en toute sécurité sur votre serveur.On supposera que vous voudrez copier votre script vers le dossier lib de la débian et que votre script se trouve dans /home/wilder.
+```scp -r /home/wilder/script.sh root@172.16.30.10:/var/lib```
+Votre script devrait être sur votre machine serveur.
+Si vous avez dez difficultés à copier cotre script,rendez-vous dans le fichier ```/etc/ssh/sshd_config``` et ouvrez le
+cherchez la ligne ```PermitRootLogin```,enlevez le # et faites ```yes```
 
 
+![copie_script](./Images/Installation/Scp.png)  
 
 
 ### Les étapes d'installation et de configuration
