@@ -55,7 +55,11 @@ Pour changer le nom de la machine.
 Donnez lui un nouveau nom (ici SRVLX01)
 Sauvegardez puis fermez le fichier.
 
+Pour indiquer aux autres machines le nom du serveur sur le réseau.
 
+```Sudo nano /etc/hosts```
+  
+Nous allons modifier le nom afin qu’il soit bien pris en compte
 
 
  ### 3) Installation SSH
