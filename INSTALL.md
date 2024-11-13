@@ -25,6 +25,7 @@ Une fois la première étape terminée,vous pourrez installer le SSH sur le serv
 ```sudo apt install ssh```
 ##### Étape 3
 Lorsque l'installation est terminé,SSH devrait démarrer automatiquement,vous allez vérifier cela avec ```sudo systemctl status```et voici ce qui devrait s'afficher
+
 ![Mise à jour du système](./Images/Installation/screen_ssh3.png) 
 Dans certains cas il se peut que SSH ne soit pas démmaré,vous devrez donc faire ```sudo systemctl start ssh``` ou ```sudo systemctl enable ssh```dans d'autres cas.SSh devrait être installé correctement désormais.
 ##### Étape 4
