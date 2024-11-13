@@ -12,10 +12,22 @@ Depuis votre serveur Linux, vous connectez avec un compte utilisateur local, "wi
 #### Étape 2
 Entrez l'adresse IP de l'ordinateur client auquel vous voulez accéder. La connexion se fait grâce à une clé publique.
 ![screen](./Images/Installation/screen-projet2/1.png)
+
 #### Étape 3
-Vous pouvez naviguer dans le menu et choisir si vous voulez une action ou une information. Vous aurez ensuite le choix entre cibler un utilisateur local au client précédemment choisi ou cibler l'ordinateur lui-même.  
+Vous pouvez naviguer dans le menu et choisir si vous voulez une action ou une information. Vous aurez ensuite le choix entre cibler un utilisateur local au client précédemment choisi ou cibler l'ordinateur lui-même. 
+
+![screen](./Images/Installation/screen-projet2/2.png)
+
+![screen](./Images/Installation/screen-projet2/3.png)
+
+![screen](./Images/Installation/screen-projet2/4.png)
+
+
 #### Étape 4
 Les informations que vous avez demandé sont stockées dans un fichier dans le dossier personnel de l'utilisateur que vous utilisez.
+
+![screen](./Images/Installation/screen-projet2/5.png)
+
 
 ### L'utilisation avancée
 #### Journalisation
