@@ -53,6 +53,8 @@ cherchez la ligne ```PermitRootLogin```,enlevez le # et faites ```yes```
 Vous pouvez créér un utilisateur local sur lequel SSH sera installé (par exemple utilisateur_ssh pour le besoin du script) et ajoutez le au groupe sudo avec ```sudo usermod -aG sudo utilisateur_ssh```et vérifiez avec ```groups utilisateur_ssh```
 ![group](./Images/Installation/group.png)  
 
+#### Étape 2
+Pour installer SSH sur la ubuntu vous devrez effectuer exactement les mêmes étapes que pour la débian dans la même ordre.
 
 
 
