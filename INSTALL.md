@@ -19,8 +19,24 @@ ajout du sudo au compte utilisateur du serveur
 création du compte utilisateur_ssh sur les clients  
 ## Étapes d'installation sur Débian 12
 ### 1) Définir une adresse ip fixe
-Il faudra se rendre dans le ficher interfaces et le modifier avec une adresse ip,
+Il faudra se rendre dans le ficher interfaces et le modifier avec une adresse ip,un DNS,un pont et un masque de sous-réseau.
 ```sudo nano /etc/network/interfaces```
+![Mise à jour du système](./Images/Installation/interfaces.png) 
+
+```#The primary network interface```
+
+```auto enp0s18```
+
+```Iface enp0s18 inet static```
+	
+ ```address 172.16.30.10```
+	
+ ```netmask 255.255.255.0```
+
+ ```dns-nameservers 8.8.8.8```
+
+```gateway 172.16.30.254```
+
 
 ##### Étape 1 
 Il est fortement conseillé que vous mettiez à jour votre débian pour permettre une installation fluide de SSH et vérifier que tous les paquets soit à jours.Vous devrez utiliser les commandes ```sudo apt update && sudo apt upgrade```
