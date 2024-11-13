@@ -467,7 +467,7 @@ function infoUser {
                     try { Invoke-Command -Session $Session -ScriptBlock {
                         param ($username)
                         $derniereConnexion = Get-WinEvent -LogName Security -FilterXPath "*[System/EventID=4624]" | 
-                            Where-Object { $_.ReplacementStrings[5] -eq $username } |
+                            Where-Object { $_.Properties.Count -gt 5 -and $_.Properties[5].Value -eq $username } |
                             Select-Object -Last 1
         
                     if ($derniereConnexion) {
