@@ -6,7 +6,7 @@ Vous trouverez dans ce document la manière de configurer vos machines afin d'ut
 ## Un serveur Linux et son client Linux
 
 ### Les prérequis techniques
-Serveur + client$
+Serveur + client
 connaissance de la configuration du réseau
 connaissance de Linux et console
 droit admin sur serveur et client
@@ -48,7 +48,13 @@ cherchez la ligne ```PermitRootLogin```,enlevez le # et faites ```yes```
 ![copie_script](./Images/Installation/Scp.png)  
 
 
-### Les étapes d'installation et de configuration
+## Étapes d'installations sur Ubuntu 
+#### Étape 1
+Vous pouvez créér un utilisateur local sur lequel SSH sera installé (par exemple utilisateur_ssh pour le besoin du script) et ajoutez le au groupe sudo avec ```sudo usermod -aG sudo utilisateur_ssh```et vérifiez avec ```groups utilisateur_ssh```
+![group](./Images/Installation/group.png)  
+
+
+
 
 ### La Foire aux Questions
 
