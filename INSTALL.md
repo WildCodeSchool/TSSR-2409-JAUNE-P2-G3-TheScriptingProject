@@ -46,7 +46,19 @@ Les changements devraient avoir eu lieux.
 
 Faites un ping vers google pour vérifier la connexion au réseau,```ping 8.8.8.8```
 
- ### 2) Installation SSH
+### 2) Renommer le serveur
+
+Pour changer le nom de la machine.
+
+```Sudo nano /etc/hostname```
+  
+Donnez lui un nouveau nom (ici SRVLX01)
+Sauvegardez puis fermez le fichier.
+
+
+
+
+ ### 3) Installation SSH
  
  ##### Étape 1 
 Il est fortement conseillé que vous mettiez à jour votre débian pour permettre une installation fluide de SSH et vérifier que tous les paquets soit à jours.Vous devrez utiliser les commandes ```sudo apt update && sudo apt upgrade```
