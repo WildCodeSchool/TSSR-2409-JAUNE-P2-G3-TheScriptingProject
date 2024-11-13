@@ -18,6 +18,7 @@ check des ping
 ajout du sudo au compte utilisateur du serveur  
 création du compte utilisateur_ssh sur les clients  
 ## Étapes d'installation sur Débian 12
+### 1) Définir une adresse ip fixe
 ##### Étape 1 
 Il est fortement conseillé que vous mettiez à jour votre débian pour permettre une installation fluide de SSH et vérifier que tous les paquets soit à jours.Vous devrez utiliser les commandes ```sudo apt update && sudo apt upgrade```
 ![Mise à jour du système](./Images/Installation/Screen_ssh1.png) 
