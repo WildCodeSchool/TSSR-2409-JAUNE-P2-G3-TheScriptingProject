@@ -62,6 +62,22 @@ Pour indiquer aux autres machines le nom du serveur sur le réseau.
 Nous allons modifier le nom afin qu’il soit bien pris en compte
 
 
+![Mise à jour du système](./Images/Installation/hostname.png) 
+
+```127.0.1.1	SRVLX01```
+
+Rajoutez en dessous les autres machines si vous souhaitez communiquer avec elles (exemple ci-dessus).
+
+```172.16.0.30	 CLILIN01```
+  
+Une fois terminé, sauvegarder puis fermer
+
+Faites un redémarrage de la machine pour prendre en compte le nouveau nom.
+
+```reboot```
+  
+Une fois redémarrée, le nouveau nom de la machine apparaît.
+
  ### 3) Installation SSH
  
  ##### Étape 1 
