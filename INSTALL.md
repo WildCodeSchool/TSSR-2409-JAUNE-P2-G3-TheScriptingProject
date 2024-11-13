@@ -6,7 +6,7 @@ Vous trouverez dans ce document la manière de configurer vos machines afin d'ut
 ## Un serveur Linux et son client Linux
 
 ### Les prérequis techniques
-Serveur + client$
+Serveur + client
 connaissance de la configuration du réseau
 connaissance de Linux et console
 droit admin sur serveur et client
@@ -17,6 +17,8 @@ config IP client
 check des ping  
 ajout du sudo au compte utilisateur du serveur  
 création du compte utilisateur_ssh sur les clients  
+## Étapes d'installation sur Débian 12
+### 1) Définir une adresse ip fixe
 ##### Étape 1 
 Il est fortement conseillé que vous mettiez à jour votre débian pour permettre une installation fluide de SSH et vérifier que tous les paquets soit à jours.Vous devrez utiliser les commandes ```sudo apt update && sudo apt upgrade```
 ![Mise à jour du système](./Images/Installation/Screen_ssh1.png) 
@@ -47,7 +49,15 @@ cherchez la ligne ```PermitRootLogin```,enlevez le # et faites ```yes```
 ![copie_script](./Images/Installation/Scp.png)  
 
 
-### Les étapes d'installation et de configuration
+## Étapes d'installations sur Ubuntu 
+#### Étape 1
+Vous pouvez créér un utilisateur local sur lequel SSH sera installé (par exemple utilisateur_ssh pour le besoin du script) et ajoutez le au groupe sudo avec ```sudo usermod -aG sudo utilisateur_ssh```et vérifiez avec ```groups utilisateur_ssh```
+![group](./Images/Installation/group.png)  
+
+#### Étape 2
+Pour installer SSH sur la ubuntu vous devrez effectuer exactement les mêmes étapes que pour la débian dans la même ordre.
+
+
 
 ### La Foire aux Questions
 
