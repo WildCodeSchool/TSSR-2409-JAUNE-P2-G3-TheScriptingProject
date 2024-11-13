@@ -21,9 +21,12 @@ création du compte utilisateur_ssh sur les clients
 Il est fortement conseillé que vous mettiez à jour votre débian pour permettre une installation fluide de SSH et vérifier que tous les paquets soit à jours.Vous devrez utiliser les commandes ```sudo apt update && sudo apt upgrade```
 ![Mise à jour du système](./Images/Installation/Screen_ssh1.png) 
 ##### Étape 2
-Installer le SSH sur le serveur et les clients  
+Une fois la première étape terminée,vous pourrez installer le SSH sur le serveur et les clients.
+```sudo apt install ssh```
 ##### Étape 3
-Activer le SSH sur le serveur et les clients  
+Lorsque l'installation est terminé,SSH devrait démarrer automatiquement,vous allez vérifier cela avec ```sudo systemctl status```et voici ce qui devrait s'afficher
+![Mise à jour du système](./Images/Installation/screen_ssh3.png) 
+Dans certains cas il se peut que SSH ne soit pas démmaré,vous devrez donc faire ```sudo systemctl start ssh``` ou ```sudo systemctl enable ssh```dans d'autres cas.SSh devrait être installé correctement désormais.
 ##### Étape 4
 Se connecter sur le compte "root" et créer la clé publique grâce à la commande ```ssh-keygen -t rsa -b 4096```.  
 ![Création de clé publique sur le root du serveur](./Images/Installation/creation_cle_publique.png)  
