@@ -201,7 +201,6 @@ function actionUser {
                 Start-Sleep -Seconds 1
             } 
             } 
-        }
 
         3 {
             ## Choix de "Désactivation de compte utilisateur local"
@@ -372,7 +371,7 @@ function actionComputer {
             ## Choix de "Installation de logiciel de l'ordinateur $address_ip"
             addLog "Choix de 'Installation de logiciel de l'ordinateur $address_ip'"
             $name = Read-Host "Entrez le nom du logiciel à installer: "
-	    Invoke-Command -ComputerName $address_ip -ScriptBlock {
+        Invoke-Command -ComputerName $address_ip -ScriptBlock {
 		param($name)
 		$install = choco list --local-only
 		if ($install -contains $name) {
@@ -382,7 +381,7 @@ function actionComputer {
 			choco install $name -y
 			Write-Host "$name a été installé avec succès."
 		}		
-           } -ArgumentList $name
+        } -ArgumentList $name
         }
 		
         5 {
@@ -760,6 +759,8 @@ function infoComputer {
             }
         }   
     }
+    if ($ans_info_computer.Length -le 2)
+    { Get-Content $file_info_computer | Select-String -Pattern "# Informations" -Context 1,100 | Select-Object -Last 1}
     Write-Host "Les informations sont dans le fichier $file_info_computer."
     Start-Sleep -Seconds 2
 }
