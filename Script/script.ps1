@@ -543,31 +543,38 @@ function infoUser {
             }
 
             4 {
-            $username = Read-Host "Entrez le nom de l'utilisateur"
+                $username = Read-Host "Entrez le nom de l'utilisateur"
 
-            try {
-                Invoke-Command -Session $Session -ScriptBlock {
-                    param ($username)
-                    $groupes = Get-LocalGroup | Where-Object { (Get-LocalGroupMember -Group $_.Name | Where-Object { $_.Name -eq $username }) }
-
-                if ($groupes) {
-                    Write-Host "Groupes d'appartenance de l'utilisateur '$username' :"
-                    $groupes | ForEach-Object { $_.Name }
-                    addLog "Groupes pour '$username' listés avec succès."
-                    Start-Sleep -Seconds 1
-                }
-                else {
-                    Write-Host "Aucun groupe trouvé pour l'utilisateur '$username'."
-                    addLog "Aucun groupe trouvé pour '$username'."
-                    Start-Sleep -Seconds 1
-                }
-                } -ArgumentList $username
+                try {
+                    Invoke-Command -Session $Session -ScriptBlock {
+                        param ($username)
+                
+                        # Utiliser WMI pour obtenir les groupes de l'utilisateur
+                        $groupes = Get-WmiObject -Class Win32_GroupUser | Where-Object {
+                            $_.PartComponent -match "Name=`"$username`""
+                        }
+                
+                        if ($groupes) {
+                            Write-Host "Groupes d'appartenance de l'utilisateur '$username' :"
+                            $groupes | ForEach-Object {
+                                # Afficher le nom de chaque groupe
+                                ([wmi]$_.GroupComponent).Name
+                            }
+                            addLog "Groupes pour '$username' listés avec succès."
+                            Start-Sleep -Seconds 1
+                        } else {
+                            Write-Host "Aucun groupe trouvé pour l'utilisateur '$username'."
+                            addLog "Aucun groupe trouvé pour '$username'."
+                            Start-Sleep -Seconds 1
+                        }
+                    } -ArgumentList $username
                 }
                 catch {
-                    Write-Host "Erreur lors de la récupération des groupes pour '$username'." *> $null
+                    Write-Host "Erreur lors de la récupération des groupes pour l'utilisateur '$username'."
                     addLog "Erreur lors de la récupération des groupes pour '$username'."
                     Start-Sleep -Seconds 1
                 }
+                
             }
 
             5 {
