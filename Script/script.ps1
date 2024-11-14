@@ -147,8 +147,7 @@ function cpuUSe {
 
 ##### fonction pour gérer les actions concernant un utilisateur
 function actionUser {
-    menu "Création de compte utilisateur local" "Changement de mot de passe" "Suppression de compte utilisateur local" `
-        "Désactivation de compte utilisateur local" "Ajout à un groupe local" "Sortie d'un groupe local" "Retour"
+    menu "Création de compte utilisateur local" "Suppression de compte utilisateur local" "Désactivation de compte utilisateur local" "Ajout à un groupe local" "Sortie d'un groupe local" "Retour"
     $ans_action_user = Read-Host 
     switch ($ans_action_user) {
 
@@ -178,11 +177,6 @@ function actionUser {
         }
 
         2 {
-            ## Choix de "Changement de mot de passe"
-            addLog "Choix de 'Changement de mot de passe'"
-        }
-
-        3 {
             ## Choix de "Suppression de compte utilisateur local"
             addLog "Choix de 'Suppression de compte utilisateur local'"
             $username = Read-Host "Entrez le nom de l'utilisateur à supprimer"
@@ -210,7 +204,7 @@ function actionUser {
             } -ArgumentList $username
         }
 
-        4 {
+        3 {
             ## Choix de "Désactivation de compte utilisateur local"
             addLog "Choix de 'Désactivation de compte utilisateur local'"
             $username = Read-Host "Entrez le nom de l'utilisateur que vous souhaitez désactiver "
@@ -237,7 +231,7 @@ function actionUser {
             } 
         }
 
-        5 {
+        4 {
             ## Choix de "Ajout à un groupe local"
             addLog "Choix de 'Ajout à un groupe local'"
             $username = Read-Host "Entrez le nom de l'utilisateur à ajouter au groupe"
@@ -258,7 +252,7 @@ function actionUser {
             }
         }
 
-        6 {
+        5 {
             ## Choix de "Sortie d'un groupe local"
             addLog "Choix de 'Sortie d'un groupe local'"
             $username = Read-Host "Entrez le nom de l'utilisateur à retirer du groupe"
@@ -279,7 +273,7 @@ function actionUser {
             }
         }
 
-        7 {
+        6 {
             ### Retour au menu précédent
             addLog "Retour au menu précédent"
             return
@@ -297,11 +291,7 @@ function actionUser {
 
 #### fonction pour gérer les actions concernant un ordinateur client
 function actionComputer {
-    menu "Arrêt" "Redémarrage" "Verrouillage" "Mise-à-jour du système" "Création de répertoire" `
-        "Modification de répertoire" "Suppression de répertoire" "Définition de règles de pare-feu" `
-        "Activation du pare-feu" "Désactivation du pare-feu" "Installation de logiciel" `
-        "Désinstallation de logiciel" "Exécution de script sur la machine distante" `
-        "Prise de main à distance (CLI)" "Retour"
+    menu "Création de répertoire" "Suppression de répertoire" "Définition de règles de pare-feu" " "Installation de logiciel" "Désinstallation de logiciel" "Retour"
     $ans_action_computer = Read-Host 
     Switch ($ans_action_computer) { 
         0 {
@@ -312,26 +302,6 @@ function actionComputer {
         }
 
         1 {
-            ## Choix de "Arrêt de l'ordinateur $address_ip"
-            addLog "Choix de 'Arrêt de l'ordinateur $address_ip'"
-        }
-
-        2 {
-            ## Choix de "Redémarrage de l'ordinateur $address_ip"
-            addLog "Choix de 'Redémarrage de l'ordinateur $address_ip'"
-        }
-
-        3 {
-            ## Choix de "Verrouillage de l'ordinateur $address_ip"
-            addLog "Choix de 'Verrouillage de l'ordinateur $address_ip'"
-        }
-
-        4 {
-            ## Choix de "Mise à jour du système de l'ordinateur $address_ip"
-            addLog "Choix de 'Mise à jour du système de l'ordinateur $address_ip'"
-        }
-
-        5 {
             ## Choix de "Création d'un répertoire sur l'ordinateur $address_ip"
             addLog "Choix de 'Création d'un répertoire sur l'ordinateur $address_ip'"
             $NewDir = Read-Host "Entrez le nom du dossier que vous voulez créer"
@@ -346,12 +316,7 @@ function actionComputer {
             }
         }
 
-        6 {
-            ## Choix de "Modification d'un répertoire de l'ordinateur $address_ip"
-            addLog "Choix de 'Modification d'un répertoire de l'ordinateur $address_ip'"
-        }
-
-        7 {
+        2 {
             ## Choix de "Suppression d'un répertoire de l'ordinateur $address_ip"
             addLog "Choix de 'Suppression d'un répertoire de l'ordinateur $address_ip'"
             $suppDir = Read-Host "Entrez le nom du dossier que vous voulez supprimer"
@@ -366,7 +331,7 @@ function actionComputer {
             }
         }
 		
-        8 {
+        3 {
             ## Choix de "Définitions de règles de pare-feu de l'ordinateur $address_ip"
             addLog "Choix de 'Définitions de règles de pare-feu de l'ordinateur $address_ip'"
             $choose_firewall = Read-Host "Voulez-vous autoriser ou refuser le HTTP sur le port 80 ? 1 pour autoriser, 2 pour refuser"
@@ -398,18 +363,8 @@ function actionComputer {
                 }
             }
         }
-		
-        9 {
-            ## Choix de "Activation du pare-feu de l'ordinateur $address_ip"
-            addLog "Choix de 'Activation du pare-feu de l'ordinateur $address_ip'"
-        }
-
-        10 {
-            ## Choix de "Désactivation du pare-feu de l'ordinateur $address_ip"
-            addLog "Choix de 'Désactivation du pare-feu de l'ordinateur $address_ip'"
-        }
         
-        11 {
+        4 {
             ## Choix de "Installation de logiciel de l'ordinateur $address_ip"
             addLog "Choix de 'Installation de logiciel de l'ordinateur $address_ip'"
             $name = Read-Host "Entrez le nom du logiciel à installer: "
@@ -426,7 +381,7 @@ function actionComputer {
            } -ArgumentList $name
         }
 		
-        12 {
+        5 {
             ## Choix de "Désinstallation de logiciel"
             addLog "Choix de 'Désinstallation de logiciel'"
             $name = Read-Host "Entrez le nom du logiciel à désinstaller: "
@@ -440,18 +395,8 @@ function actionComputer {
                 Write-Host "$name n'est pas installé, il n'y a rien à désinstaller." -ForegroundColor Red
             }
         }
-		
-        13 {
-            ## Choix de "Exécution de script sur la machine distante"
-            addLog "Choix de 'Exécution de script sur la machine distante'"
-        }
-        
-        14 {
-            ## Choix de "Prise de main à distance (CLI)"
-            addLog "Choix de 'Prise de main à distance (CLI)'"
-        }
 
-        15 {
+        6 {
             ### Retour au menu précédent
             addLog "Retour au menu précédent"
             break
