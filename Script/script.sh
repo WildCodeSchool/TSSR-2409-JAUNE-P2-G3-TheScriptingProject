@@ -359,7 +359,7 @@ function actionComputer() {
 		
 		3) ## Choix de "Verrouillage de l'ordinateur $address_ip"
 		addLog "Choix de 'Verrouillage de l'ordinateur $address_ip'"
-		if ssh $user_ssh@$address_ip "sudo systemctl suspend"
+		if ssh -t $user_ssh@$address_ip "sudo systemctl suspend"
 		then
 			echo "L'ordinateur $address_ip est verrouillé."
 			addLog "Réussite du verrouillage de l'ordinateur $address_ip"
