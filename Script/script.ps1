@@ -372,7 +372,7 @@ function actionComputer {
             $choose_firewall = Read-Host "Voulez-vous autoriser ou refuser le HTTP sur le port 80 ? 1 pour autoriser, 2 pour refuser"
             switch ($choose_firewall) {
                 1 {
-                    $result = Invoke-Command -ComputerName $address_ip -Credential $user_ssh -ScriptBlock {
+                    $result = Invoke-Command -ComputerName $address_ip -ScriptBlock {
                         sudo ufw allow 80
                     }
                     if ($result) {
@@ -383,7 +383,7 @@ function actionComputer {
                     }
                 }
                 2 {
-                    $result = Invoke-Command -ComputerName $address_ip -Credential $user_ssh -ScriptBlock {
+                    $result = Invoke-Command -ComputerName $address_ip -ScriptBlock {
                         sudo ufw deny 80
                     }
                     if ($result) {
