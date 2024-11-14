@@ -110,16 +110,16 @@ function cpuInfo {
 }
 ## Mémoire RAM totale
 function ramTotal {
-    Invoke-Command -session $session -scriptblock `
+    $ram=Invoke-Command -session $session -scriptblock `
     { $ram = ([math]::Round((Get-CimInstance -ClassName Win32_ComputerSystem).TotalPhysicalMemory / 1GB, 2)) 
-    return $ram} > $ram
+    return $ram}
     return $ram
 }
 
 
 ## Utilisation de la RAM
 function ramUSe {
-    $ramFree = Invoke-Command -session $session -scriptblock { ([math]::Round((Get-CimInstance -ClassName Win32_ComputerSystem).freePhysicalMemory / 1MB, 2)) }
+    $ramFree = Invoke-Command -session $session -scriptblock { ([math]::Round((Get-CimInstance -ClassName Win32_OperatingSystem).freePhysicalMemory / 1MB, 2)) }
     $ramTotal = ramTotal
     $ramUsed = $RamTotal - $ramFree
     return $ramUsed
