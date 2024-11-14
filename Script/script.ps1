@@ -472,7 +472,7 @@ function infoUser {
                             Select-Object -Last 1
         
                     if ($derniereConnexion) {
-                        $timeGenerated = $derniereConnexion.TimeGenerated
+                        $timeGenerated = $($derniereConnexion.TimeGenerated)
                         Write-Host "L'utilisateur '$username' s'est connecté pour la dernière fois le : $timeGenerated"
                         addLog "$result Dernière connexion de l'utilisateur '$username' le : $timeGenerated"
                         Start-Sleep -Seconds 1
@@ -543,31 +543,29 @@ function infoUser {
             }
 
             4 {
-            $username = Read-Host "Entrez le nom de l'utilisateur"
-
-            try {
+                $username = Read-Host "Entrez le nom de l'utilisateur"
                 Invoke-Command -Session $Session -ScriptBlock {
                     param ($username)
-                    $groupes = Get-LocalGroup | Where-Object { (Get-LocalGroupMember -Group $_.Name | Where-Object { $_.Name -eq $username }) }
-
-                if ($groupes) {
-                    Write-Host "Groupes d'appartenance de l'utilisateur '$username' :"
-                    $groupes | ForEach-Object { $_.Name }
-                    addLog "Groupes pour '$username' listés avec succès."
-                    Start-Sleep -Seconds 1
-                }
-                else {
-                    Write-Host "Aucun groupe trouvé pour l'utilisateur '$username'."
-                    addLog "Aucun groupe trouvé pour '$username'."
-                    Start-Sleep -Seconds 1
-                }
+                
+                    # Récupérer les groupes locaux et vérifier si l'utilisateur en fait partie
+                    $groupes = Get-LocalGroup | Where-Object {
+                        (Get-LocalGroupMember -Group $_.Name | Where-Object { $_.Name -eq $username })
+                    }
+                
+                    if ($groupes) {
+                        # Afficher les groupes d'appartenance de l'utilisateur
+                        Write-Host "Groupes d'appartenance de l'utilisateur '$username' :"
+                        $groupes | ForEach-Object { $_.Name }
+                        addLog "Groupes pour '$username' listés avec succès."
+                        Start-Sleep -Seconds 1
+                    }
+                    else {
+                        Write-Host "Aucun groupe trouvé pour l'utilisateur '$username'."
+                        addLog "Aucun groupe trouvé pour '$username'."
+                        Start-Sleep -Seconds 1
+                    }
                 } -ArgumentList $username
-                }
-                catch {
-                    Write-Host "Erreur lors de la récupération des groupes pour '$username'." *> $null
-                    addLog "Erreur lors de la récupération des groupes pour '$username'."
-                    Start-Sleep -Seconds 1
-                }
+                
             }
 
             5 {
