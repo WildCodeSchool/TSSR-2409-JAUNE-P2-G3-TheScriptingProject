@@ -413,15 +413,17 @@ function actionComputer {
             ## Choix de "Installation de logiciel de l'ordinateur $address_ip"
             addLog "Choix de 'Installation de logiciel de l'ordinateur $address_ip'"
             $name = Read-Host "Entrez le nom du logiciel à installer: "
-            $install = choco list --local-only
-            if ($install -contains $name) {
-                Write-Host "$name est déjà installé, donc n'oublie plus que tu la déja installer." -ForegroundColor Red
-            }
-            else {
-                Write-Host "Installation de $name..."
-                choco install $name -y
-                Write-Host "$name a été installé avec succès." -ForegroundColor Green
-            }
+	    Invoke-Command -ComputerName $address_ip -ScriptBlock {
+		param($name)
+		$install = choco list --local-only
+		if ($install -contains $name) {
+			Write-Host "$name est déjà installé."
+		} else {
+			Write-Host "Installation de $name..."
+			choco install $name -y
+			Write-Host "$name a été installé avec succès."
+		}		
+           } -ArgumentList $name
         }
 		
         12 {
