@@ -305,14 +305,15 @@ function actionComputer {
             ## Choix de "Création d'un répertoire sur l'ordinateur $address_ip"
             addLog "Choix de 'Création d'un répertoire sur l'ordinateur $address_ip'"
             $NewDir = Read-Host "Entrez le nom du dossier que vous voulez créer"
-            $pathDir = Read-Host "Entrez le chemin où vous souhaitez créer le dossier"
+            $pathDir = Read-Host "Entrez le chemin absolu où vous souhaitez créer le dossier"
             try {
-                New-Item -Path "$pathDir\$NewDir" -ItemType Directory
+                Invoke-Command -session $sessionn -ScriptBlock { param ($pathDir, $NewDir ) New-Item -Path "$pathDir\$NewDir" -ItemType Directory} -ArgumentList $pathDir $NewDir
                 Write-Host "Le dossier $NewDir a été crée dans le chemin $pathDir"
                 addLog "Réussite de la création du dossier $NewDir"
             }
             catch {
-                Write-Host "Veuillez réessayer"
+                Write-Host "La création n'a pas réussi."
+                addLog "Échec de la création du dossier $NewDir"
             }
         }
 
