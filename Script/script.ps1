@@ -463,31 +463,39 @@ function infoUser {
             }
             1 {
                 $username = Read-Host "Entrez le nom de l'utilisateur"
-
-                    try { 
-                        $result = Invoke-Command -Session $Session -ScriptBlock {
+                
+                try {
+                    # Exécution de la commande sur la session distante et stockage du résultat
+                    $result = Invoke-Command -Session $Session -ScriptBlock {
                         param ($username)
-                        $derniereConnexion = Get-WinEvent -LogName Security -FilterXPath "*[System/EventID=4624]" | 
-                            Where-Object { $_.Properties.Count -gt 5 -and $_.Properties[5].Value -eq $username } |
+                        
+                        # Récupération de l'événement de connexion avec ID 4624 pour Windows 10
+                        $derniereConnexion = Get-WinEvent -LogName Security | 
+                            Where-Object { $_.Id -eq 4624 -and $_.Properties.Count -gt 5 -and $_.Properties[5].Value -eq $username } |
                             Select-Object -Last 1
-        
-                    if ($derniereConnexion) {
-                        $timeGenerated = $derniereConnexion.TimeGenerated
-                        Write-Host "L'utilisateur '$username' s'est connecté pour la dernière fois le : $timeGenerated"
-                        addLog "$result Dernière connexion de l'utilisateur '$username' le : $timeGenerated"
-                        Start-Sleep -Seconds 1
-                    } else {
-                        Write-Host "Aucune connexion trouvée pour l'utilisateur '$username'." *> $null
-                        addLog "$result Aucune connexion trouvée pour l'utilisateur '$username'."
-                        Start-Sleep -Seconds 1
-                    }
-                } -ArgumentList $username
-                    }
-                    catch {
-                        Write-Host "Erreur lors de la récupération des informations de connexion pour '$username'." *> $null
-                        addLog "$result Erreur lors de la récupération des informations de connexion pour '$username'."
-                        Start-Sleep -Seconds 1
-                    }
+                
+                        # Si une connexion est trouvée, retourner l'heure de connexion
+                        if ($derniereConnexion) {
+                            $timeGenerated = $derniereConnexion.TimeCreated
+                            return "L'utilisateur '$username' s'est connecté pour la dernière fois le : $timeGenerated"
+                        } else {
+                            # Si aucune connexion n'est trouvée
+                            return "Aucune connexion trouvée pour l'utilisateur '$username'."
+                        }
+                    } -ArgumentList $username
+                
+                    # Affichage et enregistrement des résultats dans le fichier de log
+                    Write-Host $result
+                    addLog "$result"
+                    Start-Sleep -Seconds 1
+                }
+                catch {
+                    # En cas d'erreur, afficher un message et ajouter au log
+                    Write-Host "Erreur lors de la récupération des informations de connexion pour '$username'."
+                    addLog "Erreur lors de la récupération des informations de connexion pour '$username'."
+                    Start-Sleep -Seconds 1
+                }
+                
             }
 
             2 {
