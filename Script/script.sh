@@ -359,7 +359,7 @@ function actionComputer() {
 		
 		3) ## Choix de "Verrouillage de l'ordinateur $address_ip"
 		addLog "Choix de 'Verrouillage de l'ordinateur $address_ip'"
-		if ssh $user_ssh@$address_ip "sudo systemctl suspend"
+		if ssh -t $user_ssh@$address_ip "sudo systemctl suspend"
 		then
 			echo "L'ordinateur $address_ip est verrouillé."
 			addLog "Réussite du verrouillage de l'ordinateur $address_ip"
@@ -389,7 +389,7 @@ function actionComputer() {
 			read -p "Saisie vide. Entrez l'endroit où vous voulez créer le nouveau dossier : " rep_path
 		done
 		read -p "Entrez le nom du dossier à créer: " rep_name
-		if ssh $user_ssh@$address_ip "sudo mkdir -p $rep_path/$rep_name" 2> /dev/null
+		if ssh -t $user_ssh@$address_ip "sudo mkdir -p $rep_path/$rep_name" 2> /dev/null
 		then
 			echo "Création du répertoire $rep_name réussie."
 			addLog "Réussite de la création du dossier $rep_name dans $rep_path de l'ordinateur $address_ip"
@@ -430,8 +430,8 @@ function actionComputer() {
 		do
 			read -p "Entrez le nom du dossier avec son chemin absolu : " rep_path
 		done
-		ssh $user_ssh@$address_ip "sudo rm -r $rep_path"
-		if $?
+		if ssh -t $user_ssh@$address_ip "sudo rm -r $rep_path"
+		
 		then
 			echo "Suppression du répertoire $rep_path réussie."
 			addLog "Réussite de la suppression du dossier $rep_path de l'ordinateur $address_ip"
