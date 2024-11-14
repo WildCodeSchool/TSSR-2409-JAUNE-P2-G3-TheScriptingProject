@@ -111,7 +111,8 @@ function cpuInfo {
 ## Mémoire RAM totale
 function ramTotal {
     Invoke-Command -session $session -scriptblock `
-    { $ram = ([math]::Round((Get-CimInstance -ClassName Win32_ComputerSystem).TotalPhysicalMemory / 1GB, 2)) }
+    { $ram = ([math]::Round((Get-CimInstance -ClassName Win32_ComputerSystem).TotalPhysicalMemory / 1GB, 2)) 
+    return $ram} > $ram
     return $ram
 }
 
