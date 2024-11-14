@@ -371,7 +371,7 @@ function actionComputer() {
 		
 		4) ## Choix de "Mise à jour du système de l'ordinateur $address_ip"
 		addLog "Choix de 'Mise à jour du système de l'ordinateur $address_ip'"
-		if ssh $user_ssh@$address_ip "sudo apt update && sudo apt upgrade -y"
+		if ssh -t $user_ssh@$address_ip "sudo apt update && sudo apt upgrade -y"
 		then
 			echo "L'ordinateur $address_ip est mis à jour."
 			addLog "Réussite de la mise à jour du système de l'ordinateur $address_ip'"
