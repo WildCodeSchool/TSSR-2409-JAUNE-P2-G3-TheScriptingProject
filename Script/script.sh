@@ -335,7 +335,7 @@ function actionComputer() {
 		
 		1) ## Choix de "Arrêt de l'ordinateur $address_ip"
 		addLog "Choix de 'Arrêt de l'ordinateur $address_ip'"
-		if ssh $user_ssh@$address_ip "sudo shutdown -h now"
+		if ssh -t $user_ssh@$address_ip "sudo shutdown -h now"
 		then
 			echo "L'ordinateur $address_ip est arrêté."
 			addLog "Réussite de l'arrêt  de l'ordinateur $address_ip"
@@ -347,7 +347,7 @@ function actionComputer() {
 		
 		2) ## Choix de "Redémarrage de l'ordinateur $address_ip"
 		addLog "Choix de 'Redémarrage de l'ordinateur $address_ip'"
-		if ssh $user_ssh@$address_ip 'sudo reboot'
+		if ssh -t $user_ssh@$address_ip 'sudo reboot'
 		then
 			echo "L'ordinateur $address_ip a redemarré."
 			addLog "Réussite du redémarrage de l'ordinateur $address_ip"
