@@ -6,159 +6,114 @@ Vous trouverez dans ce document la manière de configurer vos machines afin d'ut
 ## Un serveur Linux et son client Linux
 
 ### Les prérequis techniques
-Serveur + client
-connaissance de la configuration du réseau
-connaissance de Linux et console
-droit admin sur serveur et client
+- Avoir une machine Serveur Débian 12 et au moins une machine client Ubuntu 24.04LTS
+- AVoir des droits administrateurs sur toutes les machines.
+- Avoir des connaissances basique en Bash.
+- Avoir une connexion internet.
 
 
-## Étapes d'installation sur Débian 12
-
-### 1) Définir une adresse ip fixe
-Il faudra se rendre dans le ficher interfaces et le modifier avec une adresse ip,un DNS,une passerelle et un masque de sous-réseau.
+### 1) Définir une adresse IP fixe
+#### Sur le serveur
+Il faudra se rendre dans le ficher interfaces et le modifier avec une adresse IP, un DNS, une passerelle et un masque de sous-réseau.
 ```sudo nano /etc/network/interfaces```
 
 ![Mise à jour du système](./Images/Installation/interfaces.png) 
 
-```#The primary network interface```
+```
+#The primary network interface
+auto enp0s18
+Iface enp0s18 inet static
+address 172.16.30.10
+netmask 255.255.255.0
+dns-nameservers 8.8.8.8
+gateway 172.16.30.254
+```
+Sauvegardez ensuite le fichier.  
 
-```auto enp0s18```
+Rédemmarez le réseau grâce à ```systemctl restart networking``` et vérifiez la nouvelle adresse IP avec  ```ip a```  
+Les changements devraient avoir eu lieu.  
 
-```Iface enp0s18 inet static```
-	
- ```address 172.16.30.10```
-	
- ```netmask 255.255.255.0```
+Faites un ping vers Google pour vérifier la connexion au réseau internet :```ping 8.8.8.8```  
+#### Sur le client
+Pour définir une adresse IP fixe, il faudra vous rendre dans les paramètres filaires de votre machine cliente.  
+![group](./Images/Installation/1.png) 
+![group](./Images/Installation/2.png) 
 
- ```dns-nameservers 8.8.8.8```
+Selectionnez ipv4 et faites les modifications suivantes manuellement
+```
+addresse 172.16.30.30
+masque de réseau 255.255.255.0
+DNS 8.8.8.8
+passerelle 172.16.30.254
+```
+![group](./Images/Installation/3.png)
 
-```gateway 172.16.30.254```
+### 2) Renommer les machines
 
-Sauvegardez ensuite le fichier.
-
-Rédemmarez le réseau grâce à ```systemctl restart networking``` et vérifiez la nouvelle adresse ip avec  ```ip a```
-Les changements devraient avoir eu lieux.
-
-Faites un ping vers google pour vérifier la connexion au réseau,```ping 8.8.8.8```
-
-### 2) Renommer le serveur
-
-Pour changer le nom de la machine.
-
-```Sudo nano /etc/hostname```
-  
-Donnez lui un nouveau nom (ici SRVLX01)
+Pour changer le nom de la machine : ```Sudo nano /etc/hostname```
+Donnez lui un nouveau nom :  ici SRVLX01 pour le serveur et CLILIN01 pour la machine cliente.
 Sauvegardez puis fermez le fichier.
-
-Pour indiquer aux autres machines le nom du serveur sur le réseau.
-
-```Sudo nano /etc/hosts```
-  
-Nous allons modifier le nom afin qu’il soit bien pris en compte
-
-
+Pour indiquer aux autres machines le nom des différentes machines sur le réseau : ```sudo nano /etc/hosts```  
+Nous allons modifier les nom afin qu’ils soient bien pris en compte.  
 ![Mise à jour du système](./Images/Installation/hostname.png) 
 
-```127.0.1.1	SRVLX01```
-
-Rajoutez en dessous les autres machines si vous souhaitez communiquer avec elles (exemple ci-dessus).
-
-```172.16.0.30	 CLILIN01```
+```
+172.16.30.10	SRVLX01
+72.16.30.30	 CLILIN01
+```
   
-Une fois terminé, sauvegarder puis fermer
+Une fois terminé, sauvegardez puis fermez.  
+Faites un redémarrage de la machine pour prendre en compte le nouveau nom : ```reboot```  
+Une fois redémarré, le nouveau nom de la machine apparaît.  
 
-Faites un redémarrage de la machine pour prendre en compte le nouveau nom.
-
-```reboot```
-  
-Une fois redémarrée, le nouveau nom de la machine apparaît.
-
- ### 3) Installation SSH
- 
- ##### Étape 1 
-Il est fortement conseillé que vous mettiez à jour votre débian pour permettre une installation fluide de SSH et vérifier que tous les paquets soit à jours.Vous devrez utiliser les commandes ```sudo apt update && sudo apt upgrade```
+### 3) Installation SSH
+#### Étape 0
+Vous pouvez créér un utilisateur local sur chacune de vos machines clientes, sur lequel SSH sera installé (par exemple utilisateur_ssh pour le besoin du script).  
+ajoutez-le au groupe sudo avec ```sudo usermod -aG sudo utilisateur_ssh```et vérifiez avec ```groups utilisateur_ssh```  
+![group](./Images/Installation/group.png)  
+#### Étape 1 
+Il est fortement conseillé que vous mettiez à jour vos machines pour permettre une installation fluide de SSH et vérifier que tous les paquets soit à jour. Vous devrez utiliser les commandes ```sudo apt update && sudo apt upgrade -y```  
 ![Mise à jour du système](./Images/Installation/Screen_ssh1.png) 
-##### Étape 2
-Une fois la première étape terminée,vous pourrez installer le SSH sur le serveur et les clients.
-```sudo apt install ssh```
-##### Étape 3
-Lorsque l'installation est terminé,SSH devrait démarrer automatiquement,vous allez vérifier cela avec ```sudo systemctl status```et voici ce qui devrait s'afficher
-
+#### Étape 2
+Une fois la première étape terminée,vous pourrez installer le SSH sur le serveur et les clients.  
+```sudo apt install ssh```  
+#### Étape 3
+Lorsque l'installation est terminé,SSH devrait démarrer automatiquement,vous allez vérifier cela avec ```sudo systemctl status```et voici ce qui devrait s'afficher :  
 ![Mise à jour du système](./Images/Installation/screen_ssh3.png) 
+Dans certains cas, il se peut que SSH ne soit pas démmaré,vous devrez donc faire ```sudo systemctl start ssh``` ou ```sudo systemctl enable ssh```dans d'autres cas.  
+SSh devrait être installé correctement désormais.
 
-Dans certains cas il se peut que SSH ne soit pas démmaré,vous devrez donc faire ```sudo systemctl start ssh``` ou ```sudo systemctl enable ssh```dans d'autres cas.SSh devrait être installé correctement désormais.
-##### Étape 4
+#### Étape 4
+**Sur le serveur** :
 Se connecter sur le compte "root" et créer la clé publique grâce à la commande ```ssh-keygen -t rsa -b 4096```.  
 ![Création de clé publique sur le root du serveur](./Images/Installation/creation_cle_publique.png)  
 Envoyer la clé aux comptes utilisateur_ssh sur chaque client grâce à la commande ```ssh-copy-id USERNAME@ADDRESSIP```.  
 ![Envoi de la clé publique à utilisateur_ssh](./Images/Installation/transfert_cle_publique.png)  
 Tester la connexion SSH grâce à ```ssh USERNAME@ADDRESSIP```.  
 
-#### La récupération du Script
-Lorsque l'installation SSH sera terminée,vous devrez récupérer votre script.Vous pouvez passer depuis votre ordinateur client pour télécharger votre script depuis github et le transférer en toute sécurité sur votre serveur.On supposera que vous voudrez copier votre script vers le dossier lib de la débian et que votre script se trouve dans /home/wilder.
-```scp -r /home/wilder/script.sh root@172.16.30.10:/var/lib```
-Votre script devrait être sur votre machine serveur.
-Si vous avez dez difficultés à copier cotre script,rendez-vous dans le fichier ```/etc/ssh/sshd_config``` et ouvrez le
+### 4) La récupération du Script
+Lorsque l'installation SSH sera terminée,vous devrez récupérer votre script. Vous pouvez passer depuis votre ordinateur client pour télécharger votre script depuis github et le transférer en toute sécurité sur votre serveur. On supposera que vous voudrez copier votre script vers le dossier lib de la débian et que votre script se trouve dans /home/wilder.  
+```scp -r /home/wilder/script.sh root@172.16.30.10:/var/lib```  
+Votre script devrait être sur votre machine serveur.  
+Si vous avez dez difficultés à copier votre script,rendez-vous dans le fichier ```/etc/ssh/sshd_config``` et ouvrez le.  
 cherchez la ligne ```PermitRootLogin```,enlevez le # et faites ```yes```
-
-
 ![copie_script](./Images/Installation/Scp.png)  
 
-
-
-
-
-## Étapes d'installations sur Ubuntu 
-
-### 1) Définir une adresse ip fixe
-Pour définir une adresse ip fixe il faudra vous rendre dans les paramètres filaires de votre machine cliente.
-![group](./Images/Installation/1.png) 
-![group](./Images/Installation/2.png) 
-
-Selectionnez ipv4 et faites les modifications suivantes manuellement
-
-```addresse 172.16.30.30```
-	
- ```masque de réseau 255.255.255.0```
-
- ```DNS 8.8.8.8```
-
-```passerelle 172.16.30.254```
-
-![group](./Images/Installation/3.png)
-
-
-### 2) Renommer le client
-
-On reprend les mêmes étapes mais le client aura pour nom cette fois-ci Clilin01
-
-### 3) Installation SSH
-
-#### Étape 1
-Vous pouvez créér un utilisateur local sur lequel SSH sera installé (par exemple utilisateur_ssh pour le besoin du script) et ajoutez le au groupe sudo avec ```sudo usermod -aG sudo utilisateur_ssh```et vérifiez avec ```groups utilisateur_ssh```
-![group](./Images/Installation/group.png)  
-
-#### Étape 2
-Pour installer SSH sur la ubuntu vous devrez effectuer exactement les mêmes étapes que pour la débian dans la même ordre.
-
-
----
 ## Un serveur Windows et son client Windows
 
 ### Les prérequis techniques
-Serveur + client
-connaissance de la configuration du réseau
-connaissance de Windows et console
-droit admin sur serveur et client
+- Avoir une machine Serveur Windows Server 2022 et au moins une machine client Windows 10.
+- AVoir des droits administrateurs sur toutes les machines.
+- Avoir des connaissances basique en Powershell.
+- Avoir une connexion internet.
 
-## 1) Étapes d'installation sur les windows pour l'adresse ip
-La configuation de l'ip est la même pour les 2 windows,seul l'adresse ip changera.
-
+### 1)Configurer les adresses IP
+La configuation de l'IP est la même pour les 2 windows,seule l'adresse IP changera.  
 Rendez-vous dans l'onglet réseau en bas à droite de l'écran et cliquez sur ```modifier les options d'adaptateur```
 
 ![group](./Images/Installation/6.png)
 
-Faites un clique droit sur ```ethernet``` et sélectionnez ```propriétés```.
+Faites un clic droit sur ```ethernet``` et sélectionnez ```propriétés```.
 
 ![group](./Images/Installation/7.png)
 
@@ -170,32 +125,56 @@ Ensuite faites les modifications nécessaires pour votre adresse IP
 
 ![group](./Images/Installation/9.png)
 
-Pour votre windows server 2022 ce sera:
+Pour votre Windows Server 2022 :
 
-```addresse IP 172.16.30.5```
-	
- ```masque de sous-réseau 255.255.255.0```
+```
+addresse IP 172.16.30.5
+masque de sous-réseau 255.255.255.0
+serveur DNS préféré 8.8.8.8
+passerelle par défaut 172.16.30.254
+```
 
- ```serveur DNS préféré 8.8.8.8```
+Pour la Windows 10 :
 
-```passerelle par défaut 172.16.30.254```
-
-tandis que pour la windows 10 ce sera:
-
-```addresse IP 172.16.30.30```
-	
- ```masque de sous-réseau 255.255.255.0```
-
- ```serveur DNS préféré 8.8.8.8```
-
-```passerelle par défaut 172.16.30.254```
+```
+addresse IP 172.16.30.20
+masque de sous-réseau 255.255.255.0
+serveur DNS préféré 8.8.8.8
+passerelle par défaut 172.16.30.254
+```
 
 Redémarrez votre ordinateur et faites ensuite ```ìp a``` pour vérifier l'adresse ip.
 
+## Configuration de WinRM
+### Sur le serveur
+Dans une console Powershell en tant qu'administrateur, entrez les commandes ```Start-Service -Name WinRM```et ```Enable-PSRemoting -Force```  
+
+Si votre pare-feu est activé, tapez ```New-NetFirewallRule -Name "WinRM-HTTP" -DisplayName "Windows Remote Management (HTTP-In)" -Enabled True -Direction Inbound -Protocol TCP -LocalPort 5985```  
+
+![Installation WINRM Serveur](./Images/Installation/SRVWIN_WINRM.png)
+
+Entrez tous les machines de votre réseau en hôte de confiance : ```Set-Item WSMan:\localhost\Client\TrustedHosts -Value "172.16.30.*" -Force```
+### Sur le client
+Dans une console Powershell en tant qu'administrateur,entrez les commandes ```Set-Service -Name winrm -StartupType Automatic```et ```Start-Service -Name WinRM```.   
+![Install WINRM client](./Images/Installation/WINRM_client.png)
+Autorisez le serveur à se conecter : ```Set-Item WSMan:\localhost\Client\TrustedHosts -Value "N172.16.30.5" -Force```.  
+
+Si votre pare-feu est activé, tapez ```Set-NetConnectionProfile -InterfaceIndex (Get-NetConnectionProfile).InterfaceIndex -NetworkCategory Private```, ```Enable-PSRemoting -Force``` puis ```Set-NetFirewallRule -Name "WINRM-HTTP-In-TCP" -Enabled True```.  
+![Config WINRM client](./Images/Installation/WINRM.png)
+Puis dans une console cmd.exe en administrateur, entrez ```reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v LocalAccountTokenFilterPolicy /t REG_DWORD /d 1 /f``` et ``ẁinrm quickcongif```  
+![Config cmd.exe client](./Images/Installation/WINRM_serveur_cmd.png)
+
+## Installation de Chocolatey sur le client
+Dans un Powershell, tapez ```Set-ExecutionPolicy AllSigned -Scope Process -Force; iwr https://community.chocolatey.org/install.ps1 -UseBasicParsing | iex```.  
 
 
+## Installation de Powershell 7.4 sur le serveur
+Pour installer ce logiciel, téléchargez-le en suivant ce lien : [PowerShell-7.4.1-win-x64.msi](https://github.com/PowerShell/PowerShell/releases/download/v7.4.1/PowerShell-7.4.1-win-x64.msi).  
+Lancez le fichier et suivez les directives d'installation.  
 
+## La Foire aux Questions
+"Je n'arrive pas à installer Chocolatey ou Powershell 7.4" :  
+Vérifiez bien que vous êtes en tant qu'administrateur et que votre connexion Internet soit bonne.  
 
-### Les étapes d'installation et de configuration
-
-### La Foire aux Questions
+"Je n'arrive pas à lancer mon script" :  
+Sur windows, lancez la commande ```Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted```. SUr Linux, tapez la commande ```chmod u+x ./script.sh```.   
