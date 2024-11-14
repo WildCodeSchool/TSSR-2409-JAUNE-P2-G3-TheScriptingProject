@@ -307,7 +307,8 @@ function actionComputer {
             $NewDir = Read-Host "Entrez le nom du dossier que vous voulez créer"
             $pathDir = Read-Host "Entrez le chemin absolu où vous souhaitez créer le dossier"
             try {
-                Invoke-Command -session $sessionn -ScriptBlock { param ($pathDir, $NewDir ) New-Item -Path "$pathDir\$NewDir" -ItemType Directory} -ArgumentList $pathDir $NewDir
+                Invoke-Command -session $sessionn -ScriptBlock { param ($pathDir, $NewDir ) `
+                    New-Item -Path "$pathDir\$NewDir" -ItemType Directory} -ArgumentList $pathDir $NewDir
                 Write-Host "Le dossier $NewDir a été crée dans le chemin $pathDir"
                 addLog "Réussite de la création du dossier $NewDir"
             }
@@ -323,12 +324,14 @@ function actionComputer {
             $suppDir = Read-Host "Entrez le nom du dossier que vous voulez supprimer"
             $pathDir = Read-Host "Entrez le chemin où se trouve le dossier"
             try {
-                Remove-Item -Path "$pathDir\$suppDir" 
+                Invoke-Command -session $sessionn -ScriptBlock { param ($pathDir, $suppDir ) `
+                    Remove-Item -Path "$pathDir\$NewDir"} -ArgumentList $pathDir $suppDir
                 Write-Host "Le dossier $suppDir est supprimé du chemin $pathDir"
-                addLog "Réussite de la suppression du dossier $NewDir"
+                addLog "Réussite de la suppression du dossier $suppDir"
             }
             catch {
-                Write-Host "Veuillez réessayer"
+                Write-Host "La suppression a échoué."
+                addLog "Échec de la suppression du dossier $suppDir"
             }
         }
 		
