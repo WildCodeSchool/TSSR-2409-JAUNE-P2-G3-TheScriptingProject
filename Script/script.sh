@@ -400,29 +400,35 @@ function actionComputer() {
 		sleep 3;;
 		
 		6) ## Choix de "Modification d'un répertoire de l ordinateur $address_ip"
-		addLog "Choix de 'Modification d'un répertoire de l ordinateur $address_ip'"
-		while ! ssh $user_ssh@$address_ip "[ -d $rep_path/$rep_name ]" 2> /dev/null
-		do
-			read -p "Entrez le nom du dossier : " rep_name
-			read -p "Entrez le dossier dans lequel $rep_name se trouve (chemin absolu) :" rep_path
-		done
-		read -p  "Souhaitez-vous renommer ou déplacer votre dossier ? Tapez 1 pour renommer, 2 pour déplacer " ans_modify
-		case $ans_modify in
-			1)  ## Pour renommer
-			read -p "Entrez le nouveau nom : " rep_newname
-			ssh $user_ssh@$address_ip "sudo mv $rep_path/$rep_name $rep_path/$rep_newname"
-			echo "Le dossier $rep_name a été renommé en $rep_newname"
-			addLog "Réussite du renommage du dossier $rep_name en $rep_newname sur l'ordinateur client $address_ip";;
-			2) ## Pour déplacer
-			read -p "Entrez le nouveau chemin absolu : " rep_newpath
-			ssh $user_ssh@$address_ip "sudo mv $rep_path/$rep_name $rep_newpath/$rep_name"
-			echo "Le dossier $rep_name a été déplacé en dans le dossier $rep_newpath"
-			addLog "Réussite du déplacement du dossier $rep_name vers $rep_newpath sur l'ordinateur client $address_ip";;
-			*) ## Erreur de saisie
-			echo "Erreur de saisie, échec de la modification du dossier"
-			addLog "Échec de la modification du dossier $rep_name sur l'ordinateur client $address_ip";;
-		esac
-		sleep 3;;
+                addLog "Choix de 'Modification d'un répertoire de l ordinateur $address_ip'"
+                read -p "Entrez le nom du dossier : " rep_name
+                while   [ -z $rep_name ]
+                        do
+                        read -p "Erreur,entrez le nom du dossier : " rep_name
+                        done
+                read -p "Entrez le dossier dans lequel $rep_name se trouve (chemin absolu) :" rep_path
+                while   [ -z $rep_path ]
+                do
+                        read -p "Erreur,entrez le dossier dans lequel $rep_name se trouve (chemin absolu) :" rep_path
+                done
+                read -p  "Souhaitez-vous renommer ou déplacer votre dossier ? Tapez 1 pour renommer, 2 pour déplacer " ans_modify
+                case $ans_modify in
+                        1)  ## Pour renommer
+                        read -p "Entrez le nouveau nom : " rep_newname
+                        ssh -t $user_ssh@$address_ip "sudo mv $rep_path/$rep_name $rep_path/$rep_newname"
+                        echo "Le dossier $rep_name a été renommé en $rep_newname"
+                        addLog "Réussite du renommage du dossier $rep_name en $rep_newname sur l'ordinateur client $address_ip";;
+                        2) ## Pour déplacer
+                        read -p "Entrez le nouveau chemin absolu : " rep_newpath
+                        ssh -t $user_ssh@$address_ip "sudo mv $rep_path/$rep_name $rep_newpath/$rep_name"
+                        echo "Le dossier $rep_name a été déplacé en dans le dossier $rep_newpath"
+                        addLog "Réussite du déplacement du dossier $rep_name vers $rep_newpath sur l'ordinateur client $address_ip";;
+                        *) ## Erreur de saisie
+                        echo "Erreur de saisie, échec de la modification du dossier"
+                        addLog "Échec de la modification du dossier $rep_name sur l'ordinateur client $address_ip";;
+                esac
+                sleep 3;;
+
 		
 		7) ## Choix de "Suppression d'un répertoire de l'ordinateur $address_ip"
 		addLog "Choix de 'Suppression d'un répertoire de l'ordinateur $address_ip'"
