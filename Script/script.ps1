@@ -306,14 +306,16 @@ function actionComputer {
             $NewDir = Read-Host "Entrez le nom du dossier que vous voulez créer"
             $pathDir = Read-Host "Entrez le chemin absolu où vous souhaitez créer le dossier"
             try {
-                Invoke-Command -session $sessionn -ScriptBlock { param ($pathDir, $NewDir ) `
-                    New-Item -Path "$pathDir\$NewDir" -ItemType Directory} -ArgumentList $pathDir $NewDir
+                Invoke-Command -session $session -ScriptBlock { param ($pathDir, $NewDir ) `
+                    New-Item -Path "$pathDir\$NewDir" -ItemType Directory} -ArgumentList $pathDir,$NewDir
                 Write-Host "Le dossier $NewDir a été crée dans le chemin $pathDir"
                 addLog "Réussite de la création du dossier $NewDir"
+                Start-Sleep -Seconds 2
             }
             catch {
                 Write-Host "La création n'a pas réussi."
                 addLog "Échec de la création du dossier $NewDir"
+                Start-Sleep -Seconds 2
             }
         }
 
@@ -323,14 +325,16 @@ function actionComputer {
             $suppDir = Read-Host "Entrez le nom du dossier que vous voulez supprimer"
             $pathDir = Read-Host "Entrez le chemin où se trouve le dossier"
             try {
-                Invoke-Command -session $sessionn -ScriptBlock { param ($pathDir, $suppDir ) `
-                    Remove-Item -Path "$pathDir\$NewDir"} -ArgumentList $pathDir $suppDir
+                Invoke-Command -session $session -ScriptBlock { param ($pathDir, $suppDir ) `
+                    Remove-Item -Path "$pathDir\$suppDir"} -ArgumentList $pathDir,$suppDir
                 Write-Host "Le dossier $suppDir est supprimé du chemin $pathDir"
                 addLog "Réussite de la suppression du dossier $suppDir"
+                Start-Sleep -Seconds 2
             }
             catch {
                 Write-Host "La suppression a échoué."
                 addLog "Échec de la suppression du dossier $suppDir"
+                Start-Sleep -Seconds 2
             }
         }
 		
