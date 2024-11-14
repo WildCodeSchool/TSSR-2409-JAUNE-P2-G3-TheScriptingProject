@@ -452,7 +452,7 @@ function actionComputer() {
 		read -p "Voulez-vous autoriser ou refuser le HTTP sur le port 80 ? 1 pour autoriser, 2 pour refuser " ans_firewall
 		case $ans_firewall in
 			1) # Pour autoriser
-			if ssh $user_ssh@$address_ip "sudo ufw allow 80"
+			if ssh -t $user_ssh@$address_ip "sudo ufw allow 80"
 			then
 				echo "Le port 80 est autorisé sur la machine $address_ip"
 				addLog "Réussite de l'autorisation de l'utilisation du port 80 sur l'ordinateur client $address_ip"
@@ -462,7 +462,7 @@ function actionComputer() {
 			fi;;
 	
 			2) # Pour refuser
-			if ssh $user_ssh@$address_ip "sudo ufw deny 80"
+			if ssh -t $user_ssh@$address_ip "sudo ufw deny 80"
 			then
 				echo "Le port 80 est refusé sur la machine $address_ip"
 				addLog "Réussite du refus de l'utilisation du port 80 sur l'ordinateur client $address_ip"
@@ -478,7 +478,7 @@ function actionComputer() {
 		
 		9) ## Choix de "Activation du pare-feu de l'ordinateur $address_ip"
 		addLog "Choix de 'Activation du pare-feu de l'ordinateur $address_ip'"
-		if ssh $user_ssh@$address_ip "sudo ufw enable"
+		if ssh -t $user_ssh@$address_ip "sudo ufw enable"
 		then
 			echo "Le pare-feu de la machine $address_ip a été activé."
 			addLog "Réussite de l'activation du pare-feu de l'ordinateur $address_ip'"
@@ -490,7 +490,7 @@ function actionComputer() {
 
 		10) ## Choix de "Désactivation du pare-feu de l'ordinateur $address_ip"
 		addLog "Choix de 'Désactivation du pare-feu de l'ordinateur $address_ip'"
-		if ssh $user_ssh@$address_ip "sudo ufw disable"
+		if ssh -t $user_ssh@$address_ip "sudo ufw disable"
 		then
 			echo "Le pare-feu de la machine $address_ip a été désactivé."
 			addLog "Réussite de la désactivation du pare-feu de l'ordinateur $address_ip'"
