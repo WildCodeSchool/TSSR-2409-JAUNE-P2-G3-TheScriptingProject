@@ -489,7 +489,7 @@ function infoUser {
 
                 try {
                     # Exécution de la commande sur la session distante et stockage du résultat
-                    Invoke-Command -Session $Session -ScriptBlock {
+                    $result = Invoke-Command -Session $Session -ScriptBlock {
                         param ($username)
         
                         # Récupération de l'événement de connexion avec ID 4624 pour Windows 10
@@ -500,17 +500,17 @@ function infoUser {
                         # Si une connexion est trouvée, retourner l'heure de connexion
                         if ($derniereConnexion) {
                             $timeGenerated = $derniereConnexion.TimeCreated
-                            Write-Host "L'utilisateur '$username' s'est connecté pour la dernière fois le : $timeGenerated"
-                            addLog "L'utilisateur '$username' s'est connecté pour la dernière fois le : $timeGenerated"
+                            return "L'utilisateur '$username' s'est connecté pour la dernière fois le : $timeGenerated"
                         }
                         else {
                             # Si aucune connexion n'est trouvée
-                            Write-Host "Aucune connexion trouvée pour l'utilisateur '$username'."
-                            addLog "Aucune connexion trouvée pour l'utilisateur '$username'."
+                            return "Aucune connexion trouvée pour l'utilisateur '$username'."
                         }
                     } -ArgumentList $username
 
                     # Affichage et enregistrement des résultats dans le fichier de log
+                    Write-Host $result
+                    addLog "$result"
                     Start-Sleep -Seconds 1
                 }
                 catch {
