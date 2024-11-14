@@ -291,7 +291,7 @@ function actionUser {
 
 #### fonction pour gérer les actions concernant un ordinateur client
 function actionComputer {
-    menu "Création de répertoire" "Suppression de répertoire" "Définition de règles de pare-feu" " "Installation de logiciel" "Désinstallation de logiciel" "Retour"
+    menu "Création de répertoire" "Suppression de répertoire" "Définition de règles de pare-feu" "Installation de logiciel" "Désinstallation de logiciel" "Retour"
     $ans_action_computer = Read-Host 
     Switch ($ans_action_computer) { 
         0 {
