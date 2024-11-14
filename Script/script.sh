@@ -430,8 +430,8 @@ function actionComputer() {
 		do
 			read -p "Entrez le nom du dossier avec son chemin absolu : " rep_path
 		done
-		ssh $user_ssh@$address_ip "sudo rm -r $rep_path"
-		if $?
+		if ssh -t $user_ssh@$address_ip "sudo rm -r $rep_path"
+		
 		then
 			echo "Suppression du répertoire $rep_path réussie."
 			addLog "Réussite de la suppression du dossier $rep_path de l'ordinateur $address_ip"
