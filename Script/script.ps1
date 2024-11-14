@@ -464,26 +464,28 @@ function infoUser {
             1 {
                 $username = Read-Host "Entrez le nom de l'utilisateur"
 
-                    try { Invoke-Command -Session $Session -ScriptBlock {
+                    try { 
+                        $result = Invoke-Command -Session $Session -ScriptBlock {
                         param ($username)
                         $derniereConnexion = Get-WinEvent -LogName Security -FilterXPath "*[System/EventID=4624]" | 
                             Where-Object { $_.Properties.Count -gt 5 -and $_.Properties[5].Value -eq $username } |
                             Select-Object -Last 1
         
                     if ($derniereConnexion) {
-                        Write-Host "L'utilisateur '$username' s'est connecté pour la dernière fois le : $($derniereConnexion.TimeGenerated)"
-                        addLog "Dernière connexion de l'utilisateur '$username' le : $($derniereConnexion.TimeGenerated)"
+                        $timeGenerated = $derniereConnexion.TimeGenerated
+                        Write-Host "L'utilisateur '$username' s'est connecté pour la dernière fois le : $timeGenerated"
+                        addLog "$result Dernière connexion de l'utilisateur '$username' le : $timeGenerated"
                         Start-Sleep -Seconds 1
                     } else {
                         Write-Host "Aucune connexion trouvée pour l'utilisateur '$username'." *> $null
-                        addLog "Aucune connexion trouvée pour l'utilisateur '$username'."
+                        addLog "$result Aucune connexion trouvée pour l'utilisateur '$username'."
                         Start-Sleep -Seconds 1
                     }
                 } -ArgumentList $username
                     }
                     catch {
                         Write-Host "Erreur lors de la récupération des informations de connexion pour '$username'." *> $null
-                        addLog "Erreur lors de la récupération des informations de connexion pour '$username'."
+                        addLog "$result Erreur lors de la récupération des informations de connexion pour '$username'."
                         Start-Sleep -Seconds 1
                     }
             }
