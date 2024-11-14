@@ -463,34 +463,33 @@ function infoUser {
             }
             1 {
                 $username = Read-Host "Entrez le nom de l'utilisateur"
-                # Pour récupérer l'info du dérnier 7 jours
-                $startDate = (Get-Date).AddDays(-7)
 
                 try {
                     Invoke-Command -Session $Session -ScriptBlock {
-                        param ($username, $startDate)
-        
-                        $derniereConnexion = Get-WinEvent -LogName Security -FilterHashtable @{LogName="Security"; Id=4624; StartTime=$startDate} |
-                            Where-Object { $_.Properties[5].Value -eq $username } |
-                            Select-Object -Last 1
+                    param ($username)
 
-                    if ($derniereConnexion) {
-                        $timeGenerated = $derniereConnexion.TimeGenerated
-                        Write-Host "L'utilisateur '$username' s'est connecté pour la dernière fois le : $timeGenerated"
-                        addLog "Dernière connexion de l'utilisateur '$username' le : $timeGenerated"
+                    # Récupère les événements de connexion (ID 4624) pour le nom d'utilisateur donné
+                    $events = Get-WinEvent -FilterHashtable @{LogName='Security'; ID=4624} |
+                        Where-Object { $_.Properties[5].Value -eq $username }
+
+                    if ($events) {
+                        # Trie les événements par date de création et récupère le plus récent
+                        $lastLogin = $events | Sort-Object TimeCreated -Descending | Select-Object -First 1
+                        Write-Host "L'utilisateur '$username' s'est connecté pour la dernière fois le : $($lastLogin.TimeCreated)"
+                        addLog "Dernière connexion de l'utilisateur '$username' le : $($lastLogin.TimeCreated)"
                         Start-Sleep -Seconds 1
                     } else {
                         Write-Host "Aucune connexion trouvée pour l'utilisateur '$username'."
                         addLog "Aucune connexion trouvée pour l'utilisateur '$username'."
                         Start-Sleep -Seconds 1
                     }
-                    } -ArgumentList $username, $startDate
+                    } -ArgumentList $username
                 }
                 catch {
-                    Write-Host "Erreur lors de la récupération des informations de connexion pour '$username'."
-                    addLog "Erreur lors de la récupération des informations de connexion pour '$username'."
-                    Start-Sleep -Seconds 1
-            }      
+                Write-Host "Erreur lors de la récupération des informations de connexion pour '$username'."
+                addLog "Erreur lors de la récupération des informations de connexion pour '$username'."
+                Start-Sleep -Seconds 1
+                }
             }
 
             2 {
