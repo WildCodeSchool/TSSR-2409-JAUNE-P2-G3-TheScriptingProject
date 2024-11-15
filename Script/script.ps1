@@ -465,7 +465,7 @@ function infoUser {
                         param ($username)
         
                         # Récupération de l'événement de connexion avec ID 4624 pour Windows 10
-                        $derniereConnexion = Get-WinEvent -FilterHashtable @{ -Logname 'Security'; ID=4624} | 
+                        $derniereConnexion = Get-WinEvent -FilterHashtable @{ -Logname 'Security'; ID=4624 } | 
                         Where-Object { $_.Properties.Count -gt 5 -and $_.Properties[5].Value -eq $username } |
                         Select-Object -Last 1
 
