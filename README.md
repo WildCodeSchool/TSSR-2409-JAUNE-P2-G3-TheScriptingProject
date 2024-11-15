@@ -52,7 +52,7 @@ Pour le sprint 4 :
 | ---------- | ------ | ------------------------------------------------------------------------------------------------- |
 | Lamine     | Membre | Débuggage de la partie Powershell, modification des livrables                                     |
 | Sam        |   PO   | Débuggage de la partie Powershell                                                                 |
-| Charlène   |   SM   | Débuggage de la partie POwershell, modification des livrables                                     |
+| Charlène   |   SM   | Débuggage de la partie Powershell, modification des livrables                                     |
 | Arnauld    | Membre | Écriture de fonctions                                                                             |
 
 
