@@ -22,7 +22,7 @@ Il faudra se rendre dans le ficher interfaces et le modifier avec une adresse IP
 ```
 #The primary network interface
 auto enp0s18
-Iface enp0s18 inet static
+iface enp0s18 inet static
 address 172.16.30.10
 netmask 255.255.255.0
 dns-nameservers 8.8.8.8
