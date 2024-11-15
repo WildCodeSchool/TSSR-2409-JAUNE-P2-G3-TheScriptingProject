@@ -344,9 +344,7 @@ function actionComputer {
             $choose_firewall = Read-Host "Voulez-vous autoriser ou refuser le HTTP sur le port 80 ? 1 pour autoriser, 2 pour refuser"
             switch ($choose_firewall) {
                 1 {
-                    $result = Invoke-Command -ComputerName $address_ip -ScriptBlock {
-                        sudo ufw allow 80
-                    }
+                    $result = Invoke-Command -Session $session -ScriptBlock { sudo ufw allow 80 }
                     if ($result) {
                         Write-Host "Le port 80 est autorisé sur la machine $address_ip"
                     }
@@ -355,7 +353,7 @@ function actionComputer {
                     }
                 }
                 2 {
-                    $result = Invoke-Command -ComputerName $address_ip -ScriptBlock {
+                    $result = Invoke-Command -Session $session -ScriptBlock {
                         sudo ufw deny 80
                     }
                     if ($result) {
@@ -428,6 +426,26 @@ function infoUser {
         "Droits/permissions de l’utilisateur sur un fichier" "Retour"
     Write-Host "Si vous souhaitez plusieurs informations, écrivez les différents chiffres à la suite, avec un espace entre chaque. "
     $ans_info_user = Read-Host 
+
+    ## chemin vers le fichier d'enregistrement d'informations
+    $file_info_computer = "C:\Users\$env:USERNAME\Documents\info_$($username)_$(get-date -Format "yyyyMMdd").txt"
+    $username = Read-Host "Entrez le nom de l'utilisateur que vous voulez cibler"
+    ## sortie du script si il y a un 0, retour si 12. Création et/ou initialisation du fichier d'enregistrement
+    if ($ans_info_user | Select-String -Pattern " 0 |^0| 0$") {
+        ## Fin du script
+        Write-Host "Fin du script"
+        addLog "*********EndScript*********"
+        exit
+    }
+    if ($ans_info_user | Select-String -Pattern "8") {
+        ## Retour en arrière
+        addLog "Retour au menu précédent, le menu Information"
+        break
+    }
+    New-Item -type file $file_info_user *> $NULL
+    add-Content -Value "####### `n# Informations sur l'utilisateur $username demandées le $(get-date -Format "yyyyMMdd") à $(get-date -Format "HHmm") `n#######`n" `
+        -path $file_info_user
+
     foreach ($ans in $ans_info_user.Split(" ")) {
         
         Switch ($ans) {
@@ -440,7 +458,7 @@ function infoUser {
             }
 
             1 {
-                $username = Read-Host "Entrez le nom de l'utilisateur"
+                
                 try {
                     # Exécution de la commande sur la session distante et stockage du résultat
                     $result = Invoke-Command -Session $Session -ScriptBlock {
@@ -462,8 +480,9 @@ function infoUser {
                         }
                     } -ArgumentList $username
                     # Affichage et enregistrement des résultats dans le fichier de log
-                    Write-Host $result
-                    addLog "$result"
+                    Add-Content -Path $file_info_user -value "`n"
+                    Add-Content -path $file_info_user -Value $result
+                    addlog "$result"
                     Start-Sleep -Seconds 1
                 }
                 catch {
@@ -477,21 +496,22 @@ function infoUser {
             2 {
                 $username = Read-Host "Entrez le nom de l'utilisateur"
                 try {
-                    Invoke-Command -Session $Session -ScriptBlock {
+                    $results=Invoke-Command -Session $Session -ScriptBlock {
                         param ($username)
                         $user = Get-LocalUser -Name $username -ErrorAction SilentlyContinue
         
                         if ($user) {
-                            Write-Host "Dernière modification du mot de passe de l'utilisateur '$username' : $($user.PasswordLastSet)"
-                            addLog "Dernière modification du mot de passe de '$username' : $($user.PasswordLastSet)"
-                            Start-Sleep -Seconds 1
+                            $results="Dernière modification du mot de passe de l'utilisateur '$username' : $($user.PasswordLastSet)"
                         }
                         else {
-                            Write-Host "L'utilisateur '$username' n'existe pas."
-                            addLog "L'utilisateur '$username' n'existe pas."
-                            Start-Sleep -Seconds 1
+                            $results="L'utilisateur '$username' n'existe pas."
                         }
+                        return $results
                     } -ArgumentList $username
+                Add-Content -Path $file_info_user -value "`n"
+                Add-Content -path $file_info_user -Value $results
+                addLog $results
+                Start-Sleep -Seconds 1
                 }
                 catch {
                     Write-Host "Erreur lors de la récupération de la date de modification du mot de passe pour '$username'." *> $null
@@ -503,22 +523,24 @@ function infoUser {
             3 {
                 $username = Read-Host "Entrez le nom de l'utilisateur"
                 try {
-                    Invoke-Command -Session $Session -ScriptBlock {
+                    $sessions=Invoke-Command -Session $Session -ScriptBlock {
                         param ($username)
-                        $sessions = query user | Select-String $username
-        
-                        if ($sessions) {
-                            Write-Host "Sessions ouvertes pour l'utilisateur '$username' :"
-                            $sessions
-                            addLog "Sessions ouvertes pour '$username' listées avec succès."
-                            Start-Sleep -Seconds 1
-                        }
-                        else {
-                            Write-Host "Aucune session ouverte trouvée pour l'utilisateur '$username'." *> $null
-                            addLog "Aucune session ouverte trouvée pour '$username'."
-                            Start-Sleep -Seconds 1
-                        }
-                    } -ArgumentList $username
+                        $sessions = query user | Select-String $username 
+                    return $sessions } -ArgumentList $username 
+                    if ($sessions) 
+                    {
+                        Add-Content -Path $file_info_user -value "`n"
+                        Add-Content -path $file_info_user -Value  "Sessions ouvertes pour l'utilisateur '$username' :"
+                        Add-Content -Path $file_info_user -value $sessions
+                        addLog "Sessions ouvertes pour '$username' listées avec succès."
+                        Start-Sleep -Seconds 1
+                    }
+                    else {
+                        Add-Content -Path $file_info_user -value "`n"
+                        Add-Content -path $file_info_user -Value "Aucune session ouverte trouvée pour l'utilisateur '$username'." *> $null
+                        addLog "Aucune session ouverte trouvée pour '$username'."
+                        Start-Sleep -Seconds 1
+                    }
                 }
                 catch {
                     Write-Host "Erreur lors de la récupération des sessions ouvertes pour '$username'." *> $null
@@ -529,31 +551,26 @@ function infoUser {
 
             4 {
                 $username = Read-Host "Entrez le nom de l'utilisateur"
-
                 try {
-                    Invoke-Command -Session $Session -ScriptBlock {
+                    $groupes=Invoke-Command -Session $Session -ScriptBlock {
                         param ($username)
-                
                         # Utiliser WMI pour obtenir les groupes de l'utilisateur
-                        $groupes = Get-WmiObject -Class Win32_GroupUser | Where-Object {
-                            $_.PartComponent -match "Name=`"$username`""
-                        }
-                
-                        if ($groupes) {
-                            Write-Host "Groupes d'appartenance de l'utilisateur '$username' :"
-                            $groupes | ForEach-Object {
-                                # Afficher le nom de chaque groupe
-                                ([wmi]$_.GroupComponent).Name
+                        $groupes = Get-WmiObject -Class Win32_GroupUser | Where-Object $_.PartComponent -match "Name=`"$username`""
+                        return $groupes } -ArgumentList $username
+                    if ($groupes) {
+                        Write-Host "Groupes d'appartenance de l'utilisateur '$username' :"
+                        $groupes | ForEach-Object {
+                            # Afficher le nom de chaque groupe
+                            ([wmi]$_.GroupComponent).Name
                             }
-                            addLog "Groupes pour '$username' listés avec succès."
-                            Start-Sleep -Seconds 1
-                        }
-                        else {
-                            Write-Host "Aucun groupe trouvé pour l'utilisateur '$username'."
-                            addLog "Aucun groupe trouvé pour '$username'."
-                            Start-Sleep -Seconds 1
-                        }
-                    } -ArgumentList $username
+                        addLog "Groupes pour '$username' listés avec succès."
+                        Start-Sleep -Seconds 1
+                    }
+                    else {
+                        Write-Host "Aucun groupe trouvé pour l'utilisateur '$username'."
+                        addLog "Aucun groupe trouvé pour '$username'."
+                        Start-Sleep -Seconds 1
+                    }
                 }
                 catch {
                     Write-Host "Erreur lors de la récupération des groupes pour l'utilisateur '$username'."
@@ -645,6 +662,10 @@ function infoUser {
             }
         }
     }
+    if ($ans_info_user.Length -le 2)
+    { Get-Content $file_info_userer | Select-String -Pattern "# Informations" -Context 1,1000 | Select-Object -Last 1}
+    Write-Host "Les informations sont dans le fichier $file_info_user."
+    Start-Sleep -Seconds 2
 }
 
 #### fonction qui gère les informations sur l'ordinateur client
