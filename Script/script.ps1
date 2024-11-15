@@ -373,32 +373,41 @@ function actionComputer {
             ## Choix de "Installation de logiciel de l'ordinateur $address_ip"
             addLog "Choix de 'Installation de logiciel de l'ordinateur $address_ip'"
             $name = Read-Host "Entrez le nom du logiciel à installer: "
-        Invoke-Command -ComputerName $address_ip -ScriptBlock {
-		param($name)
-		$install = choco list --local-only
-		if ($install -contains $name) {
-			Write-Host "$name est déjà installé."
-		} else {
-			Write-Host "Installation de $name..."
-			choco install $name -y
-			Write-Host "$name a été installé avec succès."
-		}		
-        } -ArgumentList $name
+            $results=Invoke-Command -session $session -ScriptBlock {
+                param($name)
+                $install = choco list --local-only
+                if ($install -contains $name) {
+                    $results="Échec de l'installation de $name"
+                } else {
+                    choco install $name -y
+                    $results="Réussite de l'installation de $name"
+                }
+                return $results
+            } -ArgumentList $name
+            write-host $results
+            addLog $results
+            Start-Sleep -Seconds 2
         }
 		
         5 {
             ## Choix de "Désinstallation de logiciel"
             addLog "Choix de 'Désinstallation de logiciel'"
             $name = Read-Host "Entrez le nom du logiciel à désinstaller: "
-            $install = choco list --local-only
-            if ($install -contains $name) {
-                Write-Host "Désinstallation de $name..."
-                choco uninstall $name -y
-                Write-Host "$name a été désinstallé avec succès." -ForegroundColor Green
-            }
-            else {
-                Write-Host "$name n'est pas installé, il n'y a rien à désinstaller." -ForegroundColor Red
-            }
+            $results=Invoke-Command -session $session -ScriptBlock {
+                param($name)
+                $install = choco list --local-only
+                if ($install -contains $name) {
+                    choco uninstall $name -y
+                    $results="Réussite de la désinstallation de $name"
+                    
+                } else {
+                    $results="Échec de la désinstallation de $name"
+                }
+                return $results
+            } -ArgumentList $name
+            write-host $results
+            addLog $results
+            Start-Sleep -Seconds 2
         }
 
         6 {
