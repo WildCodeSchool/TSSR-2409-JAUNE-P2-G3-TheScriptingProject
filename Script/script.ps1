@@ -504,7 +504,7 @@ function infoUser {
                     if ($sessions) 
                     {
                         Add-Content -Path $file_info_user -value "`n"
-                        Add-Content -path $file_info_user -Value  "Sessions ouvertes pour l'utilisateur '$username' :"
+                        Add-Content -path $file_info_user -Value  "Sessions ouverte"Définition de règles de pare-feu" s pour l'utilisateur '$username' :"
                         Add-Content -Path $file_info_user -value $sessions
                         Start-Sleep -Seconds 1
                     }
@@ -549,7 +549,7 @@ function infoUser {
                         param ($username)
                         $historyFilePath = "C:\Users\$username\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt"
                         if (Test-Path $historyFilePath) {
-                            $results=Get-Content $historyFilePath | 
+                            $results=Get-Content $historyFilePath
                         }
                         else {
                             $results="Aucun historique de commandes trouvé pour l'utilisateur '$username'."
@@ -558,7 +558,7 @@ function infoUser {
                     } -ArgumentList $username
                     Add-Content -Path $file_info_user -value "`n"
                     Add-Content -path $file_info_user -Value "Historique des commandes pour l utilisateur '$username' :"
-                    $results=ForEach-Object { Add-Content -path $file_info_user -Value $_ }
+                    Add-Content -path $file_info_user -Value $results
                     addLog "Historique des commandes pour '$username' listé avec succès."
                 }
                 catch {
@@ -569,17 +569,15 @@ function infoUser {
             }
 
             6 {
-                $dossier = Read-Host "Entrez le chemin absolu du dossier"
+                $dossier = Read-Host "Entrez le chemin absolu du dossier dont vous voulez connaître les droits"
                 try {
-                    $results=Invoke-Command -Session $Session -ScriptBlock {
-                        param ($username, $dossier)
-                        $getacl = Get-Acl -Path $dossier
-                        $results=$($getacl).Access | Where-Object { $_.IdentityReference -match $username }
-                        return $results
-                    } -ArgumentList $username, $dossier
+                    
                     Add-Content -Path $file_info_user -value "`n"
                     Add-Content -path $file_info_user -Value "Permissions de l'utilisateur '$username' sur le dossier '$dossier' :"
-                    Add-Content -path $file_info_user -Value $results
+                    Invoke-Command -Session $Session -ScriptBlock {
+                        param ($dossier)
+                        Get-Acl -Path $dossier | Format-List
+                    } -ArgumentList $dossier >> $file_info_user
                     addLog "Permissions sur le dossier '$dossier' listées avec succès pour '$username'."
                     Start-Sleep -Seconds 1
                 }
@@ -591,17 +589,15 @@ function infoUser {
             }
 
             7 {
-                $fichier = Read-Host "Entrez le chemin absolu du fichier"
+                $fichier = Read-Host "Entrez le chemin absolu du fichier dont vous voulez connaître les droits"
                 try {
-                    $results=Invoke-Command -Session $Session -ScriptBlock {
-                        param ($username, $fichier)
-                        $getacl = Get-Acl -Path $fichier
-                        $results=$getacl.Access | Where-Object { $_.IdentityReference -match $username }
-                        return $results
-                    } -ArgumentList $username, $fichier
+                    
                     Add-Content -Path $file_info_user -value "`n"
                     Add-Content -path $file_info_user -Value "Permissions de l'utilisateur '$username' sur le fichier '$fichier' :"
-                    Add-Content -path $file_info_user -Value $results
+                    Invoke-Command -Session $Session -ScriptBlock {
+                        param ($fichier)
+                        Get-Acl -Path $fichier | Format-List
+                    } -ArgumentList $fichier >> $file_info_user
                     addLog "Permissions sur le fichier '$fichier' listées avec succès pour '$username'."
                     Start-Sleep -Seconds 1
                 }
