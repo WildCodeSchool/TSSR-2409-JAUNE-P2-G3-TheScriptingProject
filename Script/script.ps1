@@ -797,14 +797,14 @@ function infoScript {
     menu "Recherche des événements dans le fichier log_evt.log pour un utilisateur" `
         "Recherche des événements dans le fichier log_evt.log pour un ordinateur" "Retour"
     $ans_info_script = Read-Host
+    if ($ans_info_script -eq 0)
+    {
+    	## Fin du script
+        Write-Host "Fin du script"
+        addLog "*********EndScript*********"
+        exit
+    }
     Switch ($ans_info_script) { 
-        0 {
-            ## Fin du script
-            Write-Host "Fin du script"
-            addLog "*********EndScript*********"
-            exit
-        }
-
         1 {
             ## Choix de "Recherche des événements dans le fichier log_evt.log pour un utilisateur"
             addLog "Choix de 'Recherche des événements dans le fichier log_evt.log pour un utilisateur'"
