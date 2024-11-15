@@ -44,7 +44,16 @@ Il faut vérifier l'installation ([INSTALL.md](./INSTALL.md)). Le problème peut
 ## Un serveur Windows et son client Windows
 
 ### L'utilisation de base
+Il faut lancer le script.ps1 depuis une console Powershell 7.4 lancée en Administrateur
+L'utilisation est identique à celle sur Linux.  
+Une différence est à notifier : la connexion entre les deux machines se fait grâce à WinRM.  
+![Visuel de la connexion](./Images/Installation/scriptps1.png)
 
 ### L'utilisation avancée
+Vous pouvez retrouver le même fichier de journalisation qu'avec Linux à l'emplacement ```C:\Windows\System32\LogFiles\log_evt.log```.  
 
 ### La Foire aux Questions
+**Je n'arrive pas à lancer le script. Je n'ai pas les droits**  
+Il faut impérativement lancer la console en tant qu'administrateur.  
+**Je n'arrive pas à lancer le script car j'ai un message de sécurité.**  
+Lancez la commande ``Ùnblock-file .\script.ps1```.  
