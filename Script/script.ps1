@@ -350,7 +350,7 @@ function actionComputer {
                 if ($install -match $name) {
                     $results="Échec de l'installation de $name"
                 } else {
-                    choco install $name -y 
+                    choco install $name -y *> $NULL
                     $results="Réussite de l'installation de $name"
                 }
                 return $results
@@ -368,7 +368,7 @@ function actionComputer {
                 param($name)
                 $install = choco list
                 if ($install -match $name) {
-                    choco uninstall $name -yx
+                    choco uninstall $name -yx *> $NULL
                     $results="Réussite de la désinstallation de $name"
                     
                 } else {
