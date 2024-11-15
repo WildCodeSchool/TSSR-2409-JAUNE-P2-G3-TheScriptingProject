@@ -7,7 +7,7 @@ Vous trouverez dans ce document la manière de configurer vos machines afin d'ut
 
 ### Les prérequis techniques
 - Avoir une machine Serveur Débian 12 et au moins une machine client Ubuntu 24.04LTS
-- AVoir des droits administrateurs sur toutes les machines.
+- Avoir des droits administrateurs sur toutes les machines.
 - Avoir des connaissances basique en Bash.
 - Avoir une connexion internet.
 
