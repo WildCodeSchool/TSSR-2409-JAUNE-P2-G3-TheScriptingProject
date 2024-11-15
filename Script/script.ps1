@@ -383,7 +383,7 @@ function actionComputer {
 
         5 { # Choix de Arrêt
             addLog "Choix de 'Arrêt'"
-            Invoke-Command -Session $session -ScriptBlock { shutdown /s /t 1 }
+            Invoke-Command -Session $session -ScriptBlock { shutdown /s /f /t 0 }
             addLog "L'ordinateur $addressip est éteint"
             write-host "L'ordinateur $address_ip est éteint"
             Start-Sleep -Seconds 2
@@ -392,36 +392,36 @@ function actionComputer {
         6 { # Choix de Redémarrage
             addLog "Choix de 'Redémarrage'"
             Invoke-Command -Session $session -ScriptBlock { shutdown /r /t 1 }
-            addLog "L'ordinateur $addressip va redémarrer."
+            addLog "L'ordinateur $address_ip va redémarrer."
             write-host "L'ordinateur $address_ip est en train de redémarrer"
             Start-Sleep -Seconds 2
         }
 
         7 { ## Choix de verrouillage
             addLog "Choix de 'Verrouillage'"
-            Invoke-Command -Session $session -ScriptBlock { shutdown /l /t 1 }
-            addLog "L'ordinateur $addressip est verrouillé"
+            Invoke-Command -Session $session -ScriptBlock { logoff console }
+            addLog "L'ordinateur $address_ip est verrouillé"
             write-host "L'ordinateur $address_ip est verrouillé."
             Start-Sleep -Seconds 2
         }
 
-        9 { ## Choix de Activation du Pare-feu
+        8 { ## Choix de Activation du Pare-feu
             addLog "Choix de 'Activation du pare-feu'"
             Invoke-Command -Session $session -ScriptBlock { set-netFirewallProfile -enabled true }
-            addLog "Le pare-feu de l'ordinateur $addressip est activé"
-            write-host "Le pare-feu de l'ordinateur $addressip est activé"
+            addLog "Le pare-feu de l'ordinateur $address_ip est activé"
+            write-host "Le pare-feu de l'ordinateur $address_ip est activé"
             Start-Sleep -Seconds 2
         }
 
-        10 { ## Choix de désactivation du Pare-feu
+        9 { ## Choix de désactivation du Pare-feu
             addLog "Choix de 'Désactivation du pare-feu'"
             Invoke-Command -Session $session -ScriptBlock { set-netFirewallProfile -enabled false }
-            addLog "Le pare-feu de l'ordinateur $addressip est désactivé"
-            write-host "Le pare-feu de l'ordinateur $addressip est désactivé"
+            addLog "Le pare-feu de l'ordinateur $address_ip est désactivé"
+            write-host "Le pare-feu de l'ordinateur $address_ip est désactivé"
             Start-Sleep -Seconds 2
         }
 
-        11 {
+        10 {
             ### Retour au menu précédent
             addLog "Retour au menu précédent"
             break
