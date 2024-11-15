@@ -30,7 +30,7 @@ gateway 172.16.30.254
 ```
 Sauvegardez ensuite le fichier.  
 
-Rédemmarez le réseau grâce à ```systemctl restart networking``` et vérifiez la nouvelle adresse IP avec  ```ip a```  
+Redémmarez le réseau grâce à ```systemctl restart networking``` et vérifiez la nouvelle adresse IP avec  ```ip a```  
 Les changements devraient avoir eu lieu.  
 
 Faites un ping vers Google pour vérifier la connexion au réseau internet :```ping 8.8.8.8```  
