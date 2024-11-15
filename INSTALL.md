@@ -50,7 +50,7 @@ passerelle 172.16.30.254
 
 ### 2) Renommer les machines
 
-Pour changer le nom de la machine : ```Sudo nano /etc/hostname```
+Pour changer le nom de la machine : ```sudo nano /etc/hostname```
 Donnez lui un nouveau nom :  ici SRVLX01 pour le serveur et CLILIN01 pour la machine cliente.
 Sauvegardez puis fermez le fichier.
 Pour indiquer aux autres machines le nom des différentes machines sur le réseau : ```sudo nano /etc/hosts```  
@@ -59,7 +59,7 @@ Nous allons modifier les nom afin qu’ils soient bien pris en compte.
 
 ```
 172.16.30.10	SRVLX01
-72.16.30.30	 CLILIN01
+172.16.30.30	 CLILIN01
 ```
   
 Une fois terminé, sauvegardez puis fermez.  
@@ -143,7 +143,7 @@ serveur DNS préféré 8.8.8.8
 passerelle par défaut 172.16.30.254
 ```
 
-Redémarrez votre ordinateur et faites ensuite ```ìp a``` pour vérifier l'adresse ip.
+Redémarrez votre ordinateur et faites ensuite ```ipconfig /all``` pour vérifier l'adresse ip.
 
 ## Configuration de WinRM
 ### Sur le serveur
@@ -161,7 +161,7 @@ Autorisez le serveur à se conecter : ```Set-Item WSMan:\localhost\Client\Truste
 
 Si votre pare-feu est activé, tapez ```Set-NetConnectionProfile -InterfaceIndex (Get-NetConnectionProfile).InterfaceIndex -NetworkCategory Private```, ```Enable-PSRemoting -Force``` puis ```Set-NetFirewallRule -Name "WINRM-HTTP-In-TCP" -Enabled True```.  
 ![Config WINRM client](./Images/Installation/WINRM.png)
-Puis dans une console cmd.exe en administrateur, entrez ```reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v LocalAccountTokenFilterPolicy /t REG_DWORD /d 1 /f``` et ``ẁinrm quickcongif```  
+Puis dans une console cmd.exe en administrateur, entrez ```reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v LocalAccountTokenFilterPolicy /t REG_DWORD /d 1 /f``` et ``ẁinrm quickconfig```  
 ![Config cmd.exe client](./Images/Installation/WINRM_serveur_cmd.png)
 
 ## Installation de Chocolatey sur le client
@@ -177,4 +177,4 @@ Lancez le fichier et suivez les directives d'installation.
 Vérifiez bien que vous êtes en tant qu'administrateur et que votre connexion Internet soit bonne.  
 
 "Je n'arrive pas à lancer mon script" :  
-Sur windows, lancez la commande ```Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted```. SUr Linux, tapez la commande ```chmod u+x ./script.sh```.   
+Sur windows, lancez la commande ```Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted```. Sur Linux, tapez la commande ```chmod u+x ./script.sh```.   
