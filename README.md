@@ -50,62 +50,34 @@ Pour le sprint 4 :
 
 | Équipe     | Rôle   | Missions                                                                                          |
 | ---------- | ------ | ------------------------------------------------------------------------------------------------- |
-| Lamine     | Membre | Débuggage, modification des livrables                                                             |
-| Sam        |   PO   | Débuggage, modification des livrables                                                             |
-| Charlène   |   SM   | Débuggage, modification des livrables                                                             |
-| Arnauld    | Membre | Débuggage, modification des livrables                                                             |
+| Lamine     | Membre | Débuggage de la partie Powershell, modification des livrables                                     |
+| Sam        |   PO   | Débuggage de la partie Powershell                                                                 |
+| Charlène   |   SM   | Débuggage de la partie POwershell, modification des livrables                                     |
+| Arnauld    | Membre | Écriture de fonctions                                                                             |
 
 
 ## Choix techniques
-Les quatre machines sont sur Proxmox. Nous avons également créé des versions sur VirtualBox, afin de faciliter les tests.
+Les quatre machines sont sur Proxmox. Nous avons également créé des versions sur VirtualBox, afin de faciliter les tests.  
 
-**Client Windows 10 :**
-- Nom : CLIWIN01
-- Compte utilisateur : wilder (dans le groupe des admins locaux)
-- Mot de passe : Azerty1*
+Les adresses IP et les OS ont été imposées par le client.  
 
-**Client Ubuntu 24.04 LTS :**
-- Nom : CLILIN01
-- Compte utilisateur : wilder (dans le groupe sudo)
-- Mot de passe : Azerty1*
+Nous avons fait le choix d'une connexion SSH ente les Linux et d'une connexion WinRM pour les Windows, afin de faciliter les échanges en gardant les connexions prévues pour les OS.  
 
-**Serveur Windows Server 2022 :**
-- Nom : SRVWIN01
-- Compte : Administrator (dans le groupe des admins locaux)
-- Mot de passe : Azerty1*
+Nous avons fait le choix de diviser le code en sous-menus, gérés par des fonctions, puis de rediviser chqaque action en fonction également.   
 
-**Serveur Debian 12 :**
-- Nom : SRVLX01
-- Compte : wilder (dans le groupe sudo)
-- Mot de passe : Azerty1*
-
-Les adresses IP ont été imposées par le client.
-
-|   OS   |   IP |
-|---    |:-:    |
-|   @IP Win10   |   172.16.30.20   |
-|   @IP Ubuntu   |   172.16.30.30  |
-|   @IP Serv.Win   |   172.16.30.5   |
-|   @IP Debian   |   172.16.30.10   |
-|   @IP DG   |   172.16.30.254   |
-
-**Masque de sous-réseaux :** 255.255.255.0  
-**DNS : 8.8.8.8**  
-
-Nous avons fait le choix de diviser le code en sous-menus, gérés par des fonctions, puis de rediviser chqaque action en fonction également.  
-Nous avons choisi de créer un compte dédié à la connexion SSH sur chaque machine Linux, afin de faciliter la connexion et la configuration.  
+Nous avons choisi de créer un compte dédié à la connexion SSH sur chaque machine Linux, afin de faciliter la connexion et la configuration.   
 
 ### Difficultés rencontrées et solutions trouvées
-1. L'utilisation de Proxmox a posé quelques problèmes qui se sont résolus avec l'entrainement.
-2. 
-
-
+1. L'utilisation de Proxmox a posé quelques problèmes qui se sont résolus avec l'entrainement.  
+2. Notre méconnaissance de Powershell a retardé notre avancée dans la rédaction de script. Nous nous sommes aidé de forum Powershell et de la commande ```Get-Help```.
+3. Nous n'avons pas réussi à écrire et débugger toutes les fonctionnalités, par manque de temps. Nous avons donc décidé de ne pas les inclure.  
 
 
 
 ### Améliorations possibles
-1. Nous pourrions améliorer la mise en page et l'ergonomie du script, avec par exemple l'ajout de couleurs.
-2. Nous pourrions créer un script pour automatiser la mise en place du script, surtout la partie création des comptes dédiés au SSH.
-3. 
+1. Nous pourrions améliorer la mise en page et l'ergonomie du script, avec par exemple l'ajout de couleurs.  
+2. Nous pourrions ajouter les fonctionnalités manquantes.  
+3. Nous pourrions créer un script pour automatiser la mise en place du script, surtout la partie création des comptes dédiés au SSH.  
+4. Nous pourrions améliorer la sécurité des échanges, en changeant le port du SSH ou en adaptant le pare-feu des Windows.   
 
 
