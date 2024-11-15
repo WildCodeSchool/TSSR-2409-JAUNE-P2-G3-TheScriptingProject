@@ -428,7 +428,7 @@ function infoUser {
     $ans_info_user = Read-Host 
 
     ## chemin vers le fichier d'enregistrement d'informations
-    $file_info_computer = "C:\Users\$env:USERNAME\Documents\info_$($username)_$(get-date -Format "yyyyMMdd").txt"
+    $file_info_user = "C:\Users\$env:USERNAME\Documents\info_$($username)_$(get-date -Format "yyyyMMdd").txt"
     $username = Read-Host "Entrez le nom de l'utilisateur que vous voulez cibler"
     ## sortie du script si il y a un 0, retour si 12. Création et/ou initialisation du fichier d'enregistrement
     if ($ans_info_user | Select-String -Pattern " 0 |^0| 0$") {
@@ -443,7 +443,7 @@ function infoUser {
         break
     }
     New-Item -type file $file_info_user *> $NULL
-    add-Content -Value "####### `n# Informations sur l'utilisateur $username demandées le $(get-date -Format "yyyyMMdd") à $(get-date -Format "HHmm") `n#######`n" `
+    add-Content -Value "`n ####### `n# Informations sur l'utilisateur $username demandées le $(get-date -Format "yyyyMMdd") à $(get-date -Format "HHmm") `n#######`n" `
         -path $file_info_user
 
     foreach ($ans in $ans_info_user.Split(" ")) {
@@ -465,9 +465,7 @@ function infoUser {
                         param ($username)
         
                         # Récupération de l'événement de connexion avec ID 4624 pour Windows 10
-                        $derniereConnexion = Get-WinEvent -FilterHashtable @{ -Logname 'Security'; ID=4624 } | 
-                        Where-Object { $_.Properties.Count -gt 5 -and $_.Properties[5].Value -eq $username } |
-                        Select-Object -Last 1
+                        $derniereConnexion = Get-WinEvent -FilterHashtable @{ Logname='Security'; ID=4624 } | Where-Object { $_.Properties.Count -gt 5 -and $_.Properties[5].Value -eq $username } | Select-Object -Last 1
 
                         # Si une connexion est trouvée, retourner l'heure de connexion
                         if ($derniereConnexion) {
@@ -482,7 +480,7 @@ function infoUser {
                     # Affichage et enregistrement des résultats dans le fichier de log
                     Add-Content -Path $file_info_user -value "`n"
                     Add-Content -path $file_info_user -Value $result
-                    addlog "$result"
+                    addlog "Consultation de la date de dernière connexion de l'utilisateur $username"
                     Start-Sleep -Seconds 1
                 }
                 catch {
@@ -494,7 +492,6 @@ function infoUser {
             }
 
             2 {
-                $username = Read-Host "Entrez le nom de l'utilisateur"
                 try {
                     $results=Invoke-Command -Session $Session -ScriptBlock {
                         param ($username)
@@ -510,7 +507,7 @@ function infoUser {
                     } -ArgumentList $username
                 Add-Content -Path $file_info_user -value "`n"
                 Add-Content -path $file_info_user -Value $results
-                addLog $results
+                addLog "Consultation de la date de modification du mot de passe de l'utilisateur $username"
                 Start-Sleep -Seconds 1
                 }
                 catch {
@@ -521,7 +518,6 @@ function infoUser {
             }
 
             3 {
-                $username = Read-Host "Entrez le nom de l'utilisateur"
                 try {
                     $sessions=Invoke-Command -Session $Session -ScriptBlock {
                         param ($username)
@@ -532,15 +528,14 @@ function infoUser {
                         Add-Content -Path $file_info_user -value "`n"
                         Add-Content -path $file_info_user -Value  "Sessions ouvertes pour l'utilisateur '$username' :"
                         Add-Content -Path $file_info_user -value $sessions
-                        addLog "Sessions ouvertes pour '$username' listées avec succès."
                         Start-Sleep -Seconds 1
                     }
                     else {
                         Add-Content -Path $file_info_user -value "`n"
                         Add-Content -path $file_info_user -Value "Aucune session ouverte trouvée pour l'utilisateur '$username'." *> $null
-                        addLog "Aucune session ouverte trouvée pour '$username'."
                         Start-Sleep -Seconds 1
                     }
+                    addLog "Consultations des sessions ouvertes par '$username'."
                 }
                 catch {
                     Write-Host "Erreur lors de la récupération des sessions ouvertes pour '$username'." *> $null
@@ -550,27 +545,16 @@ function infoUser {
             }
 
             4 {
-                $username = Read-Host "Entrez le nom de l'utilisateur"
                 try {
                     $groupes=Invoke-Command -Session $Session -ScriptBlock {
                         param ($username)
-                        # Utiliser WMI pour obtenir les groupes de l'utilisateur
-                        $groupes = Get-WmiObject -Class Win32_GroupUser | Where-Object $_.PartComponent -match "Name=`"$username`""
+                        $groupes = (net user $username)[22,23]
                         return $groupes } -ArgumentList $username
-                    if ($groupes) {
-                        Write-Host "Groupes d'appartenance de l'utilisateur '$username' :"
-                        $groupes | ForEach-Object {
-                            # Afficher le nom de chaque groupe
-                            ([wmi]$_.GroupComponent).Name
-                            }
-                        addLog "Groupes pour '$username' listés avec succès."
-                        Start-Sleep -Seconds 1
-                    }
-                    else {
-                        Write-Host "Aucun groupe trouvé pour l'utilisateur '$username'."
-                        addLog "Aucun groupe trouvé pour '$username'."
-                        Start-Sleep -Seconds 1
-                    }
+                    Add-Content -Path $file_info_user -value "`n"
+                    Add-Content -path $file_info_user -Value "Groupes d'appartenance de l'utilisateur '$username' :"
+                    Add-Content -path $file_info_user -Value $groupes
+                    addLog "Consultation des groupes de '$username'."
+                    Start-Sleep -Seconds 1
                 }
                 catch {
                     Write-Host "Erreur lors de la récupération des groupes pour l'utilisateur '$username'."
@@ -581,23 +565,23 @@ function infoUser {
             }
 
             5 {
-                $username = Read-Host "Entrez le nom de l'utilisateur"
                 try {
-                    Invoke-Command -Session $Session -ScriptBlock {
+
+                    $results=Invoke-Command -Session $Session -ScriptBlock {
                         param ($username)
                         $historyFilePath = "C:\Users\$username\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt"
                         if (Test-Path $historyFilePath) {
-                            Write-Host "Historique des commandes pour l'utilisateur '$username' :"
-                            Get-Content $historyFilePath | ForEach-Object { Write-Host $_ }
-                            addLog "Historique des commandes pour '$username' listé avec succès."
-                            Start-Sleep -Seconds 1
+                            $results=Get-Content $historyFilePath | ForEach-Object { Write-Host $_ }
                         }
                         else {
-                            Write-Host "Aucun historique de commandes trouvé pour l'utilisateur '$username'."
-                            addLog "Aucun historique de commandes trouvé pour l'utilisateur '$username'."
-                            Start-Sleep -Seconds 1
+                            $results="Aucun historique de commandes trouvé pour l'utilisateur '$username'."
                         }
+                        return $results
                     } -ArgumentList $username
+                    Add-Content -Path $file_info_user -value "`n"
+                    Add-Content -path $file_info_user -Value "Historique des commandes pour l utilisateur '$username' :"
+                    Add-Content -path $file_info_user -Value $results 
+                    addLog "Historique des commandes pour '$username' listé avec succès."
                 }
                 catch {
                     Write-Host "Erreur lors de la récupération de l'historique des commandes pour '$username'." *> $null
@@ -607,16 +591,17 @@ function infoUser {
             }
 
             6 {
-                $username = Read-Host "Entrez le nom de l'utilisateur."
-                $dossier = Read-Host "Entrez le chemin du dossier"
-
+                $dossier = Read-Host "Entrez le chemin absolu du dossier"
                 try {
-                    Invoke-Command -Session $Session -ScriptBlock {
+                    $results=Invoke-Command -Session $Session -ScriptBlock {
                         param ($username, $dossier)
                         $getacl = Get-Acl -Path $dossier
-                        Write-Host "Permissions de l'utilisateur '$username' sur le dossier '$dossier' :"
-                        $getacl.Access | Where-Object { $_.IdentityReference -match $username }
+                        $results=$getacl.Access | Where-Object { $_.IdentityReference -match $username }
+                        return $results
                     } -ArgumentList $username, $dossier
+                    Add-Content -Path $file_info_user -value "`n"
+                    Add-Content -path $file_info_user -Value "Permissions de l'utilisateur '$username' sur le dossier '$dossier' :"
+                    Add-Content -path $file_info_user -Value $results
                     addLog "Permissions sur le dossier '$dossier' listées avec succès pour '$username'."
                     Start-Sleep -Seconds 1
                 }
@@ -628,15 +613,17 @@ function infoUser {
             }
 
             7 {
-                $username = Read-Host "Entrez le nom de l'utilisateur"
-                $fichier = Read-Host "Entrez le chemin du fichier"
+                $fichier = Read-Host "Entrez le chemin absolu du fichier"
                 try {
-                    Invoke-Command -Session $Session -ScriptBlock {
+                    $results=Invoke-Command -Session $Session -ScriptBlock {
                         param ($username, $fichier)
                         $getacl = Get-Acl -Path $fichier
-                        Write-Host "Permissions de l'utilisateur '$username' sur le fichier '$fichier' :"
-                        $getacl.Access | Where-Object { $_.IdentityReference -match $username }
+                        $results=$getacl.Access | Where-Object { $_.IdentityReference -match $username }
+                        return $results
                     } -ArgumentList $username, $fichier
+                    Add-Content -Path $file_info_user -value "`n"
+                    Add-Content -path $file_info_user -Value "Permissions de l'utilisateur '$username' sur le fichier '$fichier' :"
+                    Add-Content -path $file_info_user -Value $results
                     addLog "Permissions sur le fichier '$fichier' listées avec succès pour '$username'."
                     Start-Sleep -Seconds 1
                 }
@@ -663,7 +650,7 @@ function infoUser {
         }
     }
     if ($ans_info_user.Length -le 2)
-    { Get-Content $file_info_userer | Select-String -Pattern "# Informations" -Context 1,1000 | Select-Object -Last 1}
+    { Get-Content $file_info_user | Select-String -Pattern "# Informations" -Context 1,1000 | Select-Object -Last 1}
     Write-Host "Les informations sont dans le fichier $file_info_user."
     Start-Sleep -Seconds 2
 }
