@@ -8,7 +8,7 @@ Vous trouverez dans ce document la manière d'utiliser ```script.sh``` et ```scr
 ### L'utilisation de base
 
 #### Étape 1
-Depuis votre serveur Linux, vous connectez avec un compte utilisateur local, "wilder" pour l'exemple. Le script ```script.sh```se trouve dans le dossier personnel de votre utilisateur.  
+Depuis votre serveur Linux, vous connectez avec un compte utilisateur local, "wilder" pour l'exemple. Le script ```script.sh``` se trouve dans le dossier personnel de votre utilisateur.  
 #### Étape 2
 Entrez l'adresse IP de l'ordinateur client auquel vous voulez accéder. La connexion se fait grâce à une clé publique.
 ![screen](./Images/Installation/screen-projet2/1.png)
@@ -24,14 +24,14 @@ Vous pouvez naviguer dans le menu et choisir si vous voulez une action ou une in
 
 
 #### Étape 4
-Les informations que vous avez demandé sont stockées dans un fichier dans le dossier personnel de l'utilisateur que vous utilisez.
+Les informations que vous avez demandées sont stockées dans un fichier dans le dossier personnel de l'utilisateur que vous utilisez.
 
 ![screen](./Images/Installation/screen-projet2/5.png)
 
 
 ### L'utilisation avancée
 #### Journalisation
-Vous pouvez consulter le journal du script à tout moment : il est dans le dossier ```/var/log```et se nomme ```log_evt.log```. Vous y retrouverez les différentes actions, informations et navigations concernant le script, effectué par un utilisateur de votre ordinateur. Chaque ligne de journalisation incluera la date, l'heure, l'utilisateur, l'évévement, la cible et la reussite ou non.  
+Vous pouvez consulter le journal du script à tout moment : il est dans le dossier ```/var/log``` et se nomme ```log_evt.log```. Vous y retrouverez les différentes actions, informations et navigations concernant le script, effectué par un utilisateur de votre ordinateur. Chaque ligne de journalisation incluera la date, l'heure, l'utilisateur, l'évévement, la cible et la reussite ou non.  
 
 ### La Foire aux Questions
 **Je n'arrive pas à lancer le script. Je n'ai pas les droits**  
