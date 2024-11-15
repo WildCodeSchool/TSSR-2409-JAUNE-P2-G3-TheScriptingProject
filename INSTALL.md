@@ -161,7 +161,7 @@ Autorisez le serveur à se conecter : ```Set-Item WSMan:\localhost\Client\Truste
 
 Si votre pare-feu est activé, tapez ```Set-NetConnectionProfile -InterfaceIndex (Get-NetConnectionProfile).InterfaceIndex -NetworkCategory Private```, ```Enable-PSRemoting -Force``` puis ```Set-NetFirewallRule -Name "WINRM-HTTP-In-TCP" -Enabled True```.  
 ![Config WINRM client](./Images/Installation/WINRM.png)
-Puis dans une console cmd.exe en administrateur, entrez ```reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v LocalAccountTokenFilterPolicy /t REG_DWORD /d 1 /f``` et ``ẁinrm quickconfig```  
+Puis dans une console cmd.exe en administrateur, entrez ```reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v LocalAccountTokenFilterPolicy /t REG_DWORD /d 1 /f``` et ```winrm quickconfig```  
 ![Config cmd.exe client](./Images/Installation/WINRM_serveur_cmd.png)
 
 ## Installation de Chocolatey sur le client
