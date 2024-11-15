@@ -290,7 +290,7 @@ function actionUser {
 
 #### fonction pour gérer les actions concernant un ordinateur client
 function actionComputer {
-    menu "Création de répertoire" "Suppression de répertoire" "Définition de règles de pare-feu" "Installation de logiciel" "Désinstallation de logiciel" "Retour"
+    menu "Création de répertoire" "Suppression de répertoire" "Installation de logiciel" "Désinstallation de logiciel" "Retour"
     $ans_action_computer = Read-Host 
     Switch ($ans_action_computer) { 
         0 {
@@ -338,45 +338,15 @@ function actionComputer {
             }
         }
 		
-        3 {
-            ## Choix de "Définitions de règles de pare-feu de l'ordinateur $address_ip"
-            addLog "Choix de 'Définitions de règles de pare-feu de l'ordinateur $address_ip'"
-            $choose_firewall = Read-Host "Voulez-vous autoriser ou refuser le HTTP sur le port 80 ? 1 pour autoriser, 2 pour refuser"
-            switch ($choose_firewall) {
-                1 {
-                    $result = Invoke-Command -Session $session -ScriptBlock { sudo ufw allow 80 }
-                    if ($result) {
-                        Write-Host "Le port 80 est autorisé sur la machine $address_ip"
-                    }
-                    else {
-                        Write-Host "Le port 80 n'a pas été autorisé sur la machine $address_ip"
-                    }
-                }
-                2 {
-                    $result = Invoke-Command -Session $session -ScriptBlock {
-                        sudo ufw deny 80
-                    }
-                    if ($result) {
-                        Write-Host "Le port 80 est refusé sur la machine $address_ip"
-                    }
-                    else {
-                        Write-Host "Le port 80 n'a pas été refusé sur la machine $address_ip"
-                    }
-                }
-                Default {
-                    Write-Host "Erreur de saisie, échec du changement"
-                }
-            }
-        }
         
-        4 {
+        3 {
             ## Choix de "Installation de logiciel de l'ordinateur $address_ip"
             addLog "Choix de 'Installation de logiciel de l'ordinateur $address_ip'"
             $name = Read-Host "Entrez le nom du logiciel à installer: "
             $results=Invoke-Command -session $session -ScriptBlock {
                 param($name)
-                $install = choco list --local-only
-                if ($install -contains $name) {
+                $install = choco list 
+                if ($install -match $name) {
                     $results="Échec de l'installation de $name"
                 } else {
                     choco install $name -y
@@ -389,15 +359,15 @@ function actionComputer {
             Start-Sleep -Seconds 2
         }
 		
-        5 {
+        4 {
             ## Choix de "Désinstallation de logiciel"
             addLog "Choix de 'Désinstallation de logiciel'"
             $name = Read-Host "Entrez le nom du logiciel à désinstaller: "
             $results=Invoke-Command -session $session -ScriptBlock {
                 param($name)
-                $install = choco list --local-only
-                if ($install -contains $name) {
-                    choco uninstall $name -y
+                $install = choco list
+                if ($install -match $name) {
+                    choco uninstall $name -yx
                     $results="Réussite de la désinstallation de $name"
                     
                 } else {
@@ -410,7 +380,7 @@ function actionComputer {
             Start-Sleep -Seconds 2
         }
 
-        6 {
+        5 {
             ### Retour au menu précédent
             addLog "Retour au menu précédent"
             break
@@ -435,10 +405,9 @@ function infoUser {
         "Droits/permissions de l’utilisateur sur un fichier" "Retour"
     Write-Host "Si vous souhaitez plusieurs informations, écrivez les différents chiffres à la suite, avec un espace entre chaque. "
     $ans_info_user = Read-Host 
-
+    $username = Read-Host "Entrez le nom de l'utilisateur que vous voulez cibler"
     ## chemin vers le fichier d'enregistrement d'informations
     $file_info_user = "C:\Users\$env:USERNAME\Documents\info_$($username)_$(get-date -Format "yyyyMMdd").txt"
-    $username = Read-Host "Entrez le nom de l'utilisateur que vous voulez cibler"
     ## sortie du script si il y a un 0, retour si 12. Création et/ou initialisation du fichier d'enregistrement
     if ($ans_info_user | Select-String -Pattern " 0 |^0| 0$") {
         ## Fin du script
@@ -580,7 +549,7 @@ function infoUser {
                         param ($username)
                         $historyFilePath = "C:\Users\$username\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt"
                         if (Test-Path $historyFilePath) {
-                            $results=Get-Content $historyFilePath | ForEach-Object { Write-Host $_ }
+                            $results=Get-Content $historyFilePath | 
                         }
                         else {
                             $results="Aucun historique de commandes trouvé pour l'utilisateur '$username'."
@@ -589,7 +558,7 @@ function infoUser {
                     } -ArgumentList $username
                     Add-Content -Path $file_info_user -value "`n"
                     Add-Content -path $file_info_user -Value "Historique des commandes pour l utilisateur '$username' :"
-                    Add-Content -path $file_info_user -Value $results 
+                    $results=ForEach-Object { Add-Content -path $file_info_user -Value $_ }
                     addLog "Historique des commandes pour '$username' listé avec succès."
                 }
                 catch {
@@ -605,7 +574,7 @@ function infoUser {
                     $results=Invoke-Command -Session $Session -ScriptBlock {
                         param ($username, $dossier)
                         $getacl = Get-Acl -Path $dossier
-                        $results=$getacl.Access | Where-Object { $_.IdentityReference -match $username }
+                        $results=$($getacl).Access | Where-Object { $_.IdentityReference -match $username }
                         return $results
                     } -ArgumentList $username, $dossier
                     Add-Content -Path $file_info_user -value "`n"
@@ -804,7 +773,7 @@ function infoScript {
             addLog "Choix de 'Recherche des événements dans le fichier log_evt.log pour un utilisateur'"
             $user = Read-Host "Quel utilisateur voulez-vous cibler ?"
             Get-content $path\log_evt.log | Select-String -Pattern $user
-            if (!(Get-content $path\log_evt.log | Select-String -Pattern $computer))
+            if (!(Get-content $path\log_evt.log | Select-String -Pattern $user))
             { write-host "Aucune correspondance trouvée" }
             read-host "Appuyez sur Entrée pour continuer."
             addLog "Recherche des événements dans le fichier log_evt.log pour l'utilisateur $user"
