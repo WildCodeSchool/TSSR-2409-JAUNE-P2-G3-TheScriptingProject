@@ -602,21 +602,21 @@ function infoUser() {
 		1) ## Choix de "Date de dernière connexion d’un utilisateur"
 		addLog "Choix de 'Date de dernière connexion de l'utilisateur'"
 		echo "Date de dernière connexion de l'utilisateur : " >> $file_info_user 
-		ssh $utilisateur_ssh@$address_ip "last -R $user_name | head -n 1" >> $file_info_user
+		ssh $user_ssh@$address_ip "last -R $user_name | head -n 1" >> $file_info_user
 		echo -e "\n " >> $file_info_user 
 		addLog "Consultation de la dernière connexion de l'utilisateur local $user_name sur l'ordinateur client $address_ip";;
 		
 		2) ## Choix de "Date de dernière modification du mot de passe"
 		addLog "Choix de 'Date de dernière modification du mot de passe de l'utilisateur'"
 		echo "Date de dernière modification du mot de passe de l'utilisateur : " >> $file_info_user 
-		ssh $utilisateur_ssh@$address_ip "echo $password | sudo -S chage -l $user_name | head -n 1" >> $file_info_user
+		ssh $user_ssh@$address_ip "echo $password | sudo -S chage -l $user_name | head -n 1" >> $file_info_user
 		echo -e "\n " >> $file_info_user 
 		addLog "Consultation de la dernière modification du mot de passe de l'utilisateur local $user_name sur l'ordinateur client $address_ip";;
 		
 		3) ## Choix de "Liste des sessions ouvertes par l'utilisateur"
 		addLog "Choix de 'Liste des sessions ouvertes par l'utilisateur'"
 		echo "Liste des sessions ouvertes par l'utilisateur : " >> $file_info_user 
-		if ! ssh $utilisateur_ssh@$address_ip "who | grep $user_name" >> $file_info_user
+		if ! ssh $user_ssh@$address_ip "who | grep $user_name" >> $file_info_user
 		then    
 			echo "Aucune session ouverte par l'utilisateur $user_name" >> $file_info_user
 		fi
@@ -626,7 +626,7 @@ function infoUser() {
 		4) ## Choix de "Groupe d’appartenance d’un utilisateur"
 		addLog "Choix de 'Groupe d’appartenance d’un utilisateur'"
 		echo "Groupe d'appartenance de l'utilisateur local : " >> $file_info_user 
-		ssh $utilisateur_ssh@$address_ip "groups $user_name" >> $file_info_user
+		ssh $user_ssh@$address_ip "groups $user_name" >> $file_info_user
 		echo -e "\n " >> $file_info_user 
 		addLog "Consultation des groupes d'appartenance de l'utilisateur local $user_name sur l'ordinateur client $address_ip";;
 		
@@ -636,10 +636,10 @@ function infoUser() {
         read -p "Voulez-vous voir l'intégrité des commandes exécutées par $user_name ou uniquement une partie ? Tapez le nombre de lignes voulues ou la touche 'Entrée' pour la totalité : " ans_history
 		if [ -z $ans_history ]
 		then
-			ssh $utilisateur_ssh@$address_ip "echo $password | sudo -S cat /home/$user_name/.bash_history" >> $file_info_user
+			ssh $user_ssh@$address_ip "echo $password | sudo -S cat /home/$user_name/.bash_history" >> $file_info_user
 			addLog "Consultation de l'historique des ccommandes exécutées par l'utilisateur local $user_name sur l'ordinateur client $address_ip"
 		else
-			ssh $utilisateur_ssh@$address_ip "echo $password | sudo -S tail -n $ans_history /home/$user_name/.bash_history" >> $file_info_user
+			ssh $user_ssh@$address_ip "echo $password | sudo -S tail -n $ans_history /home/$user_name/.bash_history" >> $file_info_user
 			addLog "Consultation des $ans_history dernières lignes de l'historique des ccommandes exécutées par l'utilisateur local $user_name sur l'ordinateur client $address_ip"
 		fi
 		echo -e "\n " >> $file_info_user;;
@@ -648,14 +648,14 @@ function infoUser() {
 		addLog "Choix de 'Droits/permissions de l’utilisateur sur un dossier'"
 		## Choix + vérif du dossier
 		read -p " Entrez le nom et le chemin absolu du dossier sur lequel vous voulez vérifier les droits de $user_name : " rep_name
-		ssh $utilisateur_ssh@$address_ip "[ -d $rep_name ]"
+		ssh $user_ssh@$address_ip "[ -d $rep_name ]"
 		while ! $?
 		do 
 			echo "Le dossier n'existe pas."
 			read -p " Entrez le nom et le chemin absolu du dossier sur lequel vous voulez vérifier les droits de $user_name : " rep_name
 		done
 		echo "Droits de l'utilisateur local sur le dossier $rep_name : " >> $file_info_user
-		ssh $utilisateur_ssh@$address_ip "ls -ld  $rep_name" >> $file_info_user
+		ssh $user_ssh@$address_ip "ls -ld  $rep_name" >> $file_info_user
 		if cat $file_info_user | tail -n 1 | grep $user_name > /dev/null 2>&1
 		then
 			echo "$user_name est le propriétaire du dossier $rep_name" >> $file_info_user
@@ -672,7 +672,7 @@ function infoUser() {
 		addLog "Choix de 'Droits/permissions de l’utilisateur sur un fichier'"
 		## Choix + vérif du fichier
         read -p " Entrez le nom et le chemin absolu du fichier sur lequel vous voulez vérifier les droits de $user_name" file_name
-		ssh $utilisateur_ssh@$address_ip "[ -e $file_name ]"
+		ssh $user_ssh@$address_ip "[ -e $file_name ]"
 		while ! $?
 		do 
 			echo "Le fichier n'existe pas."
