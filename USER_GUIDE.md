@@ -56,4 +56,4 @@ Vous pouvez retrouver le même fichier de journalisation qu'avec Linux à l'empl
 **Je n'arrive pas à lancer le script. Je n'ai pas les droits**  
 Il faut impérativement lancer la console en tant qu'administrateur.  
 **Je n'arrive pas à lancer le script car j'ai un message de sécurité.**  
-Lancez la commande ``Ùnblock-file .\script.ps1```.  
+Lancez la commande ```Unblock-file .\script.ps1```.  
