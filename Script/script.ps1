@@ -438,17 +438,17 @@ function infoUser {
                 addLog "*********EndScript********"
                 exit
             }
+
             1 {
                 $username = Read-Host "Entrez le nom de l'utilisateur"
-
                 try {
                     # Exécution de la commande sur la session distante et stockage du résultat
                     $result = Invoke-Command -Session $Session -ScriptBlock {
                         param ($username)
         
                         # Récupération de l'événement de connexion avec ID 4624 pour Windows 10
-                        $derniereConnexion = Get-WinEvent -LogName Security | 
-                        Where-Object { $_.Id -eq 4624 -and $_.Properties.Count -gt 5 -and $_.Properties[5].Value -eq $username } |
+                        $derniereConnexion = Get-WinEvent -FilterHashtable @{ -Logname 'Security'; ID=4624} | 
+                        Where-Object { $_.Properties.Count -gt 5 -and $_.Properties[5].Value -eq $username } |
                         Select-Object -Last 1
 
                         # Si une connexion est trouvée, retourner l'heure de connexion
@@ -461,7 +461,6 @@ function infoUser {
                             return "Aucune connexion trouvée pour l'utilisateur '$username'."
                         }
                     } -ArgumentList $username
-
                     # Affichage et enregistrement des résultats dans le fichier de log
                     Write-Host $result
                     addLog "$result"
