@@ -1,6 +1,6 @@
 # Guide d'utilisation
 
-Vous trouverez dans ce document la manière d'utiliser ```script.sh```et ```script.ps1```, dont le but est la gestion et le relevé d'informations à distance d'ordinateurs clients ou d'utilisateurs locaux.  
+Vous trouverez dans ce document la manière d'utiliser ```script.sh``` et ```script.ps1```, dont le but est la gestion et le relevé d'informations à distance d'ordinateurs clients ou d'utilisateurs locaux.  
 
 ---
 ## Un serveur Linux et son client Linux
