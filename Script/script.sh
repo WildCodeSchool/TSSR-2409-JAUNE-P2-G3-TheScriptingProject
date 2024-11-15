@@ -809,7 +809,7 @@ function infoComputer() {
 		
 		11) ## pour connaître la quantité de processeurs utilisée
 			echo "La quantité de processeurs utilisée :" >> $file_info_computer 
-			ssh $user_ssh@$address_ip "top -n1 | grep %Cpu"  >> $file_info_computer 
+			ssh $user_ssh@$address_ip "nproc"  >> $file_info_computer 
 			echo -e "\n " >> $file_info_computer 
 			addLog "Consultation de la quantité de processeur utilisée de l'ordinateur client $address_ip";; 
 		
