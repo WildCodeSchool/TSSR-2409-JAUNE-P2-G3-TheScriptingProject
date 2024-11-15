@@ -649,7 +649,7 @@ function infoUser() {
 		## Choix + vérif du dossier
 		read -p " Entrez le nom et le chemin absolu du dossier sur lequel vous voulez vérifier les droits de $user_name : " rep_name
 		ssh $user_ssh@$address_ip "[ -d $rep_name ]"
-		while ! $?
+		while ! ssh $user_ssh@$address_ip "[ -d $rep_name ]"
 		do 
 			echo "Le dossier n'existe pas."
 			read -p " Entrez le nom et le chemin absolu du dossier sur lequel vous voulez vérifier les droits de $user_name : " rep_name
@@ -672,8 +672,8 @@ function infoUser() {
 		addLog "Choix de 'Droits/permissions de l’utilisateur sur un fichier'"
 		## Choix + vérif du fichier
         read -p " Entrez le nom et le chemin absolu du fichier sur lequel vous voulez vérifier les droits de $user_name" file_name
-		ssh $user_ssh@$address_ip "[ -e $file_name ]"
-		while ! $?
+		ssh $user_ssh@$address_ip "[ -f $file_name ]"
+		while ! ssh $user_ssh@$address_ip "[ -f $file_name ]"
 		do 
 			echo "Le fichier n'existe pas."
 			read -p " Entrez le nom et le chemin absolu du fichier sur lequel vous voulez vérifier les droits de $user_name : " file_name
