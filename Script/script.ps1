@@ -349,7 +349,7 @@ function actionComputer {
                 if ($install -match $name) {
                     $results="Échec de l'installation de $name"
                 } else {
-                    choco install $name -y
+                    choco install $name -y 
                     $results="Réussite de l'installation de $name"
                 }
                 return $results
@@ -626,7 +626,7 @@ function infoUser {
     if ($ans_info_user.Length -le 2)
     { Get-Content $file_info_user | Select-String -Pattern "# Informations" -Context 1,1000 | Select-Object -Last 1}
     Write-Host "Les informations sont dans le fichier $file_info_user."
-    Start-Sleep -Seconds 2
+    Read-Host "Appuyez sur Entrée pour continuer."
 }
 
 #### fonction qui gère les informations sur l'ordinateur client
@@ -747,7 +747,7 @@ function infoComputer {
     if ($ans_info_computer.Length -le 2)
     { Get-Content $file_info_computer | Select-String -Pattern "# Informations" -Context 1,100 | Select-Object -Last 1}
     Write-Host "Les informations sont dans le fichier $file_info_computer."
-    Start-Sleep -Seconds 2
+    Read-Host "Appuyez sur Entrée pour continuer."
 }
 
 
