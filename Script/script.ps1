@@ -290,7 +290,8 @@ function actionUser {
 
 #### fonction pour gérer les actions concernant un ordinateur client
 function actionComputer {
-    menu "Création de répertoire" "Suppression de répertoire" "Installation de logiciel" "Désinstallation de logiciel" "Arrêt" "Redémarrage" "Verrouillage" "Retour"
+    menu "Création de répertoire" "Suppression de répertoire" "Installation de logiciel" "Désinstallation de logiciel" `
+        "Arrêt" "Redémarrage" "Verrouillage" "Activation du pare-feu" "Désactivation du pare-feu" "Retour"
     $ans_action_computer = Read-Host 
     Switch ($ans_action_computer) { 
         0 {
@@ -404,7 +405,23 @@ function actionComputer {
             Start-Sleep -Seconds 2
         }
 
-        8 {
+        9 { ## Choix de Activation du Pare-feu
+            addLog "Choix de 'Activation du pare-feu'"
+            Invoke-Command -Session $session -ScriptBlock { set-netFirewallProfile -enabled true }
+            addLog "Le pare-feu de l'ordinateur $addressip est activé"
+            write-host "Le pare-feu de l'ordinateur $addressip est activé"
+            Start-Sleep -Seconds 2
+        }
+
+        10 { ## Choix de désactivation du Pare-feu
+            addLog "Choix de 'Désactivation du pare-feu'"
+            Invoke-Command -Session $session -ScriptBlock { set-netFirewallProfile -enabled false }
+            addLog "Le pare-feu de l'ordinateur $addressip est désactivé"
+            write-host "Le pare-feu de l'ordinateur $addressip est désactivé"
+            Start-Sleep -Seconds 2
+        }
+
+        11 {
             ### Retour au menu précédent
             addLog "Retour au menu précédent"
             break
