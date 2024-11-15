@@ -577,7 +577,7 @@ function infoUser() {
 	then
 	### Retour au menu précédent
 		addLog "Retour au menu précédent"
-		break 1
+		return
 	else
 		touch $file_info_user > /dev/null 2>&1 
 		echo -e "####### \n# Informations sur l'utilisateur local $user_name de l'ordinateur $address_ip demandées le $(date +"%Y%m%d") à $(date +"%H:%M") \n#######\n" >> $file_info_user
@@ -730,7 +730,7 @@ function infoComputer() {
 	then 
 		### Retour au menu précédent
 		addLog "Retour au menu précédent"
-		break 1
+		return
 	else
 		touch $file_info_computer > /dev/null 2>&1 
 		echo -e "####### \n# Informations sur l'ordinateur $address_ip demandées le $(date +"%Y%m%d") à $(date +"%H:%M") \n#######\n" >> $file_info_computer
