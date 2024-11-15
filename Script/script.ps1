@@ -290,7 +290,7 @@ function actionUser {
 
 #### fonction pour gérer les actions concernant un ordinateur client
 function actionComputer {
-    menu "Création de répertoire" "Suppression de répertoire" "Installation de logiciel" "Désinstallation de logiciel" "Retour"
+    menu "Création de répertoire" "Suppression de répertoire" "Installation de logiciel" "Désinstallation de logiciel" "Arrêt" "Redémarrage" "Verrouillage" "Retour"
     $ans_action_computer = Read-Host 
     Switch ($ans_action_computer) { 
         0 {
@@ -380,7 +380,31 @@ function actionComputer {
             Start-Sleep -Seconds 2
         }
 
-        5 {
+        5 { # Choix de Arrêt
+            addLog "Choix de 'Arrêt'"
+            Invoke-Command -Session $session -ScriptBlock { shutdown /s /t 1 }
+            addLog "L'ordinateur $addressip est éteint"
+            write-host "L'ordinateur $address_ip est éteint"
+            Start-Sleep -Seconds 2
+        }
+
+        6 { # Choix de Redémarrage
+            addLog "Choix de 'Redémarrage'"
+            Invoke-Command -Session $session -ScriptBlock { shutdown /r /t 1 }
+            addLog "L'ordinateur $addressip va redémarrer."
+            write-host "L'ordinateur $address_ip est en train de redémarrer"
+            Start-Sleep -Seconds 2
+        }
+
+        7 { ## Choix de verrouillage
+            addLog "Choix de 'Verrouillage'"
+            Invoke-Command -Session $session -ScriptBlock { shutdown /l /t 1 }
+            addLog "L'ordinateur $addressip est verrouillé"
+            write-host "L'ordinateur $address_ip est verrouillé."
+            Start-Sleep -Seconds 2
+        }
+
+        8 {
             ### Retour au menu précédent
             addLog "Retour au menu précédent"
             break
