@@ -584,7 +584,7 @@ function infoUser() {
 	fi
 
 	## Demande de mot de passe si besoin 
-	if echo $ans_info_user | grep "2\|5 " > /dev/null
+	if echo $ans_info_user | grep "2\|5" > /dev/null
 	then
 		passwordSudo
 		read -s password
